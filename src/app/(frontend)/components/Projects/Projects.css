@@ -1,0 +1,314 @@
+/* =================================================================
+   PROJECTS SECTION
+   ================================================================= */
+.projects-section {
+  padding: 150px 60px;
+  background: url('/top.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.projects-container {
+  max-width: 1588px;
+  margin-left: 40px;
+}
+
+.projects-header {
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.section-label-projects {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.projects-main-title {
+  font-size: clamp(32px, 4vw, 42px);
+  font-weight: 700;
+  color: white;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.projects-description {
+  font-size: clamp(14px, 1.3vw, 16px);
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 650px;
+  line-height: 1.6;
+}
+
+/* Category Filters */
+.category-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 50px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 10px 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.filter-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.filter-btn.active {
+  background: rgba(255, 255, 255, 0.95);
+  color: #0a2463;
+  border-color: white;
+}
+
+/* Projects Grid Layout */
+.projects-grid-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+  margin-bottom: 50px;
+}
+
+.project-card-item {
+  position: relative;
+}
+
+.project-large {
+  grid-row: span 2;
+}
+
+.project-small {
+  grid-row: span 1;
+}
+
+/* Make second and third cards horizontal layout */
+.project-card-item:nth-child(2) .project-card-inner,
+.project-card-item:nth-child(3) .project-card-inner {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+/* Second card: text left, image right */
+.project-card-item:nth-child(2) .project-card-inner {
+  flex-direction: row;
+}
+
+/* Third card: image left, text right */
+.project-card-item:nth-child(3) .project-card-inner {
+  flex-direction: row-reverse;
+}
+
+.project-card-inner {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  height: 100%;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card-inner:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+}
+
+/* Project Image */
+.project-image-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.project-large .project-image-container {
+  height: 320px;
+  padding:20px;
+ 
+}
+
+.project-small .project-image-container {
+  padding:20px;
+  height: 240px;
+
+}
+
+/* Horizontal layout for 2nd and 3rd cards */
+.project-card-item:nth-child(2) .project-image-container,
+.project-card-item:nth-child(3) .project-image-container {
+  width: 50%;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.project-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+     border: 1px solid #e5e7eb;
+  border-radius: 15px;
+}
+
+.project-card-inner:hover .project-image {
+  transform: scale(1.05);
+}
+
+.project-category-badge {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  color: rgba(37, 99, 235, 1);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.project-category-badge.badge-right {
+  left: auto;
+  right: 30px;
+}
+
+.project-card-inner:hover .project-category-badge {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Project Content */
+.project-content {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Adjust padding for horizontal cards */
+.project-card-item:nth-child(2) .project-content,
+.project-card-item:nth-child(3) .project-content {
+  width: 50%;
+  padding: 32px;
+}
+
+.project-title {
+  font-size: clamp(16px, 1.5vw, 18px);
+  font-weight: 500;
+  line-height: 1.4;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.project-desc {
+  font-size: clamp(13px, 1.1vw, 14px);
+  color: rgba(85, 85, 85, 1);
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 400;
+  line-height: 28px;
+}
+
+/* Projects CTA */
+.projects-cta {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.explore-more-btn {
+  padding: 14px 40px;
+  background: transparent;
+  border: 2px solid white;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.explore-more-btn:hover {
+  background: white;
+  color: #0a2463;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
+
+.explore-more-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .projects-section {
+    padding: 80px 40px;
+  }
+
+  .projects-grid-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .project-large,
+  .project-small {
+    grid-row: span 1;
+  }
+
+  .project-large .project-image-container,
+  .project-small .project-image-container {
+    height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .projects-section {
+    padding: 60px 24px;
+  }
+
+  .projects-header {
+    margin-bottom: 40px;
+  }
+
+  .category-filters {
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .filter-btn {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+
+  .project-content {
+    padding: 24px;
+  }
+
+  .project-large .project-image-container,
+  .project-small .project-image-container {
+    height: 280px;
+  }
+}
+

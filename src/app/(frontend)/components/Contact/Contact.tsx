@@ -1,12 +1,13 @@
 'use client'
 
+import './Contact.css'
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
 
 export default function Contact() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
-  
+
   const [formData, setFormData] = useState({
     name: '',
     company: '',

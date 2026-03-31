@@ -33,7 +33,7 @@ export default function OverlappingHero({
         initial={{ y: -40, opacity: 0, x: '-50%' }}
         animate={{ y: 0, opacity: 1, x: '-50%' }}
         transition={{ delay: 0.2 }}
-        className="overlay-pill top"
+        className={`overlay-pill top`}
         style={{ left: '50%' }}
       >
         {topOverlay}
@@ -44,7 +44,7 @@ export default function OverlappingHero({
         initial={{ y: 40, opacity: 0, x: '-50%' }}
         animate={{ y: 0, opacity: 1, x: '-50%' }}
         transition={{ delay: 0.3 }}
-        className="overlay-pill bottom"
+        className={`overlay-pill bottom`}
         style={{ left: '50%' }}
       >
         {bottomOverlay}
@@ -55,7 +55,7 @@ export default function OverlappingHero({
         initial={{ x: -40, opacity: 0, y: '-50%' }}
         animate={{ x: 0, opacity: 1, y: '-50%' }}
         transition={{ delay: 0.4 }}
-        className="overlay-pill left"
+        className={`overlay-pill left`}
         style={{ top: '50%' }}
       >
         {leftOverlay}
@@ -66,7 +66,7 @@ export default function OverlappingHero({
         initial={{ x: 40, opacity: 0, y: '-50%' }}
         animate={{ x: 0, opacity: 1, y: '-50%' }}
         transition={{ delay: 0.5 }}
-        className="overlay-pill right"
+        className={`overlay-pill right`}
         style={{ top: '50%' }}
       >
         {rightOverlay}

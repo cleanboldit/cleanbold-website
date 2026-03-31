@@ -1,5 +1,6 @@
 'use client'
 
+import './OurWork.css'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 import { useRef } from 'react'

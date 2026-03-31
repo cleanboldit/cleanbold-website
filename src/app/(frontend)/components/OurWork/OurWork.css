@@ -1,0 +1,160 @@
+/* ===================== OUR WORK / CORE OFFERINGS SECTION ===================== */
+.core-offerings {
+  padding: 120px 60px;
+  background: var(--color-gray-light);
+}
+
+.offerings-container {
+  max-width: 1400px;
+  margin-left: 40px;
+}
+
+.offerings-header {
+  margin-bottom: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.offerings-header-content {
+  flex: 1;
+}
+
+.offerings-header-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-shrink: 0;
+  margin-top: 72px;
+}
+
+.section-label {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-style: 'Biennale';
+}
+
+.offerings-header h2 {
+  font-size: 48px;
+  font-weight: 600;
+  color: var(--color-black);
+  margin-bottom: 16px;
+}
+
+.section-description {
+  font-size: 18px;
+  color: rgba(85, 85, 85, 1);;
+  max-width: 1250px;
+  line-height: 1.6;
+}
+
+.offerings-carousel {
+  position: relative;
+  width: 100%;
+}
+
+.carousel-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 10%;
+  border: 2px solid rgba(1, 30, 244, 1);
+  background: white;
+  color: rgba(1, 30, 244, 1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.carousel-btn:hover {
+  background: rgba(1, 30, 244, 1);
+  color: white;
+  transform: scale(1.1);
+}
+
+.offerings-scroll {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 0;
+  width: 100%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.offerings-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.offering-card {
+  min-width: 300px;
+  max-width: 200px;
+  height: 600px !important;
+  padding: 0;
+  border-radius: 20px;
+  color: white;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.offering-card.image-top {
+  flex-direction: column;
+    border-radius: 20px !important;
+}
+
+.offering-card.image-bottom {
+  flex-direction: column-reverse;
+  border-radius: 20px !important;
+}
+
+.card-content {
+  padding: 32px 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-content h2 {
+  font-size: 35px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  line-height: 1.2;
+ margin-top:12px
+}
+
+.card-content p {
+  font-size: 16px;
+  line-height: 28px;
+  opacity: 0.9;
+  margin-top:12px;
+  font-weight: 400;
+  flex: 1;
+}
+
+.card-image-top,
+.card-image-bottom {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 288px; /* 248px image + 40px padding (20px top + 20px bottom) */
+}
+
+.offering-img {
+  width: 100%;
+  height: 248px;
+  border-radius: 20px !important;
+  object-fit: cover;
+}
+

@@ -1,5 +1,7 @@
 'use client'
 
+import './Hero.css'
+
 export default function Hero() {
   return (
     <section className="hero" id="hero">
@@ -18,8 +20,7 @@ export default function Hero() {
       </video>
 
       {/* Content sits on top of the video */}
-      <div className="hero-wrapper">
-      </div>
+      <div className="hero-wrapper"></div>
     </section>
   )
 }

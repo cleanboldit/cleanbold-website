@@ -1,5 +1,6 @@
 'use client'
 
+import './Footer.css'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { JSX, useState } from 'react'

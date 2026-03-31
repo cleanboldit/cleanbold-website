@@ -1,0 +1,164 @@
+/* =================================================================
+   FEATURED CLIENTS
+   ================================================================= */
+.featured-clients-section {
+  padding: 100px 0;
+  background: #f8f9fa;
+  overflow: hidden;
+}
+
+.clients-container {
+  max-width: 1600px;
+  margin-left:40px;
+}
+
+.clients-header {
+  text-align: left;
+  margin-bottom: 80px;
+  padding: 0 60px;
+}
+
+.clients-header h2 {
+  font-size: clamp(40px, 5vw, 56px);
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.dot-accent {
+  color: #0052ff;
+}
+
+/* Grid Wrapper */
+.clients-grid-wrapper {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  margin-bottom: 60px;
+}
+
+/* Brand Card */
+.client-brand-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  aspect-ratio: 2 / 1;
+  transition: all 0.3s ease;
+}
+
+.client-brand-card:hover {
+  border-color: #0052ff;
+  box-shadow: 0 8px 24px rgba(0, 82, 255, 0.15);
+  transform: translateY(-4px);
+}
+
+.client-brand-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.client-brand-card:hover .client-brand-logo {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+/* CTA Button */
+.clients-cta {
+  text-align: center;
+  padding: 0 60px;
+}
+
+.offerings-cta-container {
+  text-align: center;
+  padding: 0 60px;
+  margin-top: 30px;
+}
+
+.see-work-btn {
+  background: rgba(1, 30, 244, 1);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-style: 'Biennale';
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  height: 60px;
+  width: 150px;
+  transition: all 0.3s ease;
+}
+
+.see-work-btn:hover {
+  background: rgba(1, 30, 244, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(0, 82, 255, 0.4);
+}
+
+.see-work-btn:active {
+  transform: translateY(0);
+}
+
+.offerings-cta {
+  background: rgba(1, 30, 244, 1);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-style: 'Biennale';
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  height: 60px;
+  width: 220px;
+  transition: all 0.3s ease;
+}
+
+.offerings-cta:hover {
+  background: rgba(1, 30, 244, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(0, 82, 255, 0.4);
+}
+
+.offerings-cta:active {
+  transform: translateY(0);
+}
+/* Responsive */
+@media (max-width: 768px) {
+  .featured-clients-section {
+    padding: 60px 0;
+  }
+
+  .clients-header,
+  .clients-cta {
+    padding: 0 24px;
+  }
+
+  .clients-header {
+    margin-bottom: 50px;
+  }
+
+  .clients-marquee-wrapper {
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .client-brand-card {
+    width: 200px;
+    height: 120px;
+    padding: 20px;
+  }
+
+  .scroll-right-to-left,
+  .scroll-left-to-right {
+    animation-duration: 30s;
+  }
+}
+
