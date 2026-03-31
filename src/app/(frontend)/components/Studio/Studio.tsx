@@ -1,6 +1,6 @@
 'use client'
 
-import './Studio.css'
+import styles from './Studio.module.css'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
@@ -23,29 +23,29 @@ export default function StudioSection({ data }: StudioSectionProps) {
   }
 
   return (
-    <section className="studio-section" ref={ref}>
-      <div className="studio-container">
+    <section className={styles['studio-section']} ref={ref}>
+      <div className={styles['studio-container']}>
         <motion.div
-          className="studio-header"
+          className={styles['studio-header']}
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
         >
-          <div className="studio-title-area">
+          <div className={styles['studio-title-area']}>
             <h2>{data.title || 'Studio Cleanbold'}</h2>
             <h3>{data.subtitle || 'Where Stories Are Shot.'}</h3>
           </div>
-          <p className="studio-info">{data.description || ''}</p>
+          <p className={styles['studio-info']}>{data.description || ''}</p>
         </motion.div>
 
-        <div className="studio-carousel">
-          <div className="studio-images-wrapper">
+        <div className={styles['studio-carousel']}>
+          <div className={styles['studio-images-wrapper']}>
             {data.studioImages?.map((image: any, index: number) => {
               const imageUrl = typeof image.image === 'object' ? image.image?.url : image.image
               return (
                 <motion.div
                   key={index}
-                  className="studio-image-card"
+                  className={styles['studio-image-card']}
                   initial={{ opacity: 0, x: 100 }}
                   animate={isInView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.8, delay: index * 0.2 }}
@@ -56,7 +56,7 @@ export default function StudioSection({ data }: StudioSectionProps) {
                     alt={`Studio space ${index + 1}`}
                     width={600}
                     height={400}
-                    className="studio-img"
+                    className={styles['studio-img']}
                   />
                 </motion.div>
               )

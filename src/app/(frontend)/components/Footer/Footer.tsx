@@ -1,6 +1,6 @@
 'use client'
 
-import './Footer.css'
+import styles from './Footer.module.css'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { JSX, useState } from 'react'
@@ -33,18 +33,18 @@ export default function Footer({ data }: FooterProps) {
 
   return (
     <footer id="contact" className="footer">
-      <div className="footer-unified-section">
-        <div className="footer-unified-container">
+      <div className={styles['footer-unified-section']}>
+        <div className={styles['footer-unified-container']}>
           {/* Contact Form Section */}
-          <div className="footer-contact-container">
+          <div className={styles['footer-contact-container']}>
             <motion.div
-              className="footer-contact-left"
+              className={styles['footer-contact-left']}
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             >
-              <h2 className="footer-contact-title">
+              <h2 className={styles['footer-contact-title']}>
                 {data.contactSection?.title?.split('\\n').map((line: string, i: number) => (
                   <span key={i}>
                     {line}
@@ -52,27 +52,29 @@ export default function Footer({ data }: FooterProps) {
                   </span>
                 )) || "Let's Build Something Bold And Better"}
               </h2>
-              <p className="footer-contact-subtitle">{data.contactSection?.subtitle || ''}</p>
+              <p className={styles['footer-contact-subtitle']}>
+                {data.contactSection?.subtitle || ''}
+              </p>
             </motion.div>
 
             <motion.div
-              className="footer-contact-right"
+              className={styles['footer-contact-right']}
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             >
-              <h3 className="footer-form-title">
+              <h3 className={styles['footer-form-title']}>
                 {data.contactSection?.formTitle || 'Start The Conversation'}
               </h3>
-              <form className="footer-form" onSubmit={handleSubmit}>
+              <form className={styles['footer-form']} onSubmit={handleSubmit}>
                 <input
                   type="text"
                   name="name"
                   placeholder="Name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="footer-input"
+                  className={styles['footer-input']}
                   required
                 />
                 <input
@@ -81,17 +83,17 @@ export default function Footer({ data }: FooterProps) {
                   placeholder="Company Name"
                   value={formData.companyName}
                   onChange={handleChange}
-                  className="footer-input"
+                  className={styles['footer-input']}
                   required
                 />
-                <div className="footer-input-row">
+                <div className={styles['footer-input-row']}>
                   <input
                     type="email"
                     name="email"
                     placeholder="Email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="footer-input footer-input-half"
+                    className={styles['footer-input']}
                     required
                   />
                   <input
@@ -100,7 +102,7 @@ export default function Footer({ data }: FooterProps) {
                     placeholder="Phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="footer-input footer-input-half"
+                    className={styles['footer-input']}
                     required
                   />
                 </div>
@@ -109,11 +111,11 @@ export default function Footer({ data }: FooterProps) {
                   placeholder="Message"
                   value={formData.message}
                   onChange={handleChange}
-                  className="footer-textarea"
+                  className={styles['footer-textarea']}
                   rows={4}
                   required
                 />
-                <button type="submit" className="footer-submit-btn">
+                <button type="submit" className={styles['footer-submit-btn']}>
                   Submit
                 </button>
               </form>
@@ -122,35 +124,35 @@ export default function Footer({ data }: FooterProps) {
 
           {/* Footer Info Section */}
           <motion.div
-            className="footer-info-container"
+            className={styles['footer-info-container']}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="footer-info-content">
-              <div className="footer-brand-section">
-                <h1 className="footer-brand-name">
+            <div className={styles['footer-info-content']}>
+              <div className={styles['footer-brand-section']}>
+                <h1 className={styles['footer-brand-name']}>
                   {data.companyInfo?.brandName && (
                     <>
                       {data.companyInfo.brandName.split('bold')[0]}
-                      <span className="footer-brand-bold">bold</span>
-                      <span className="footer-brand-dot">.</span>{' '}
+                      <span className={styles['footer-brand-bold']}>bold</span>
+                      <span className={styles['footer-brand-dot']}>.</span>{' '}
                       {data.companyInfo.advertising && (
-                        <span className="footer-brand-advertising">
+                        <span className={styles['footer-brand-advertising']}>
                           {data.companyInfo.advertising}
                         </span>
                       )}
                     </>
                   )}
                 </h1>
-                <h1 className="footer-brand-tagline">{data.companyInfo?.tagline}</h1>
+                <h1 className={styles['footer-brand-tagline']}>{data.companyInfo?.tagline}</h1>
               </div>
 
-              <div className="footer-contact-info">
-                <div className="footer-info-item">
+              <div className={styles['footer-contact-info']}>
+                <div className={styles['footer-info-item']}>
                   <svg
-                    className="footer-icon"
+                    className={styles['footer-icon']}
                     width="24"
                     height="24"
                     viewBox="0 0 24 24"
@@ -169,9 +171,9 @@ export default function Footer({ data }: FooterProps) {
                   <span>{data.companyInfo?.phone || '+91 79902 34633'}</span>
                 </div>
 
-                <div className="footer-info-item">
+                <div className={styles['footer-info-item']}>
                   <svg
-                    className="footer-icon"
+                    className={styles['footer-icon']}
                     width="24"
                     height="24"
                     viewBox="0 0 24 24"
@@ -186,9 +188,9 @@ export default function Footer({ data }: FooterProps) {
                   <span>{data.companyInfo?.email || 'cleanboldadvertising@gmail.com'}</span>
                 </div>
 
-                <div className="footer-info-item">
+                <div className={styles['footer-info-item']}>
                   <svg
-                    className="footer-icon"
+                    className={styles['footer-icon']}
                     width="24"
                     height="24"
                     viewBox="0 0 24 24"
@@ -205,11 +207,11 @@ export default function Footer({ data }: FooterProps) {
               </div>
             </div>
 
-            <div className="footer-bottom-section">
-              <p className="footer-copyright">
+            <div className={styles['footer-bottom-section']}>
+              <p className={styles['footer-copyright']}>
                 {data.copyright || '© 2025 Cleanbold Advertising. All Rights Reserved.'}
               </p>
-              <div className="footer-social-links">
+              <div className={styles['footer-social-links']}>
                 {data.socialLinks?.map((link: any, index: number) => {
                   const getSocialIcon = (platform: string) => {
                     const icons: { [key: string]: JSX.Element } = {
@@ -235,7 +237,7 @@ export default function Footer({ data }: FooterProps) {
                       href={link.url || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="footer-social-link"
+                      className={styles['footer-social-link']}
                     >
                       <svg
                         width="24"

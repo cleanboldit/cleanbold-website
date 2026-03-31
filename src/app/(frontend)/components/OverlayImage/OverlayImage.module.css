@@ -1,0 +1,55 @@
+.hero-image-container {
+  position: relative;
+  width: 100%!important;
+  overflow: visible;
+  max-width: 100% !important;
+  color: white;
+  height: 792px !important;
+  padding: 60px;
+}
+
+.hero-image {
+  width: 1320px !important;
+  height: 792px !important;
+  --r: 40px;
+  --s: 60px;
+  border-radius: var(--r);
+  --_m: /calc(2*var(--r)) calc(2*var(--r)) radial-gradient(#000 70%,#0000 72%) no-repeat;
+  mask:
+    radial-gradient(var(--s) at 0 0,#0000 99%,#000 calc(100% + 1px))
+     calc(-1*var(--r)) var(--r) no-repeat,
+    calc(var(--s) + var(--r)) 0 var(--_m),
+    calc(var(--s) + var(--r)) calc(var(--s) + var(--r)) var(--_m),
+    conic-gradient(at calc(var(--s) + 2*var(--r)) calc(var(--s) + 2*var(--r)),
+     #0000 25%,#000 0),
+    radial-gradient(var(--s) at 100% 0,#0000 99%,#000 calc(100% + 1px))
+     calc(100% + var(--r)) var(--r) no-repeat,
+    calc(100% - var(--s) - var(--r)) 0 var(--_m),
+    calc(100% - var(--s) - var(--r)) calc(var(--s) + var(--r)) var(--_m),
+    conic-gradient(at calc(100% - var(--s) - 2*var(--r)) calc(var(--s) + 2*var(--r)),
+     #0000 25%,#000 0),
+    radial-gradient(var(--s) at 0 100%,#0000 99%,#000 calc(100% + 1px))
+     calc(-1*var(--r)) calc(100% - var(--r)) no-repeat,
+    calc(var(--s) + var(--r)) 100% var(--_m),
+    calc(var(--s) + var(--r)) calc(100% - var(--s) - var(--r)) var(--_m),
+    conic-gradient(at calc(var(--s) + 2*var(--r)) calc(100% - var(--s) - 2*var(--r)),
+     #0000 25%,#000 0),
+    radial-gradient(var(--s) at 100% 100%,#0000 99%,#000 calc(100% + 1px))
+     calc(100% + var(--r)) calc(100% - var(--r)) no-repeat,
+    calc(100% - var(--s) - var(--r)) 100% var(--_m),
+    calc(100% - var(--s) - var(--r)) calc(100% - var(--s) - var(--r)) var(--_m),
+    conic-gradient(at calc(100% - var(--s) - 2*var(--r)) calc(100% - var(--s) - 2*var(--r)),
+     #0000 25%,#000 0);
+}
+
+@media (max-width: 768px) {
+  .hero-image-container {
+    height: calc(100vh - 120px);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-image-container {
+    justify-content: center;
+  }
+}

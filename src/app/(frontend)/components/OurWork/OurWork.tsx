@@ -1,6 +1,6 @@
 'use client'
 
-import './OurWork.css'
+import styles from './OurWork.module.css'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 import { useRef } from 'react'
@@ -34,22 +34,26 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
   })
 
   return (
-    <section className="core-offerings" ref={ref}>
-      <div className="offerings-container">
+    <section className={styles['core-offerings']} ref={ref}>
+      <div className={styles['offerings-container']}>
         <motion.div
-          className="offerings-header"
+          className={styles['offerings-header']}
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
         >
-          <div className="offerings-header-content">
-            <p className="section-label">{settings?.sectionLabel}</p>
+          <div className={styles['offerings-header-content']}>
+            <p className={styles['section-label']}>{settings?.sectionLabel}</p>
             <h2>{settings?.mainTitle}</h2>
-            <p className="section-description">{settings?.description}</p>
+            <p className={styles['section-description']}>{settings?.description}</p>
           </div>
 
-          <div className="offerings-header-controls">
-            <button className="carousel-btn prev" onClick={handlePrev} aria-label="Previous">
+          <div className={styles['offerings-header-controls']}>
+            <button
+              className={`${styles['carousel-btn']} ${styles.prev}`}
+              onClick={handlePrev}
+              aria-label="Previous"
+            >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M15 18L9 12L15 6"
@@ -60,7 +64,11 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
               </svg>
             </button>
 
-            <button className="carousel-btn next" onClick={handleNext} aria-label="Next">
+            <button
+              className={`${styles['carousel-btn']} ${styles.next}`}
+              onClick={handleNext}
+              aria-label="Next"
+            >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M9 18L15 12L9 6"
@@ -73,8 +81,8 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
           </div>
         </motion.div>
 
-        <div className="offerings-carousel">
-          <div className="offerings-scroll" ref={scrollRef}>
+        <div className={styles['offerings-carousel']}>
+          <div className={styles['offerings-scroll']} ref={scrollRef}>
             {data?.map((offering: any, index: number) => {
               const imageUrl =
                 typeof offering.image === 'object' ? offering.image?.url : offering.image
@@ -87,7 +95,7 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
               return (
                 <motion.div
                   key={offering.id || index}
-                  className={`offering-card ${isTop ? 'image-top' : 'image-bottom'}`}
+                  className={`${styles['offering-card']} ${isTop ? styles['image-top'] : styles['image-bottom']}`}
                   style={{
                     backgroundImage: `url('${backgroundImage}')`,
                     backgroundSize: 'cover',
@@ -99,30 +107,30 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
                   whileHover={{ y: -8, transition: { duration: 0.2 } }}
                 >
                   {isTop && (
-                    <div className="card-image-top">
+                    <div className={styles['card-image-top']}>
                       <Image
                         src={imageUrl || '/hero-image.png'}
                         alt={offering.title}
                         width={280}
                         height={200}
-                        className="offering-img"
+                        className={styles['offering-img']}
                       />
                     </div>
                   )}
 
                   {isBottom && (
-                    <div className="card-image-bottom">
+                    <div className={styles['card-image-bottom']}>
                       <Image
                         src={imageUrl || '/hero-image.png'}
                         alt={offering.title}
                         width={280}
                         height={200}
-                        className="offering-img"
+                        className={styles['offering-img']}
                       />
                     </div>
                   )}
 
-                  <div className="card-content">
+                  <div className={styles['card-content']}>
                     <h2>{offering.title}</h2>
                     <p>{offering.description}</p>
                   </div>
@@ -132,13 +140,13 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
           </div>
         </div>
         <motion.div
-          className="offerings-cta-container"
+          className={styles['offerings-cta-container']}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <button className="offerings-cta">
+          <button className={styles['offerings-cta']}>
             {settings?.exploreButtonText || ' Explore All Services'}
           </button>
         </motion.div>

@@ -1,6 +1,6 @@
 'use client'
 
-import './Header.css'
+import styles from './Header.module.css'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -31,22 +31,22 @@ export default function Header({ data }: HeaderProps) {
 
   return (
     <motion.header
-      className="header"
+      className={styles.header}
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="header-container">
+      <div className={styles['header-container']}>
         <a
           href="#hero"
-          className="logo-link"
+          className={styles['logo-link']}
           onClick={(e) => {
             e.preventDefault()
             window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
         >
           <motion.div
-            className="logo-image-wrapper"
+            className={styles['logo-image-wrapper']}
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
           >
@@ -55,17 +55,21 @@ export default function Header({ data }: HeaderProps) {
               alt="Logo"
               width={150}
               height={40}
-              className="logo-image"
+              className={styles['logo-image']}
               priority
             />
           </motion.div>
         </a>
 
-        <nav className="nav-left">
+        <nav className={styles['nav-left']}>
           {data.navigation?.map((item: any, index: number) => (
             <motion.div
               key={index}
-              className={item.hasDropdown ? 'nav-item services-dropdown' : 'nav-item'}
+              className={
+                item.hasDropdown
+                  ? `${styles['nav-item']} ${styles['services-dropdown']}`
+                  : styles['nav-item']
+              }
               onMouseEnter={item.hasDropdown ? () => setIsServicesOpen(true) : undefined}
               onMouseLeave={item.hasDropdown ? () => setIsServicesOpen(false) : undefined}
               whileHover={{ scale: 1.02 }}
@@ -80,7 +84,11 @@ export default function Header({ data }: HeaderProps) {
                     viewBox="0 0 12 8"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className={isServicesOpen ? 'dropdown-arrow open' : 'dropdown-arrow'}
+                    className={
+                      isServicesOpen
+                        ? `${styles['dropdown-arrow']} ${styles.open}`
+                        : styles['dropdown-arrow']
+                    }
                   >
                     <path
                       d="M1 1.5L6 6.5L11 1.5"
@@ -97,14 +105,14 @@ export default function Header({ data }: HeaderProps) {
         </nav>
 
         <motion.div
-          className="header-cta"
+          className={styles['header-cta']}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.98 }}
           transition={{ duration: 0.2 }}
         >
           <a
             href={data.ctaButton?.url || '#contact'}
-            className="lets-work-btn"
+            className={styles['lets-work-btn']}
             onClick={(e) => handleSmoothScroll(e, data.ctaButton?.url || '#contact')}
           >
             {data.ctaButton?.text || "Let's Work Together"}

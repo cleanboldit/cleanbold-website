@@ -1,6 +1,6 @@
 'use client'
 
-import './Contact.css'
+import styles from './Contact.module.css'
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
 
@@ -29,10 +29,10 @@ export default function Contact() {
   }
 
   return (
-    <section className="contact-section" ref={ref}>
-      <div className="contact-container">
+    <section className={styles['contact-section']} ref={ref}>
+      <div className={styles['contact-container']}>
         <motion.div
-          className="contact-content"
+          className={styles['contact-content']}
           initial={{ opacity: 0, x: -50 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.8 }}
@@ -70,18 +70,18 @@ export default function Contact() {
         </motion.div>
 
         <motion.div
-          className="contact-form-wrapper"
+          className={styles['contact-form-wrapper']}
           initial={{ opacity: 0, x: 50 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <div className="form-header">
+          <div className={styles['form-header']}>
             <h3>Start The Conversation</h3>
           </div>
 
-          <form onSubmit={handleSubmit} className="contact-form">
+          <form onSubmit={handleSubmit} className={styles['contact-form']}>
             <motion.div
-              className="form-group"
+              className={styles['form-group']}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.4 }}
@@ -97,7 +97,7 @@ export default function Contact() {
             </motion.div>
 
             <motion.div
-              className="form-group"
+              className={styles['form-group']}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.5 }}
@@ -111,9 +111,9 @@ export default function Contact() {
               />
             </motion.div>
 
-            <div className="form-row">
+            <div className={styles['form-row']}>
               <motion.div
-                className="form-group"
+                className={styles['form-group']}
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.6 }}
@@ -129,7 +129,7 @@ export default function Contact() {
               </motion.div>
 
               <motion.div
-                className="form-group"
+                className={styles['form-group']}
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.7 }}
@@ -145,7 +145,7 @@ export default function Contact() {
             </div>
 
             <motion.div
-              className="form-group"
+              className={styles['form-group']}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.8 }}
@@ -161,7 +161,7 @@ export default function Contact() {
 
             <motion.button
               type="submit"
-              className="submit-btn"
+              className={styles['submit-btn']}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.9 }}
