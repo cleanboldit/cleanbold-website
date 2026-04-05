@@ -119,40 +119,39 @@ export default function WhyBrandsChoose({ block }: WhyBrandsChooseProps) {
         </div>
 
         <div className={styles['why-brands-content-wrapper']}>
-          <motion.div
-            className={styles['why-brands-content']}
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <p className={styles['section-label-white']}>Our Approach</p>
-            <h2 className={styles['main-heading-white']}>Clarity. Creativity. Impact.</h2>
-            <p className={styles['description-white']}>
-              Most agencies separate creativity from performance; we fuse them. At Cleanbold,
-              strategy, storytelling, and scaling work together in one cohesive system.
-            </p>
+          {data?.[1] && (
+            <motion.div
+              className={styles['why-brands-content']}
+              initial={{ opacity: 0, y: 100 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <p className={styles['section-label-white']}>{data[1].sectionLabel}</p>
+              <h2 className={styles['main-heading-white']}>{data[1].mainHeading}</h2>
+              <p className={styles['description-white']}>{data[1].description}</p>
 
-            <div className={styles['divider-line-white']}></div>
+              <div className={styles['divider-line-white']}></div>
 
-            {data[1]?.approachSteps && data[1].approachSteps.length > 0 && (
-              <div className={styles['approach-grid']}>
-                {data[1].approachSteps.map((step: ApproachStep, index: number) => (
-                  <motion.div
-                    key={index}
-                    className={styles['approach-item']}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: false, amount: 0.5 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                  >
-                    <h4>{step.title}</h4>
-                    <p>{step.description}</p>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </motion.div>
+              {data[1]?.approachSteps && data[1].approachSteps.length > 0 && (
+                <div className={styles['approach-grid']}>
+                  {data[1].approachSteps.map((step: ApproachStep, index: number) => (
+                    <motion.div
+                      key={index}
+                      className={styles['approach-item']}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: false, amount: 0.5 }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                    >
+                      <h4>{step.title}</h4>
+                      <p>{step.description}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
         </div>
       </div>
 

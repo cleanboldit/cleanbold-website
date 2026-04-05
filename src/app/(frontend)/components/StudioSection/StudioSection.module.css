@@ -23,33 +23,37 @@
 
 .studio-text-content {
   flex: 1;
-  min-width: 300px;
-  font-style: 'Biennale';
-  font-weight: 600;
+  min-width: 80px;
+  max-width: 430px;
 }
 
 .studio-title {
-  font-size: 45px;
-  font-weight: 600;
-  font-style: 'Biennale';
+  font-size: clamp(22px, 4vw, 42px);
+  font-weight: 400;
+  color: #000000;
+  line-height: 1.15;
+  margin: 0 0 6px;
+}
+
+.studio-subtitle {
   color: #000000;
   line-height: 1.2;
-  margin-bottom: 0;
+  margin: 0;
 }
 
 .studio-description {
   flex: 1;
-  min-width: 300px;
+  min-width: 260px;
+  max-width: 420px;
   display: flex;
-  align-items: center;
-   margin-top: 8px;
-  margin-left:320px;
+  align-items: flex-start;
+  padding-top: 8px;
 }
 
 .studio-description p {
-  font-size: clamp(16px, 1.5vw, 18px);
-  color: #666666;
-  line-height: 1.6;
+  font-size: clamp(15px, 1.3vw, 17px);
+  color: #888888;
+  line-height: 1.65;
 }
 
 /* Auto-scrolling Images - Perspective Carousel */

@@ -197,7 +197,6 @@ export interface Page {
               | {
                   title: string;
                   description: string;
-                  color?: ('dark-blue' | 'dark-gray' | 'teal' | 'purple') | null;
                   image?: (string | null) | Media;
                   imagePosition?: ('top' | 'bottom') | null;
                   backgroundImage?: (string | null) | Media;
@@ -318,7 +317,6 @@ export interface Page {
               | {
                   title: string;
                   description?: string | null;
-                  color?: ('dark-blue' | 'dark-gray' | 'teal' | 'purple') | null;
                   servicesTitle?: string | null;
                   services?:
                     | {
@@ -357,6 +355,7 @@ export interface Page {
         | {
             title?: string | null;
             description?: string | null;
+            backgroundImage?: (string | null) | Media;
             bulletPoints?:
               | {
                   text: string;
@@ -521,7 +520,6 @@ export interface PagesSelect<T extends boolean = true> {
                 | {
                     title?: T;
                     description?: T;
-                    color?: T;
                     image?: T;
                     imagePosition?: T;
                     backgroundImage?: T;
@@ -650,7 +648,6 @@ export interface PagesSelect<T extends boolean = true> {
                 | {
                     title?: T;
                     description?: T;
-                    color?: T;
                     servicesTitle?: T;
                     services?:
                       | T
@@ -690,6 +687,7 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               title?: T;
               description?: T;
+              backgroundImage?: T;
               bulletPoints?:
                 | T
                 | {

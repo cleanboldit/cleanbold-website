@@ -1,8 +1,7 @@
 'use client'
 
 import styles from './ServiceCards.module.css'
-import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion'
-import { useRef } from 'react'
+import { motion } from 'framer-motion'
 
 interface ServiceCard {
   id?: string
@@ -26,7 +25,6 @@ interface CardItemProps {
   card: ServiceCard
   index: number
   total: number
-  scrollYProgress: MotionValue<number>
 }
 
 const colorMap: Record<string, string> = {
@@ -36,7 +34,7 @@ const colorMap: Record<string, string> = {
   purple: 'linear-gradient(135deg, #0e0520 0%, #1e0a50 100%)',
 }
 
-function CardItem({ card, index, total, scrollYProgress }: Readonly<CardItemProps>) {
+function CardItem({ card }: Readonly<CardItemProps>) {
   let bgImageUrl: string | null = null
   if (typeof card.backgroundImage === 'object' && card.backgroundImage !== null) {
     bgImageUrl = (card.backgroundImage as { url: string }).url ?? null
@@ -45,10 +43,6 @@ function CardItem({ card, index, total, scrollYProgress }: Readonly<CardItemProp
   }
 
   const fallbackBg = colorMap[card.color ?? 'dark-blue'] ?? colorMap['dark-blue']
-
-  const dotStart = index / total
-  const dotEnd = Math.min(dotStart + 0.25, 1)
-  const dotScale = useTransform(scrollYProgress, [dotStart, dotEnd], [0, 1])
 
   return (
     <div
@@ -63,12 +57,6 @@ function CardItem({ card, index, total, scrollYProgress }: Readonly<CardItemProp
           : { background: fallbackBg }
       }
     >
-      {/* Timeline indicator — mirrors WhyBrandsChoose */}
-      <div className={styles.timeline}>
-        <div className={styles.timelineLine} />
-        <motion.div className={styles.timelineDot} style={{ scale: dotScale }} />
-      </div>
-
       <motion.div
         className={styles.cardInner}
         initial={{ opacity: 0, y: 80 }}
@@ -117,23 +105,11 @@ function CardItem({ card, index, total, scrollYProgress }: Readonly<CardItemProp
 
 export default function ServiceCards({ block }: ServiceCardsProps) {
   const { cards = [] } = block
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start end', 'end start'],
-  })
-  const total = cards.length || 1
 
   return (
-    <section className={styles.section} ref={containerRef}>
+    <section className={styles.section}>
       {cards.map((card, i) => (
-        <CardItem
-          key={card.id ?? i}
-          card={card}
-          index={i}
-          total={total}
-          scrollYProgress={scrollYProgress}
-        />
+        <CardItem key={card.id ?? i} card={card} index={i} total={cards.length || 1} />
       ))}
     </section>
   )

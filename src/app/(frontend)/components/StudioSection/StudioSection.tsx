@@ -45,15 +45,8 @@ export default function StudioSection({ block }: StudioSectionProps) {
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h2 className={styles['studio-title']}>
-              {title}
-              {subtitle && (
-                <>
-                  <br />
-                  {subtitle}
-                </>
-              )}
-            </h2>
+            {title && <p className={styles['studio-title']}>{title}</p>}
+            {subtitle && <p className={styles['studio-subtitle']}>{subtitle}</p>}
           </motion.div>
 
           {description && (

@@ -62,17 +62,6 @@ export const CoreOfferingsBlock: Block = {
           label: 'Description',
         },
         {
-          name: 'color',
-          type: 'select',
-          label: 'Card Background Color',
-          options: [
-            { label: 'Dark Blue', value: 'dark-blue' },
-            { label: 'Dark Gray', value: 'dark-gray' },
-            { label: 'Teal', value: 'teal' },
-            { label: 'Purple', value: 'purple' },
-          ],
-        },
-        {
           name: 'image',
           type: 'upload',
           relationTo: 'media',
@@ -91,7 +80,7 @@ export const CoreOfferingsBlock: Block = {
           name: 'backgroundImage',
           type: 'upload',
           relationTo: 'media',
-          label: 'Card Background Image (overrides color)',
+          label: 'Card Background Image',
         },
       ],
     },
@@ -392,7 +381,7 @@ export const PageHeroBlock: Block = {
     {
       name: 'images',
       type: 'array',
-      label: 'Bento Images (order: left-top, center-tall, right-top, left-bottom, right-bottom)',
+      label: 'Bento Images',
       fields: [
         { name: 'image', type: 'upload', relationTo: 'media', required: true, label: 'Image' },
       ],
@@ -411,17 +400,6 @@ export const ServiceCardsBlock: Block = {
       fields: [
         { name: 'title', type: 'text', required: true, label: 'Title' },
         { name: 'description', type: 'textarea', label: 'Description' },
-        {
-          name: 'color',
-          type: 'select',
-          label: 'Card Background Color',
-          options: [
-            { label: 'Dark Blue', value: 'dark-blue' },
-            { label: 'Dark Gray', value: 'dark-gray' },
-            { label: 'Teal', value: 'teal' },
-            { label: 'Purple', value: 'purple' },
-          ],
-        },
         { name: 'servicesTitle', type: 'text', label: 'Services Column Title' },
         {
           name: 'services',
@@ -440,7 +418,7 @@ export const ServiceCardsBlock: Block = {
           name: 'backgroundImage',
           type: 'upload',
           relationTo: 'media',
-          label: 'Card Full-Screen Background Image (overrides color)',
+          label: 'Card Full-Screen Background Image',
         },
       ],
     },
@@ -471,6 +449,12 @@ export const HighlightCardBlock: Block = {
   fields: [
     { name: 'title', type: 'text', label: 'Title' },
     { name: 'description', type: 'textarea', label: 'Description' },
+    {
+      name: 'backgroundImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Card Background Image',
+    },
     {
       name: 'bulletPoints',
       type: 'array',

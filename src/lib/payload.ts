@@ -1,14 +1,21 @@
 import { getPayload, type Payload, type GlobalSlug, type CollectionSlug } from 'payload'
 import config from '@/payload.config'
 
-const globalCache = global as typeof globalThis & { payload: Payload }
+const globalCache = globalThis as typeof globalThis & { payload: Payload | null }
 
 export async function getPayloadClient() {
   if (globalCache.payload) {
-    return globalCache.payload
+    try {
+      // Verify the connection is alive before returning the cached instance
+      await globalCache.payload.db.connect?.()
+    } catch {
+      // Connection is stale — clear cache so we reconnect below
+      globalCache.payload = null
+    }
   }
 
-  globalCache.payload = await getPayload({ config })
+  globalCache.payload ??= await getPayload({ config })
+
   return globalCache.payload
 }
 
