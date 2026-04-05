@@ -200,6 +200,7 @@ export interface Page {
                   color?: ('dark-blue' | 'dark-gray' | 'teal' | 'purple') | null;
                   image?: (string | null) | Media;
                   imagePosition?: ('top' | 'bottom') | null;
+                  backgroundImage?: (string | null) | Media;
                   id?: string | null;
                 }[]
               | null;
@@ -301,6 +302,7 @@ export interface Page {
         | {
             mainTitle?: string | null;
             description?: string | null;
+            backgroundImage?: (string | null) | Media;
             images?:
               | {
                   image: string | Media;
@@ -331,6 +333,7 @@ export interface Page {
                         id?: string | null;
                       }[]
                     | null;
+                  backgroundImage?: (string | null) | Media;
                   id?: string | null;
                 }[]
               | null;
@@ -521,6 +524,7 @@ export interface PagesSelect<T extends boolean = true> {
                     color?: T;
                     image?: T;
                     imagePosition?: T;
+                    backgroundImage?: T;
                     id?: T;
                   };
               id?: T;
@@ -628,6 +632,7 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               mainTitle?: T;
               description?: T;
+              backgroundImage?: T;
               images?:
                 | T
                 | {
@@ -660,6 +665,7 @@ export interface PagesSelect<T extends boolean = true> {
                           tag?: T;
                           id?: T;
                         };
+                    backgroundImage?: T;
                     id?: T;
                   };
               id?: T;
@@ -759,7 +765,7 @@ export interface Header {
     | {
         label: string;
         /**
-         * App routes: /services. Home sections: #about, #studio, #work, #contact (hash links scroll on /, or navigate to /#… from other pages).
+         * Use /services to link to the Services page route. Use #section-id for home-page scroll anchors (e.g. #about, #studio, #work, #contact).
          */
         url: string;
         hasDropdown?: boolean | null;
