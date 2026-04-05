@@ -87,6 +87,12 @@ export const CoreOfferingsBlock: Block = {
             { label: 'Bottom', value: 'bottom' },
           ],
         },
+        {
+          name: 'backgroundImage',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Card Background Image (overrides color)',
+        },
       ],
     },
   ],
@@ -378,9 +384,15 @@ export const PageHeroBlock: Block = {
     { name: 'mainTitle', type: 'text', label: 'Main Title' },
     { name: 'description', type: 'textarea', label: 'Description' },
     {
+      name: 'backgroundImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Section Background Image',
+    },
+    {
       name: 'images',
       type: 'array',
-      label: 'Images',
+      label: 'Bento Images (order: left-top, center-tall, right-top, left-bottom, right-bottom)',
       fields: [
         { name: 'image', type: 'upload', relationTo: 'media', required: true, label: 'Image' },
       ],
@@ -423,6 +435,12 @@ export const ServiceCardsBlock: Block = {
           type: 'array',
           label: 'Ideal For Tags',
           fields: [{ name: 'tag', type: 'text', required: true, label: 'Tag' }],
+        },
+        {
+          name: 'backgroundImage',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Card Full-Screen Background Image (overrides color)',
         },
       ],
     },

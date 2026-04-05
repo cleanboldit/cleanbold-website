@@ -1,7 +1,7 @@
-import { getPayload } from 'payload'
+import { getPayload, type Payload, type GlobalSlug, type CollectionSlug } from 'payload'
 import config from '@/payload.config'
 
-const globalCache = global as typeof globalThis & { payload: any }
+const globalCache = global as typeof globalThis & { payload: Payload }
 
 export async function getPayloadClient() {
   if (globalCache.payload) {
@@ -25,13 +25,16 @@ export async function getPageBySlug(slug: string) {
 }
 
 // Fetch specific global
-export async function getGlobal(slug: string) {
+export async function getGlobal(slug: GlobalSlug) {
   const payload = await getPayloadClient()
   return await payload.findGlobal({ slug })
 }
 
 // Fetch collection items
-export async function getCollection(collection: string, options = {}) {
+export async function getCollection(
+  collection: CollectionSlug,
+  options: Record<string, unknown> = {},
+) {
   const payload = await getPayloadClient()
   return await payload.find({
     collection,

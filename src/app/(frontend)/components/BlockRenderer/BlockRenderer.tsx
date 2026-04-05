@@ -10,7 +10,7 @@ import Industries from '../Industries/Industries'
 import HighlightCard from '../HighlightCard/HighlightCard'
 import CTASection from '../CTASection/CTASection'
 
-type Block = { blockType: string; id?: string } & Record<string, unknown>
+type Block = { blockType: string; id?: string | null } & Record<string, unknown>
 
 interface BlockRendererProps {
   readonly blocks: Block[]

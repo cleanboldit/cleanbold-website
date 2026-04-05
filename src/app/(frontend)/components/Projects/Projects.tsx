@@ -5,13 +5,22 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useState } from 'react'
 
+interface Project {
+  id?: string
+  title?: string
+  description?: string
+  category?: string | { name?: string }
+  image?: { url?: string } | string | null
+  size?: string
+}
+
 interface ProjectsProps {
   block: {
     sectionLabel?: string
     mainTitle?: string
     description?: string
     exploreButtonText?: string
-    projects?: any[]
+    projects?: Project[]
   }
 }
 
@@ -20,18 +29,18 @@ export default function Projects({ block }: ProjectsProps) {
   const [selectedCategory, setSelectedCategory] = useState('All')
 
   // Derive unique category names from the inline project array
-  const categories = Array.from(
+  const categories: string[] = Array.from(
     new Set(
       projects
-        .map((p: any) => (typeof p.category === 'string' ? p.category : p.category?.name))
-        .filter(Boolean),
+        .map((p: Project) => (typeof p.category === 'string' ? p.category : p.category?.name))
+        .filter((c): c is string => Boolean(c)),
     ),
   ).reverse()
 
   const filteredProjects =
     selectedCategory === 'All'
       ? projects
-      : projects.filter((project: any) => {
+      : projects.filter((project: Project) => {
           const category =
             typeof project.category === 'string' ? project.category : project.category?.name
           return category === selectedCategory
@@ -59,7 +68,7 @@ export default function Projects({ block }: ProjectsProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          {['All', ...categories].map((cat: any, index: number) => (
+          {['All', ...categories].map((cat: string, index: number) => (
             <motion.button
               key={cat}
               className={`${styles['filter-btn']} ${selectedCategory === cat ? styles.active : ''}`}
@@ -77,7 +86,7 @@ export default function Projects({ block }: ProjectsProps) {
         </motion.div>
 
         <div className={styles['projects-grid-layout']}>
-          {filteredProjects?.map((project: any, index: number) => {
+          {filteredProjects?.map((project: Project, index: number) => {
             const imageUrl = typeof project.image === 'object' ? project.image?.url : project.image
             const categoryName =
               typeof project.category === 'string' ? project.category : project.category?.name
@@ -96,7 +105,7 @@ export default function Projects({ block }: ProjectsProps) {
                     {imageUrl && (
                       <Image
                         src={imageUrl}
-                        alt={project.title}
+                        alt={project.title ?? ''}
                         width={800}
                         height={600}
                         className={styles['project-image']}

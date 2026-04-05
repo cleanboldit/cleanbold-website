@@ -45,8 +45,9 @@ export default buildConfig({
       collections: ['pages'],
       globals: ['header', 'footer', 'site-settings'],
       uploadsCollection: 'media',
-      generateTitle: ({ doc }: any) => doc?.title || 'Cleanbold Advertising',
-      generateDescription: ({ doc }: any) =>
+      generateTitle: ({ doc }: { doc: Record<string, string> }) =>
+        doc?.title || 'Cleanbold Advertising',
+      generateDescription: ({ doc }: { doc: Record<string, string> }) =>
         doc?.description || doc?.tagline || 'Where Creativity Converts',
       tabbedUI: true,
     }),

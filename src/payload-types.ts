@@ -759,7 +759,7 @@ export interface Header {
     | {
         label: string;
         /**
-         * e.g., #services, #about, #studio
+         * App routes: /services. Home sections: #about, #studio, #work, #contact (hash links scroll on /, or navigate to /#… from other pages).
          */
         url: string;
         hasDropdown?: boolean | null;

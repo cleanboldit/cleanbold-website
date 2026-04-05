@@ -35,7 +35,8 @@ export const Header: GlobalConfig = {
           required: true,
           label: 'URL / Section ID',
           admin: {
-            description: 'e.g., #services, #about, #studio',
+            description:
+              'Use /services to link to the Services page route. Use #section-id for home-page scroll anchors (e.g. #about, #studio, #work, #contact).',
           },
         },
         {

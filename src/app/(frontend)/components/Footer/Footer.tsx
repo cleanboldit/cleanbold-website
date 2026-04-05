@@ -4,9 +4,10 @@ import styles from './Footer.module.css'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { JSX, useState } from 'react'
+import type { Footer as FooterGlobal } from '@/payload-types'
 
 interface FooterProps {
-  data: any
+  data: FooterGlobal
 }
 
 export default function Footer({ data }: FooterProps) {
@@ -212,7 +213,7 @@ export default function Footer({ data }: FooterProps) {
                 {data.copyright || '© 2025 Cleanbold Advertising. All Rights Reserved.'}
               </p>
               <div className={styles['footer-social-links']}>
-                {data.socialLinks?.map((link: any, index: number) => {
+                {data.socialLinks?.map((link, index: number) => {
                   const getSocialIcon = (platform: string) => {
                     const icons: { [key: string]: JSX.Element } = {
                       linkedin: (

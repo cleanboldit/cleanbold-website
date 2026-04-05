@@ -4,13 +4,19 @@ import styles from './FeaturedClients.module.css'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 
+interface Client {
+  id?: string
+  name?: string
+  logo?: { url?: string } | string | null
+}
+
 interface FeaturedClientsProps {
   block: {
     sectionLabel?: string
     mainTitle?: string
     description?: string
     ctaButtonText?: string
-    clients?: any[]
+    clients?: Client[]
   }
 }
 
@@ -38,7 +44,7 @@ export default function FeaturedClients({ block }: FeaturedClientsProps) {
         </motion.div>
 
         <div className={styles['clients-grid-wrapper']}>
-          {clients?.map((client: any, index: number) => {
+          {clients?.map((client: Client, index: number) => {
             const logoUrl = typeof client.logo === 'object' ? client.logo?.url : client.logo
             if (!logoUrl) return null
             return (

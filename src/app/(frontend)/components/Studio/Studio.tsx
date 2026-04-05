@@ -5,8 +5,20 @@ import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
 
+interface StudioImage {
+  id?: string
+  image?: { url?: string } | string | null
+}
+
+interface StudioData {
+  title?: string
+  subtitle?: string
+  description?: string
+  studioImages?: StudioImage[]
+}
+
 interface StudioSectionProps {
-  data: any
+  data: StudioData
 }
 
 export default function StudioSection({ data }: StudioSectionProps) {
@@ -40,8 +52,9 @@ export default function StudioSection({ data }: StudioSectionProps) {
 
         <div className={styles['studio-carousel']}>
           <div className={styles['studio-images-wrapper']}>
-            {data.studioImages?.map((image: any, index: number) => {
+            {data.studioImages?.map((image: StudioImage, index: number) => {
               const imageUrl = typeof image.image === 'object' ? image.image?.url : image.image
+              if (!imageUrl) return null
               return (
                 <motion.div
                   key={index}
@@ -52,7 +65,7 @@ export default function StudioSection({ data }: StudioSectionProps) {
                   whileHover={{ scale: 1.02 }}
                 >
                   <Image
-                    src={imageUrl || '/hero-image.png'}
+                    src={imageUrl}
                     alt={`Studio space ${index + 1}`}
                     width={600}
                     height={400}

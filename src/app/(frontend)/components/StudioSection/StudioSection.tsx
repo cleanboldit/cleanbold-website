@@ -9,7 +9,7 @@ interface StudioSectionProps {
     title?: string
     subtitle?: string
     description?: string
-    studioImages?: { image: any }[]
+    studioImages?: { image: { url?: string } | string | null }[]
     perfectFor?: { item: string }[]
     detailsSection?: {
       title?: string
@@ -24,7 +24,9 @@ interface StudioSectionProps {
 export default function StudioSection({ block }: StudioSectionProps) {
   const { title, subtitle, description, studioImages = [], perfectFor = [], detailsSection } = block
 
-  const imageUrls = studioImages.map((s) => (typeof s.image === 'object' ? s.image?.url : s.image))
+  const imageUrls: string[] = studioImages
+    .map((s) => (typeof s.image === 'object' ? s.image?.url : s.image))
+    .filter((u): u is string => Boolean(u))
   // Duplicate images multiple times for seamless infinite loop
   const allImages = [...imageUrls, ...imageUrls, ...imageUrls, ...imageUrls]
 

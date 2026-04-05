@@ -3,6 +3,7 @@ import Header from '../components/Header/Header'
 import Footer from '../components/Footer/Footer'
 import BlockRenderer from '../components/BlockRenderer/BlockRenderer'
 import { getPageBySlug, getGlobal } from '@/lib/payload'
+import type { Header as HeaderGlobal, Footer as FooterGlobal } from '@/payload-types'
 
 export default async function SlugPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -11,8 +12,8 @@ export default async function SlugPage({ params }: { params: Promise<{ slug: str
 
   const [page, header, footer] = await Promise.all([
     getPageBySlug(slug),
-    getGlobal('header'),
-    getGlobal('footer'),
+    getGlobal('header') as Promise<HeaderGlobal>,
+    getGlobal('footer') as Promise<FooterGlobal>,
   ])
 
   const p = page

@@ -8,7 +8,7 @@ import Image from 'next/image'
 interface IndustryItem {
   id?: string
   name: string
-  image?: any
+  image?: { url?: string } | string | null
 }
 
 interface IndustriesProps {
@@ -34,10 +34,14 @@ export default function Industries({ block }: IndustriesProps) {
   })
 
   const activeIndustry = industries[activeIndex]
-  const activeImageUrl =
-    activeIndustry?.image && typeof activeIndustry.image === 'object'
-      ? activeIndustry.image?.url
-      : (activeIndustry?.image ?? null)
+  let activeImageUrl: string | null = null
+  if (activeIndustry?.image) {
+    if (typeof activeIndustry.image === 'object' && activeIndustry.image !== null) {
+      activeImageUrl = (activeIndustry.image as { url?: string }).url ?? null
+    } else if (typeof activeIndustry.image === 'string') {
+      activeImageUrl = activeIndustry.image
+    }
+  }
 
   return (
     <div

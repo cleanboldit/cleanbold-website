@@ -3,7 +3,25 @@
 import styles from './OurWork.module.css'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRef } from 'react'
+
+const offeringColorMap: Record<string, string> = {
+  'dark-blue': 'linear-gradient(135deg, #0d1b3e 0%, #1a2f6e 100%)',
+  'dark-gray': 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+  teal: 'linear-gradient(135deg, #0d3535 0%, #0e5454 100%)',
+  purple: 'linear-gradient(135deg, #1a0a3d 0%, #3b1fa0 100%)',
+}
+
+interface Offering {
+  id?: string
+  title?: string
+  description?: string
+  color?: string
+  image?: { url?: string } | string | null
+  imagePosition?: string
+  backgroundImage?: { url?: string } | string | null
+}
 
 interface CoreOfferingsProps {
   block: {
@@ -11,7 +29,7 @@ interface CoreOfferingsProps {
     mainTitle?: string
     description?: string
     exploreButtonText?: string
-    offerings?: any[]
+    offerings?: Offering[]
   }
 }
 
@@ -49,11 +67,7 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
           </div>
 
           <div className={styles['offerings-header-controls']}>
-            <button
-              className={`${styles['carousel-btn']} ${styles.prev}`}
-              onClick={handlePrev}
-              aria-label="Previous"
-            >
+            <button className={styles['carousel-btn']} onClick={handlePrev} aria-label="Previous">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M15 18L9 12L15 6"
@@ -64,11 +78,7 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
               </svg>
             </button>
 
-            <button
-              className={`${styles['carousel-btn']} ${styles.next}`}
-              onClick={handleNext}
-              aria-label="Next"
-            >
+            <button className={styles['carousel-btn']} onClick={handleNext} aria-label="Next">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M9 18L15 12L9 6"
@@ -83,18 +93,33 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
 
         <div className={styles['offerings-carousel']}>
           <div className={styles['offerings-scroll']} ref={scrollRef}>
-            {offerings?.map((offering: any, index: number) => {
+            {offerings?.map((offering: Offering, index: number) => {
               const imageUrl =
                 typeof offering.image === 'object' ? offering.image?.url : offering.image
+              const bgImageUrl =
+                typeof offering.backgroundImage === 'object'
+                  ? offering.backgroundImage?.url
+                  : offering.backgroundImage
               // Normalize imagePosition to handle case sensitivity and whitespace
               const imagePosition = offering.imagePosition?.toString().toLowerCase().trim() || 'top'
               const isTop = imagePosition === 'top'
               const isBottom = imagePosition === 'bottom'
+              const colorKey = offering.color?.toString().toLowerCase().trim() || 'dark-blue'
+              const contentBackground = offeringColorMap[colorKey] ?? offeringColorMap['dark-blue']
 
               return (
                 <motion.div
                   key={offering.id || index}
-                  className={`${styles['offering-card']} ${isTop ? styles['image-top'] : styles['image-bottom']}`}
+                  className={`${styles['offering-card']} ${isTop ? styles['image-top'] : styles['image-bottom']} ${bgImageUrl ? styles['has-bg-image'] : ''}`}
+                  style={
+                    bgImageUrl
+                      ? {
+                          backgroundImage: `url('${bgImageUrl}')`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                        }
+                      : undefined
+                  }
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={isInView ? { opacity: 1, scale: 1 } : {}}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -104,7 +129,7 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
                     <div className={styles['card-image-top']}>
                       <Image
                         src={imageUrl}
-                        alt={offering.title}
+                        alt={offering.title ?? ''}
                         width={280}
                         height={200}
                         className={styles['offering-img']}
@@ -116,7 +141,7 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
                     <div className={styles['card-image-bottom']}>
                       <Image
                         src={imageUrl}
-                        alt={offering.title}
+                        alt={offering.title ?? ''}
                         width={280}
                         height={200}
                         className={styles['offering-img']}
@@ -124,7 +149,10 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
                     </div>
                   )}
 
-                  <div className={styles['card-content']}>
+                  <div
+                    className={styles['card-content']}
+                    style={bgImageUrl ? undefined : { background: contentBackground }}
+                  >
                     <h2>{offering.title}</h2>
                     <p>{offering.description}</p>
                   </div>
@@ -140,9 +168,9 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <button className={styles['offerings-cta']}>
+          <Link href="/services" className={styles['offerings-cta']}>
             {exploreButtonText || 'Explore All Services'}
-          </button>
+          </Link>
         </motion.div>
       </div>
     </section>

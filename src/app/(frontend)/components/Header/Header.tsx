@@ -3,18 +3,28 @@
 import styles from './Header.module.css'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import type { Header as HeaderGlobal } from '@/payload-types'
 
 interface HeaderProps {
-  data: any
+  data: HeaderGlobal
+}
+
+function isAppRoute(url: string): boolean {
+  return url.startsWith('/') && url.length > 1 && !url.startsWith('/#')
 }
 
 export default function Header({ data }: HeaderProps) {
+  const pathname = usePathname()
   const [isServicesOpen, setIsServicesOpen] = useState(false)
+  const isHome = pathname === '/'
 
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     e.preventDefault()
-    const element = document.getElementById(targetId.replace('#', ''))
+    const id = targetId.replace(/^#/, '')
+    const element = document.getElementById(id)
     if (element) {
       const headerOffset = 80
       const elementPosition = element.getBoundingClientRect().top
@@ -29,6 +39,110 @@ export default function Header({ data }: HeaderProps) {
 
   const logoUrl = typeof data.logo === 'object' ? data.logo?.url : data.logo
 
+  const renderNavAnchor = (item: {
+    label: string
+    url?: string | null
+    hasDropdown?: boolean | null
+  }) => {
+    const url = (item.url || '#').trim()
+
+    if (isAppRoute(url)) {
+      return (
+        <Link href={url}>
+          {item.label}
+          {item.hasDropdown && (
+            <svg
+              width="12"
+              height="8"
+              viewBox="0 0 12 8"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={styles['dropdown-arrow']}
+            >
+              <path
+                d="M1 1.5L6 6.5L11 1.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </Link>
+      )
+    }
+
+    const isHash = url.startsWith('#')
+    const homeSectionHref = isHash ? `/${url}` : url
+
+    if (isHash && !isHome) {
+      return (
+        <Link href={homeSectionHref}>
+          {item.label}
+          {item.hasDropdown && (
+            <svg
+              width="12"
+              height="8"
+              viewBox="0 0 12 8"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={styles['dropdown-arrow']}
+            >
+              <path
+                d="M1 1.5L6 6.5L11 1.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </Link>
+      )
+    }
+
+    const onClick =
+      isHash && isHome
+        ? (e: React.MouseEvent<HTMLAnchorElement>) => handleSmoothScroll(e, url)
+        : undefined
+
+    return (
+      <a href={url} onClick={onClick}>
+        {item.label}
+        {item.hasDropdown && (
+          <svg
+            width="12"
+            height="8"
+            viewBox="0 0 12 8"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={
+              isServicesOpen
+                ? `${styles['dropdown-arrow']} ${styles.open}`
+                : styles['dropdown-arrow']
+            }
+          >
+            <path
+              d="M1 1.5L6 6.5L11 1.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+      </a>
+    )
+  }
+
+  const ctaUrl = (data.ctaButton?.url || '#contact').trim()
+  const ctaIsRoute = isAppRoute(ctaUrl)
+  const ctaIsHash = ctaUrl.startsWith('#')
+  const ctaOnClick =
+    ctaIsHash && isHome
+      ? (e: React.MouseEvent<HTMLAnchorElement>) => handleSmoothScroll(e, ctaUrl)
+      : undefined
+
   return (
     <motion.header
       className={styles.header}
@@ -37,12 +151,14 @@ export default function Header({ data }: HeaderProps) {
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className={styles['header-container']}>
-        <a
-          href="#hero"
+        <Link
+          href="/"
           className={styles['logo-link']}
           onClick={(e) => {
-            e.preventDefault()
-            window.scrollTo({ top: 0, behavior: 'smooth' })
+            if (isHome) {
+              e.preventDefault()
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }
           }}
         >
           <motion.div
@@ -59,10 +175,10 @@ export default function Header({ data }: HeaderProps) {
               priority
             />
           </motion.div>
-        </a>
+        </Link>
 
         <nav className={styles['nav-left']}>
-          {data.navigation?.map((item: any, index: number) => (
+          {data.navigation?.map((item, index: number) => (
             <motion.div
               key={index}
               className={
@@ -75,31 +191,7 @@ export default function Header({ data }: HeaderProps) {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <a href={item.url} onClick={(e) => handleSmoothScroll(e, item.url)}>
-                {item.label}
-                {item.hasDropdown && (
-                  <svg
-                    width="12"
-                    height="8"
-                    viewBox="0 0 12 8"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className={
-                      isServicesOpen
-                        ? `${styles['dropdown-arrow']} ${styles.open}`
-                        : styles['dropdown-arrow']
-                    }
-                  >
-                    <path
-                      d="M1 1.5L6 6.5L11 1.5"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-              </a>
+              {renderNavAnchor(item)}
             </motion.div>
           ))}
         </nav>
@@ -110,13 +202,19 @@ export default function Header({ data }: HeaderProps) {
           whileTap={{ scale: 0.98 }}
           transition={{ duration: 0.2 }}
         >
-          <a
-            href={data.ctaButton?.url || '#contact'}
-            className={styles['lets-work-btn']}
-            onClick={(e) => handleSmoothScroll(e, data.ctaButton?.url || '#contact')}
-          >
-            {data.ctaButton?.text || "Let's Work Together"}
-          </a>
+          {ctaIsRoute ? (
+            <Link href={ctaUrl} className={styles['lets-work-btn']}>
+              {data.ctaButton?.text || "Let's Work Together"}
+            </Link>
+          ) : ctaIsHash && !isHome ? (
+            <Link href={`/${ctaUrl}`} className={styles['lets-work-btn']}>
+              {data.ctaButton?.text || "Let's Work Together"}
+            </Link>
+          ) : (
+            <a href={ctaUrl} className={styles['lets-work-btn']} onClick={ctaOnClick}>
+              {data.ctaButton?.text || "Let's Work Together"}
+            </a>
+          )}
         </motion.div>
       </div>
     </motion.header>

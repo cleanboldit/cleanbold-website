@@ -4,9 +4,30 @@ import styles from './WhyBrandsChoose.module.css'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 
+interface Feature {
+  id?: string
+  text: string
+}
+
+interface ApproachStep {
+  id?: string
+  title: string
+  description?: string
+}
+
+interface BrandSection {
+  id?: string
+  sectionLabel?: string
+  mainHeading?: string
+  description?: string
+  featuresTitle?: string
+  features?: Feature[]
+  approachSteps?: ApproachStep[]
+}
+
 interface WhyBrandsChooseProps {
   block: {
-    sections?: any[]
+    sections?: BrandSection[]
   }
 }
 
@@ -57,7 +78,7 @@ export default function WhyBrandsChoose({ block }: WhyBrandsChooseProps) {
                     <div className={styles['features-column']}>
                       {data[0].features
                         .slice(0, Math.ceil(data[0].features.length / 2))
-                        .map((feature: any, index: number) => (
+                        .map((feature: Feature, index: number) => (
                           <div key={index} className={styles['feature-item-white']}>
                             <span className={styles['feature-bullet-white']}></span>
                             <p>{feature.text}</p>
@@ -67,7 +88,7 @@ export default function WhyBrandsChoose({ block }: WhyBrandsChooseProps) {
                     <div className={styles['features-column']}>
                       {data[0].features
                         .slice(Math.ceil(data[0].features.length / 2))
-                        .map((feature: any, index: number) => (
+                        .map((feature: Feature, index: number) => (
                           <div key={index} className={styles['feature-item-white']}>
                             <span className={styles['feature-bullet-white']}></span>
                             <p>{feature.text}</p>
@@ -116,7 +137,7 @@ export default function WhyBrandsChoose({ block }: WhyBrandsChooseProps) {
 
             {data[1]?.approachSteps && data[1].approachSteps.length > 0 && (
               <div className={styles['approach-grid']}>
-                {data[1].approachSteps.map((step: any, index: number) => (
+                {data[1].approachSteps.map((step: ApproachStep, index: number) => (
                   <motion.div
                     key={index}
                     className={styles['approach-item']}
@@ -170,7 +191,7 @@ export default function WhyBrandsChoose({ block }: WhyBrandsChooseProps) {
                   <div className={styles['features-column']}>
                     {data[2].features
                       .slice(0, Math.ceil(data[2].features.length / 2))
-                      .map((feature: any, index: number) => (
+                      .map((feature: Feature, index: number) => (
                         <div key={index} className={styles['feature-item-white']}>
                           <span className={styles['feature-bullet-white']}></span>
                           <p>{feature.text}</p>
@@ -180,7 +201,7 @@ export default function WhyBrandsChoose({ block }: WhyBrandsChooseProps) {
                   <div className={styles['features-column']}>
                     {data[2].features
                       .slice(Math.ceil(data[2].features.length / 2))
-                      .map((feature: any, index: number) => (
+                      .map((feature: Feature, index: number) => (
                         <div key={index} className={styles['feature-item-white']}>
                           <span className={styles['feature-bullet-white']}></span>
                           <p>{feature.text}</p>

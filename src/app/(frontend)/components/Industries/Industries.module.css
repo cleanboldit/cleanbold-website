@@ -9,7 +9,7 @@
   top: 0;
   height: 100vh;
   overflow: hidden;
-  background: #fff;
+  background: var(--color-white);
   display: flex;
   align-items: center;
 }
@@ -55,7 +55,7 @@
 .mainTitle {
   font-size: clamp(1.8rem, 3.5vw, 2.6rem);
   font-weight: 700;
-  color: #0a0a0a;
+  color: var(--color-black);
   margin: 0 0 32px;
   text-align: center;
 }
@@ -75,7 +75,7 @@
 .activeBg {
   position: absolute;
   inset: 0;
-  background: #1400ff;
+  background: var(--color-primary);
   border-radius: 0;
   z-index: 0;
 }
@@ -110,7 +110,7 @@
 
 .separator {
   height: 1px;
-  background: #e5e7eb;
+  background: color-mix(in srgb, var(--color-gray) 25%, transparent);
   margin: 0 24px;
 }
 

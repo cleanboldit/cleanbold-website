@@ -8,17 +8,36 @@ interface PageHeroProps {
   readonly block: {
     mainTitle?: string
     description?: string
+    backgroundImage?: { url: string } | string | null
     images?: { image: { url: string } | string | null; id?: string }[]
   }
 }
 
 export default function PageHero({ block }: PageHeroProps) {
-  const { mainTitle, description, images = [] } = block
+  const { mainTitle, description, backgroundImage, images = [] } = block
+
+  let bgUrl: string | null = null
+  if (typeof backgroundImage === 'object' && backgroundImage !== null) {
+    bgUrl = (backgroundImage as { url: string }).url ?? null
+  } else if (typeof backgroundImage === 'string') {
+    bgUrl = backgroundImage
+  }
 
   return (
-    <section className={styles.pageHero}>
+    <section
+      className={styles.pageHero}
+      style={
+        bgUrl
+          ? {
+              backgroundImage: `url('${bgUrl}')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }
+          : undefined
+      }
+    >
       <motion.div
-        className={styles.header}
+        className={styles.intro}
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -28,6 +47,9 @@ export default function PageHero({ block }: PageHeroProps) {
         <p className={styles.description}>{description}</p>
       </motion.div>
 
+      {/*
+        Bento layout expects this order in Payload: 1) left top 2) center (tall) 3) right top 4) left bottom 5) right bottom
+      */}
       {images.length > 0 && (
         <div className={styles.grid}>
           {images.map((item, i) => {
