@@ -6,20 +6,34 @@ import Image from 'next/image'
 import { useState } from 'react'
 
 interface ProjectsProps {
-  data: any[]
-  categories: any[]
-  settings: any
+  block: {
+    sectionLabel?: string
+    mainTitle?: string
+    description?: string
+    exploreButtonText?: string
+    projects?: any[]
+  }
 }
 
-export default function Projects({ data, categories, settings }: ProjectsProps) {
+export default function Projects({ block }: ProjectsProps) {
+  const { projects = [], sectionLabel, mainTitle, description, exploreButtonText } = block
   const [selectedCategory, setSelectedCategory] = useState('All')
+
+  // Derive unique category names from the inline project array
+  const categories = Array.from(
+    new Set(
+      projects
+        .map((p: any) => (typeof p.category === 'string' ? p.category : p.category?.name))
+        .filter(Boolean),
+    ),
+  ).reverse()
 
   const filteredProjects =
     selectedCategory === 'All'
-      ? data
-      : data.filter((project: any) => {
+      ? projects
+      : projects.filter((project: any) => {
           const category =
-            typeof project.category === 'object' ? project.category?.name : project.category
+            typeof project.category === 'string' ? project.category : project.category?.name
           return category === selectedCategory
         })
 
@@ -33,9 +47,9 @@ export default function Projects({ data, categories, settings }: ProjectsProps) 
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <p className={styles['section-label-projects']}>{settings?.sectionLabel}</p>
-          <h2 className={styles['projects-main-title']}>{settings?.mainTitle}</h2>
-          <p className={styles['projects-description']}>{settings?.description}</p>
+          <p className={styles['section-label-projects']}>{sectionLabel}</p>
+          <h2 className={styles['projects-main-title']}>{mainTitle}</h2>
+          <p className={styles['projects-description']}>{description}</p>
         </motion.div>
 
         <motion.div
@@ -45,11 +59,11 @@ export default function Projects({ data, categories, settings }: ProjectsProps) 
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          {[...(categories || [])].reverse().map((category: any, index: number) => (
+          {['All', ...categories].map((cat: any, index: number) => (
             <motion.button
-              key={category.id || index}
-              className={`${styles['filter-btn']} ${selectedCategory === category.name ? styles.active : ''}`}
-              onClick={() => setSelectedCategory(category.name)}
+              key={cat}
+              className={`${styles['filter-btn']} ${selectedCategory === cat ? styles.active : ''}`}
+              onClick={() => setSelectedCategory(cat)}
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -57,7 +71,7 @@ export default function Projects({ data, categories, settings }: ProjectsProps) 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {category.name}
+              {cat}
             </motion.button>
           ))}
         </motion.div>
@@ -66,7 +80,7 @@ export default function Projects({ data, categories, settings }: ProjectsProps) 
           {filteredProjects?.map((project: any, index: number) => {
             const imageUrl = typeof project.image === 'object' ? project.image?.url : project.image
             const categoryName =
-              typeof project.category === 'object' ? project.category?.name : project.category
+              typeof project.category === 'string' ? project.category : project.category?.name
 
             return (
               <motion.div
@@ -79,13 +93,15 @@ export default function Projects({ data, categories, settings }: ProjectsProps) 
               >
                 <div className={styles['project-card-inner']}>
                   <div className={styles['project-image-container']}>
-                    <Image
-                      src={imageUrl || '/project/project-1.png'}
-                      alt={project.title}
-                      width={800}
-                      height={600}
-                      className={styles['project-image']}
-                    />
+                    {imageUrl && (
+                      <Image
+                        src={imageUrl}
+                        alt={project.title}
+                        width={800}
+                        height={600}
+                        className={styles['project-image']}
+                      />
+                    )}
                     <span
                       className={`${styles['project-category-badge']} ${index % 2 === 1 ? styles['badge-right'] : ''}`}
                     >
@@ -112,7 +128,7 @@ export default function Projects({ data, categories, settings }: ProjectsProps) 
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <button className={styles['explore-more-btn']}>
-            {settings?.exploreButtonText || 'Explore More'}
+            {exploreButtonText || 'Explore More'}
           </button>
         </motion.div>
       </div>

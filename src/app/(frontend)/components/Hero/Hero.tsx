@@ -2,7 +2,11 @@
 
 import styles from './Hero.module.css'
 
-export default function Hero() {
+interface HeroProps {
+  video: { url: string } | null
+}
+
+export default function Hero({ video }: HeroProps) {
   return (
     <section className={styles.hero} id="hero">
       {/* Full-section video background */}
@@ -16,7 +20,7 @@ export default function Hero() {
         className={styles['hero-video-bg']}
         onContextMenu={(e) => e.preventDefault()}
       >
-        <source src="/Cleanbold.mp4" type="video/mp4" />
+        {video?.url && <source src={video.url} type="video/mp4" />}
       </video>
 
       {/* Content sits on top of the video */}

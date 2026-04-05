@@ -12,65 +12,16 @@ export async function getPayloadClient() {
   return globalCache.payload
 }
 
-// Fetch all data for homepage
-export async function getHomePageData() {
+// Fetch a page by its slug (depth 2 populates images inside block arrays)
+export async function getPageBySlug(slug: string) {
   const payload = await getPayloadClient()
-
-  const [
-    header,
-    hero,
-    footer,
-    studioSection,
-    siteSettings,
-    projects,
-    projectCategories,
-    coreOfferings,
-    featuredClients,
-    whyBrandsChoose,
-  ] = await Promise.all([
-    payload.findGlobal({ slug: 'header' }),
-    payload.findGlobal({ slug: 'hero' }),
-    payload.findGlobal({ slug: 'footer' }),
-    payload.findGlobal({ slug: 'studio-section' }),
-    payload.findGlobal({ slug: 'site-settings' }),
-    payload.find({
-      collection: 'projects',
-      sort: 'order',
-      limit: 100,
-    }),
-    payload.find({
-      collection: 'project-categories',
-      limit: 100,
-    }),
-    payload.find({
-      collection: 'core-offerings',
-      sort: 'order',
-      limit: 100,
-    }),
-    payload.find({
-      collection: 'featured-clients',
-      sort: 'row,order',
-      limit: 100,
-    }),
-    payload.find({
-      collection: 'why-brands-choose',
-      sort: 'order',
-      limit: 10,
-    }),
-  ])
-
-  return {
-    header,
-    hero,
-    footer,
-    studioSection,
-    siteSettings,
-    projects: projects.docs,
-    projectCategories: projectCategories.docs,
-    coreOfferings: coreOfferings.docs,
-    featuredClients: featuredClients.docs,
-    whyBrandsChoose: whyBrandsChoose.docs,
-  }
+  const result = await payload.find({
+    collection: 'pages',
+    where: { slug: { equals: slug } },
+    depth: 2,
+    limit: 1,
+  })
+  return result.docs[0] ?? null
 }
 
 // Fetch specific global

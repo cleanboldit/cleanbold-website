@@ -5,10 +5,13 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 
 interface WhyBrandsChooseProps {
-  data: any[]
+  block: {
+    sections?: any[]
+  }
 }
 
-export default function WhyBrandsChoose({ data }: WhyBrandsChooseProps) {
+export default function WhyBrandsChoose({ block }: WhyBrandsChooseProps) {
+  const data = block.sections ?? []
   const containerRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -18,7 +21,10 @@ export default function WhyBrandsChoose({ data }: WhyBrandsChooseProps) {
   return (
     <section className={styles['why-brands-scroll-section']} ref={containerRef}>
       {/* Section 1: Why Brands Choose */}
-      <div className={`${styles['why-brands-section-1']} ${styles['sticky-section']}`} style={{ top: 0 }}>
+      <div
+        className={`${styles['why-brands-section-1']} ${styles['sticky-section']}`}
+        style={{ top: 0 }}
+      >
         <div className={styles['timeline-container']}>
           <div className={styles['timeline-line-progress']}></div>
           <motion.div
@@ -77,7 +83,10 @@ export default function WhyBrandsChoose({ data }: WhyBrandsChooseProps) {
       </div>
 
       {/* Section 2: Our Approach */}
-      <div className={`${styles['why-brands-section-2']} ${styles['sticky-section']}`} style={{ top: 0 }}>
+      <div
+        className={`${styles['why-brands-section-2']} ${styles['sticky-section']}`}
+        style={{ top: 0 }}
+      >
         <div className={styles['timeline-container']}>
           <div className={styles['timeline-line-progress']}></div>
           <motion.div
@@ -127,7 +136,10 @@ export default function WhyBrandsChoose({ data }: WhyBrandsChooseProps) {
       </div>
 
       {/* Section 3: Where Creativity Meets Conversion */}
-      <div className={`${styles['why-brands-section-3']} ${styles['sticky-section']}`} style={{ top: 0 }}>
+      <div
+        className={`${styles['why-brands-section-3']} ${styles['sticky-section']}`}
+        style={{ top: 0 }}
+      >
         <div className={styles['timeline-container']}>
           <div className={styles['timeline-line-progress']}></div>
           <motion.div

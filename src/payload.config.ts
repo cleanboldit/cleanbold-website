@@ -11,16 +11,10 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
-import { Projects } from './collections/Projects'
-import { ProjectCategories } from './collections/ProjectCategories'
-import { CoreOfferings } from './collections/CoreOfferings'
-import { FeaturedClients } from './collections/FeaturedClients'
-import { WhyBrandsChoose } from './collections/WhyBrandsChoose'
+import { Pages } from './collections/Pages'
 
 import { Header } from './globals/Header'
-import { Hero } from './globals/Hero'
 import { Footer } from './globals/Footer'
-import { StudioSection } from './globals/StudioSection'
 import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
@@ -33,16 +27,8 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [
-    Users,
-    Media,
-    Projects,
-    ProjectCategories,
-    CoreOfferings,
-    FeaturedClients,
-    WhyBrandsChoose,
-  ],
-  globals: [Header, Hero, Footer, StudioSection, SiteSettings],
+  collections: [Users, Media, Pages],
+  globals: [Header, Footer, SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -56,17 +42,10 @@ export default buildConfig({
     payloadCloudPlugin(),
     // SEO Plugin - adds SEO fields to all collections and globals in a separate tab
     seoPlugin({
-      collections: [
-        'projects',
-        'core-offerings',
-        'project-categories',
-        'featured-clients',
-        'why-brands-choose',
-      ],
-      globals: ['header', 'hero', 'footer', 'studio-section', 'site-settings'],
+      collections: ['pages'],
+      globals: ['header', 'footer', 'site-settings'],
       uploadsCollection: 'media',
-      generateTitle: ({ doc }: any) =>
-        doc?.title || doc?.name || doc?.sectionLabel || 'Cleanbold Advertising',
+      generateTitle: ({ doc }: any) => doc?.title || 'Cleanbold Advertising',
       generateDescription: ({ doc }: any) =>
         doc?.description || doc?.tagline || 'Where Creativity Converts',
       tabbedUI: true,

@@ -1,0 +1,135 @@
+/* Outer scroll container — height set inline based on number of industries */
+.outer {
+  position: relative;
+}
+
+/* Sticky viewport-height panel */
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  gap: 60px;
+  align-items: center;
+}
+
+/* Left — image panel */
+.imageCol {
+  position: relative;
+  height: 420px;
+  border-radius: 20px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.imageWrapper {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+}
+
+/* Right — title + list */
+.listCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mainTitle {
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 700;
+  color: #0a0a0a;
+  margin: 0 0 32px;
+  text-align: center;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each row */
+.listItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.activeBg {
+  position: absolute;
+  inset: 0;
+  background: #1400ff;
+  border-radius: 0;
+  z-index: 0;
+}
+
+.industryName {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-weight: 500;
+  color: #6b7280;
+  padding: 18px 24px;
+  cursor: default;
+  transition: color 0.2s;
+  text-align: center;
+  justify-content: center;
+}
+
+.industryNameActive {
+  color: #fff;
+  font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+  font-weight: 700;
+}
+
+.activeDot {
+  font-size: 0.5em;
+  line-height: 1;
+  color: #fff;
+}
+
+.separator {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 0 24px;
+}
+
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+    gap: 30px;
+  }
+  .imageCol {
+    height: 280px;
+    width: 100%;
+  }
+  .outer {
+    height: auto !important;
+  }
+  .sticky {
+    position: relative;
+    height: auto;
+    padding: 60px 0;
+  }
+}

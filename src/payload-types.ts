@@ -69,11 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
-    projects: Project;
-    'project-categories': ProjectCategory;
-    'core-offerings': CoreOffering;
-    'featured-clients': FeaturedClient;
-    'why-brands-choose': WhyBrandsChoose;
+    pages: Page;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -82,11 +78,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    projects: ProjectsSelect<false> | ProjectsSelect<true>;
-    'project-categories': ProjectCategoriesSelect<false> | ProjectCategoriesSelect<true>;
-    'core-offerings': CoreOfferingsSelect<false> | CoreOfferingsSelect<true>;
-    'featured-clients': FeaturedClientsSelect<false> | FeaturedClientsSelect<true>;
-    'why-brands-choose': WhyBrandsChooseSelect<false> | WhyBrandsChooseSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -96,16 +88,12 @@ export interface Config {
   };
   globals: {
     header: Header;
-    hero: Hero;
     footer: Footer;
-    'studio-section': StudioSection;
     'site-settings': SiteSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
-    hero: HeroSelect<false> | HeroSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
-    'studio-section': StudioSectionSelect<false> | StudioSectionSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: null;
@@ -180,132 +168,214 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "projects".
+ * via the `definition` "pages".
  */
-export interface Project {
+export interface Page {
   id: string;
   title: string;
-  description?: string | null;
-  category: string | ProjectCategory;
-  image: string | Media;
-  size: 'large' | 'small';
-  featured?: boolean | null;
   /**
-   * Lower numbers appear first
-   */
-  order?: number | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-  };
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "project-categories".
- */
-export interface ProjectCategory {
-  id: string;
-  name: string;
-  /**
-   * URL-friendly version of the name
+   * URL path for this page. Use "home" for the homepage (served at /). All other slugs are served at /slug.
    */
   slug: string;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-  };
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "core-offerings".
- */
-export interface CoreOffering {
-  id: string;
-  title: string;
-  description: string;
-  color: '#1e3a8a' | '#1f2937' | '#0d9488' | '#7c3aed';
-  image: string | Media;
-  imagePosition: 'top' | 'bottom';
-  order: number;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-  };
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "featured-clients".
- */
-export interface FeaturedClient {
-  id: string;
-  name: string;
-  logo: string | Media;
-  row: '1' | '2' | '3' | '4';
-  order: number;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-  };
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "why-brands-choose".
- */
-export interface WhyBrandsChoose {
-  id: string;
-  sectionType: 'section-1' | 'section-2' | 'section-3';
-  sectionLabel: string;
-  mainHeading: string;
-  description: string;
-  /**
-   * e.g., "What Sets Us Apart:"
-   */
-  featuresTitle?: string | null;
-  features?:
-    | {
-        text: string;
-        id?: string | null;
-      }[]
+  layout?:
+    | (
+        | {
+            /**
+             * Upload an MP4 video file for the hero background.
+             */
+            video: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            sectionLabel?: string | null;
+            mainTitle?: string | null;
+            description?: string | null;
+            exploreButtonText?: string | null;
+            offerings?:
+              | {
+                  title: string;
+                  description: string;
+                  color?: ('dark-blue' | 'dark-gray' | 'teal' | 'purple') | null;
+                  image?: (string | null) | Media;
+                  imagePosition?: ('top' | 'bottom') | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'core-offerings';
+          }
+        | {
+            sectionLabel?: string | null;
+            mainTitle?: string | null;
+            description?: string | null;
+            exploreButtonText?: string | null;
+            projects?:
+              | {
+                  title: string;
+                  description?: string | null;
+                  category?: string | null;
+                  image?: (string | null) | Media;
+                  size?: ('large' | 'small') | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'projects';
+          }
+        | {
+            sectionLabel?: string | null;
+            mainTitle?: string | null;
+            description?: string | null;
+            ctaButtonText?: string | null;
+            clients?:
+              | {
+                  name: string;
+                  logo?: (string | null) | Media;
+                  row?: ('1' | '2' | '3' | '4') | null;
+                  order?: number | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'featured-clients';
+          }
+        | {
+            sections?:
+              | {
+                  sectionLabel?: string | null;
+                  mainHeading?: string | null;
+                  description?: string | null;
+                  featuresTitle?: string | null;
+                  features?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  approachSteps?:
+                    | {
+                        title: string;
+                        description: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'why-brands-choose';
+          }
+        | {
+            title?: string | null;
+            subtitle?: string | null;
+            description?: string | null;
+            studioImages?:
+              | {
+                  image: string | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            perfectFor?:
+              | {
+                  item: string;
+                  id?: string | null;
+                }[]
+              | null;
+            detailsSection?: {
+              title?: string | null;
+              description?: string | null;
+              locationTitle?: string | null;
+              locationAddress?: string | null;
+              bookButtonText?: string | null;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'studio-section';
+          }
+        | {
+            mainTitle?: string | null;
+            description?: string | null;
+            images?:
+              | {
+                  image: string | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'page-hero';
+          }
+        | {
+            cards?:
+              | {
+                  title: string;
+                  description?: string | null;
+                  color?: ('dark-blue' | 'dark-gray' | 'teal' | 'purple') | null;
+                  servicesTitle?: string | null;
+                  services?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  idealForLabel?: string | null;
+                  idealForTags?:
+                    | {
+                        tag: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'service-cards';
+          }
+        | {
+            mainTitle?: string | null;
+            industries?:
+              | {
+                  name: string;
+                  image?: (string | null) | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'industries';
+          }
+        | {
+            title?: string | null;
+            description?: string | null;
+            bulletPoints?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'highlight-card';
+          }
+        | {
+            sectionLabel?: string | null;
+            mainTitle?: string | null;
+            description?: string | null;
+            buttonText?: string | null;
+            buttonUrl?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta-section';
+          }
+      )[]
     | null;
-  /**
-   * Only used for "Our Approach" section
-   */
-  approachSteps?:
-    | {
-        title: string;
-        description: string;
-        id?: string | null;
-      }[]
-    | null;
-  order: number;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -334,24 +404,8 @@ export interface PayloadLockedDocument {
         value: string | Media;
       } | null)
     | ({
-        relationTo: 'projects';
-        value: string | Project;
-      } | null)
-    | ({
-        relationTo: 'project-categories';
-        value: string | ProjectCategory;
-      } | null)
-    | ({
-        relationTo: 'core-offerings';
-        value: string | CoreOffering;
-      } | null)
-    | ({
-        relationTo: 'featured-clients';
-        value: string | FeaturedClient;
-      } | null)
-    | ({
-        relationTo: 'why-brands-choose';
-        value: string | WhyBrandsChoose;
+        relationTo: 'pages';
+        value: string | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -437,111 +491,220 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "projects_select".
+ * via the `definition` "pages_select".
  */
-export interface ProjectsSelect<T extends boolean = true> {
+export interface PagesSelect<T extends boolean = true> {
   title?: T;
-  description?: T;
-  category?: T;
-  image?: T;
-  size?: T;
-  featured?: T;
-  order?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "project-categories_select".
- */
-export interface ProjectCategoriesSelect<T extends boolean = true> {
-  name?: T;
   slug?: T;
-  meta?:
+  layout?:
     | T
     | {
-        title?: T;
-        description?: T;
-        image?: T;
+        hero?:
+          | T
+          | {
+              video?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'core-offerings'?:
+          | T
+          | {
+              sectionLabel?: T;
+              mainTitle?: T;
+              description?: T;
+              exploreButtonText?: T;
+              offerings?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    color?: T;
+                    image?: T;
+                    imagePosition?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        projects?:
+          | T
+          | {
+              sectionLabel?: T;
+              mainTitle?: T;
+              description?: T;
+              exploreButtonText?: T;
+              projects?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    category?: T;
+                    image?: T;
+                    size?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'featured-clients'?:
+          | T
+          | {
+              sectionLabel?: T;
+              mainTitle?: T;
+              description?: T;
+              ctaButtonText?: T;
+              clients?:
+                | T
+                | {
+                    name?: T;
+                    logo?: T;
+                    row?: T;
+                    order?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'why-brands-choose'?:
+          | T
+          | {
+              sections?:
+                | T
+                | {
+                    sectionLabel?: T;
+                    mainHeading?: T;
+                    description?: T;
+                    featuresTitle?: T;
+                    features?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    approachSteps?:
+                      | T
+                      | {
+                          title?: T;
+                          description?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'studio-section'?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              description?: T;
+              studioImages?:
+                | T
+                | {
+                    image?: T;
+                    id?: T;
+                  };
+              perfectFor?:
+                | T
+                | {
+                    item?: T;
+                    id?: T;
+                  };
+              detailsSection?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    locationTitle?: T;
+                    locationAddress?: T;
+                    bookButtonText?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'page-hero'?:
+          | T
+          | {
+              mainTitle?: T;
+              description?: T;
+              images?:
+                | T
+                | {
+                    image?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'service-cards'?:
+          | T
+          | {
+              cards?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    color?: T;
+                    servicesTitle?: T;
+                    services?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    idealForLabel?: T;
+                    idealForTags?:
+                      | T
+                      | {
+                          tag?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        industries?:
+          | T
+          | {
+              mainTitle?: T;
+              industries?:
+                | T
+                | {
+                    name?: T;
+                    image?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'highlight-card'?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              bulletPoints?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'cta-section'?:
+          | T
+          | {
+              sectionLabel?: T;
+              mainTitle?: T;
+              description?: T;
+              buttonText?: T;
+              buttonUrl?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "core-offerings_select".
- */
-export interface CoreOfferingsSelect<T extends boolean = true> {
-  title?: T;
-  description?: T;
-  color?: T;
-  image?: T;
-  imagePosition?: T;
-  order?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "featured-clients_select".
- */
-export interface FeaturedClientsSelect<T extends boolean = true> {
-  name?: T;
-  logo?: T;
-  row?: T;
-  order?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "why-brands-choose_select".
- */
-export interface WhyBrandsChooseSelect<T extends boolean = true> {
-  sectionType?: T;
-  sectionLabel?: T;
-  mainHeading?: T;
-  description?: T;
-  featuresTitle?: T;
-  features?:
-    | T
-    | {
-        text?: T;
-        id?: T;
-      };
-  approachSteps?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        id?: T;
-      };
-  order?: T;
   meta?:
     | T
     | {
@@ -621,27 +784,6 @@ export interface Header {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "hero".
- */
-export interface Hero {
-  id: string;
-  heroImage: string | Media;
-  title?: string | null;
-  subtitle?: string | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-  };
-  _status?: ('draft' | 'published') | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "footer".
  */
 export interface Footer {
@@ -681,46 +823,6 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "studio-section".
- */
-export interface StudioSection {
-  id: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  studioImages?:
-    | {
-        image: string | Media;
-        id?: string | null;
-      }[]
-    | null;
-  perfectFor?:
-    | {
-        item: string;
-        id?: string | null;
-      }[]
-    | null;
-  detailsSection: {
-    title: string;
-    description: string;
-    locationTitle: string;
-    locationAddress: string;
-    bookButtonText: string;
-  };
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-  };
-  _status?: ('draft' | 'published') | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings".
  */
 export interface SiteSetting {
@@ -728,23 +830,6 @@ export interface SiteSetting {
   siteTitle: string;
   siteDescription: string;
   ogImage?: (string | null) | Media;
-  projectsSection?: {
-    sectionLabel?: string | null;
-    mainTitle?: string | null;
-    description?: string | null;
-    exploreButtonText?: string | null;
-  };
-  coreOfferingsSection?: {
-    sectionLabel?: string | null;
-    mainTitle?: string | null;
-    description?: string | null;
-  };
-  featuredClientsSection?: {
-    sectionLabel?: string | null;
-    mainTitle?: string | null;
-    description?: string | null;
-    ctaButtonText?: string | null;
-  };
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -777,26 +862,6 @@ export interface HeaderSelect<T extends boolean = true> {
         text?: T;
         url?: T;
       };
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
-  _status?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "hero_select".
- */
-export interface HeroSelect<T extends boolean = true> {
-  heroImage?: T;
-  title?: T;
-  subtitle?: T;
   meta?:
     | T
     | {
@@ -853,76 +918,12 @@ export interface FooterSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "studio-section_select".
- */
-export interface StudioSectionSelect<T extends boolean = true> {
-  title?: T;
-  subtitle?: T;
-  description?: T;
-  studioImages?:
-    | T
-    | {
-        image?: T;
-        id?: T;
-      };
-  perfectFor?:
-    | T
-    | {
-        item?: T;
-        id?: T;
-      };
-  detailsSection?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        locationTitle?: T;
-        locationAddress?: T;
-        bookButtonText?: T;
-      };
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
-  _status?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
   siteTitle?: T;
   siteDescription?: T;
   ogImage?: T;
-  projectsSection?:
-    | T
-    | {
-        sectionLabel?: T;
-        mainTitle?: T;
-        description?: T;
-        exploreButtonText?: T;
-      };
-  coreOfferingsSection?:
-    | T
-    | {
-        sectionLabel?: T;
-        mainTitle?: T;
-        description?: T;
-      };
-  featuredClientsSection?:
-    | T
-    | {
-        sectionLabel?: T;
-        mainTitle?: T;
-        description?: T;
-        ctaButtonText?: T;
-      };
   meta?:
     | T
     | {

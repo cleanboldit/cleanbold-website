@@ -6,11 +6,17 @@ import Image from 'next/image'
 import { useRef } from 'react'
 
 interface CoreOfferingsProps {
-  data: any[]
-  settings: any
+  block: {
+    sectionLabel?: string
+    mainTitle?: string
+    description?: string
+    exploreButtonText?: string
+    offerings?: any[]
+  }
 }
 
-export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
+export default function CoreOfferings({ block }: CoreOfferingsProps) {
+  const { offerings = [], sectionLabel, mainTitle, description, exploreButtonText } = block
   const ref = useRef(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
@@ -27,12 +33,6 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
     }
   }
 
-  // Debug: log imagePosition of each offering
-  data.forEach((offering) => {
-    const normalized = offering.imagePosition?.toString().toLowerCase().trim() || 'top'
-    console.log('Original:', offering.imagePosition, 'Normalized:', normalized)
-  })
-
   return (
     <section className={styles['core-offerings']} ref={ref}>
       <div className={styles['offerings-container']}>
@@ -43,9 +43,9 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
           transition={{ duration: 0.8 }}
         >
           <div className={styles['offerings-header-content']}>
-            <p className={styles['section-label']}>{settings?.sectionLabel}</p>
-            <h2>{settings?.mainTitle}</h2>
-            <p className={styles['section-description']}>{settings?.description}</p>
+            <p className={styles['section-label']}>{sectionLabel}</p>
+            <h2>{mainTitle}</h2>
+            <p className={styles['section-description']}>{description}</p>
           </div>
 
           <div className={styles['offerings-header-controls']}>
@@ -83,10 +83,9 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
 
         <div className={styles['offerings-carousel']}>
           <div className={styles['offerings-scroll']} ref={scrollRef}>
-            {data?.map((offering: any, index: number) => {
+            {offerings?.map((offering: any, index: number) => {
               const imageUrl =
                 typeof offering.image === 'object' ? offering.image?.url : offering.image
-              const backgroundImage = `/coreoffering/Image-${(index % 4) + 1}.png`
               // Normalize imagePosition to handle case sensitivity and whitespace
               const imagePosition = offering.imagePosition?.toString().toLowerCase().trim() || 'top'
               const isTop = imagePosition === 'top'
@@ -96,20 +95,15 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
                 <motion.div
                   key={offering.id || index}
                   className={`${styles['offering-card']} ${isTop ? styles['image-top'] : styles['image-bottom']}`}
-                  style={{
-                    backgroundImage: `url('${backgroundImage}')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={isInView ? { opacity: 1, scale: 1 } : {}}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   whileHover={{ y: -8, transition: { duration: 0.2 } }}
                 >
-                  {isTop && (
+                  {isTop && imageUrl && (
                     <div className={styles['card-image-top']}>
                       <Image
-                        src={imageUrl || '/hero-image.png'}
+                        src={imageUrl}
                         alt={offering.title}
                         width={280}
                         height={200}
@@ -118,10 +112,10 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
                     </div>
                   )}
 
-                  {isBottom && (
+                  {isBottom && imageUrl && (
                     <div className={styles['card-image-bottom']}>
                       <Image
-                        src={imageUrl || '/hero-image.png'}
+                        src={imageUrl}
                         alt={offering.title}
                         width={280}
                         height={200}
@@ -147,7 +141,7 @@ export default function CoreOfferings({ data, settings }: CoreOfferingsProps) {
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <button className={styles['offerings-cta']}>
-            {settings?.exploreButtonText || ' Explore All Services'}
+            {exploreButtonText || 'Explore All Services'}
           </button>
         </motion.div>
       </div>
