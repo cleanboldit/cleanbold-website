@@ -34,39 +34,89 @@
 .clients-grid-wrapper {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 16px;
+  padding: 0 60px;
   margin-bottom: 60px;
 }
 
 /* Brand Card */
 .client-brand-card {
-  background: white;
+  background: #ffffff;
   border: 1px solid #e5e7eb;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 30px;
+  padding: 28px;
   aspect-ratio: 2 / 1;
-  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .client-brand-card:hover {
-  border-color: #0052ff;
-  box-shadow: 0 8px 24px rgba(0, 82, 255, 0.15);
+  border-color: #d0d5dd;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
   transform: translateY(-4px);
 }
 
-.client-brand-logo {
+/* Logo inner wrapper */
+.logo-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
+}
+
+/* Exit animations */
+.logo-exit-up {
+  animation: exitUp 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.logo-exit-down {
+  animation: exitDown 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* Enter animations */
+.logo-enter-up {
+  animation: enterFromBelow 0.38s cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+.logo-enter-down {
+  animation: enterFromAbove 0.38s cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+@keyframes exitUp {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-22px); }
+}
+
+@keyframes exitDown {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(22px); }
+}
+
+@keyframes enterFromBelow {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes enterFromAbove {
+  from { opacity: 0; transform: translateY(-22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.client-brand-logo {
+  max-width: 65%;
+  height: auto;
   object-fit: contain;
-  filter: grayscale(100%);
-  opacity: 0.6;
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .client-brand-card:hover .client-brand-logo {
-  filter: grayscale(0%);
-  opacity: 1;
+  opacity: 0.85;
 }
 
 /* CTA Button */
