@@ -1,9 +1,6 @@
-/* ===================== SERVICE CARDS — sticky scroll overlay (mirrors WhyBrandsChoose) ===================== */
-
 .section {
   position: relative;
   width: 100%;
-  width: calc(100% - 100px);
 }
 
 /* Each card is a full-viewport sticky section */
@@ -16,8 +13,7 @@
   color: #fff;
   overflow: hidden;
   border-radius: 40px;
-  margin:150px;
-
+  margin: 40px 60px;
 }
 
 /* Dark overlay so text is always legible over any background image */

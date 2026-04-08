@@ -1,16 +1,19 @@
 /* ===================== OUR WORK / CORE OFFERINGS SECTION ===================== */
 .core-offerings {
-  padding: 120px 60px;
+  padding: 120px 0;
   background: var(--color-gray-light);
+  overflow: hidden;
 }
 
 .offerings-container {
-  max-width: 1400px;
-  margin-left: 40px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 0 0 60px;
 }
 
 .offerings-header {
   margin-bottom: 60px;
+  padding-right: 60px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -53,6 +56,7 @@
 .offerings-carousel {
   position: relative;
   width: 100%;
+  overflow: hidden;
 }
 
 .carousel-btn {
@@ -81,7 +85,7 @@
   gap: 20px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 10px 0;
+  padding: 10px 60px 10px 0;
   width: 100%;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -93,7 +97,8 @@
 
 .offering-card {
   min-width: 300px;
-  max-width: 200px;
+  width: 300px;
+  flex: 1 1 300px;
   height: 600px !important;
   padding: 0;
   border-radius: 20px;

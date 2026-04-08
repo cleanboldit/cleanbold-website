@@ -1,18 +1,14 @@
-/* =================================================================
-   HEADER
-   ================================================================= */
 .header {
   position: fixed;
   top: 20px;
-  left:5%;
+  left: 0;
+  right: 0;
+  margin: 0 60px;
   height: 90px;
-  transform: translateX(-50%);
   z-index: 1000;
-  width:1600px;
   background: rgba(0, 0, 0, 0.2);
-   /* ✅ no background */
-  backdrop-filter: blur(50%); /* optional blur */
-  -webkit-backdrop-filter: blur(50%); /* Safari support */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   padding: 32px 60px;
