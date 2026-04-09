@@ -7,8 +7,6 @@ import { useState } from 'react'
 
 interface Project {
   id?: string
-  title?: string
-  description?: string
   category?: string | { name?: string }
   image?: { url?: string } | string | null
   size?: string
@@ -116,12 +114,6 @@ export default function Projects({ block }: ProjectsProps) {
                     >
                       {categoryName}
                     </span>
-                  </div>
-                  <div className={styles['project-content']}>
-                    <h3 className={styles['project-title']}>{project.title}</h3>
-                    {project.description && (
-                      <p className={styles['project-desc']}>{project.description}</p>
-                    )}
                   </div>
                 </div>
               </motion.div>

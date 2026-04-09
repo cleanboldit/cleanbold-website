@@ -218,8 +218,6 @@ export interface Page {
             exploreButtonText?: string | null;
             projects?:
               | {
-                  title: string;
-                  description?: string | null;
                   category?: string | null;
                   image?: (string | null) | Media;
                   size?: ('large' | 'small') | null;
@@ -546,8 +544,6 @@ export interface PagesSelect<T extends boolean = true> {
               projects?:
                 | T
                 | {
-                    title?: T;
-                    description?: T;
                     category?: T;
                     image?: T;
                     size?: T;

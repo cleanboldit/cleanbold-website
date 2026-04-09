@@ -141,17 +141,6 @@ export const ProjectsBlock: Block = {
       label: 'Projects',
       fields: [
         {
-          name: 'title',
-          type: 'text',
-          required: true,
-          label: 'Title',
-        },
-        {
-          name: 'description',
-          type: 'textarea',
-          label: 'Description',
-        },
-        {
           name: 'category',
           type: 'text',
           label: 'Category',

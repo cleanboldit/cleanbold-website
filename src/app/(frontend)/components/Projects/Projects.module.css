@@ -22,30 +22,6 @@
   text-align: left;
 }
 
-.section-label-projects {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  display: block;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.projects-main-title {
-  font-size: clamp(32px, 4vw, 42px);
-  font-weight: 700;
-  color: white;
-  margin-bottom: 16px;
-  line-height: 1.2;
-}
-
-.projects-description {
-  font-size: clamp(14px, 1.3vw, 16px);
-  color: rgba(255, 255, 255, 0.85);
-  max-width: 650px;
-  line-height: 1.6;
-}
-
 /* Category Filters */
 .category-filters {
   display: flex;
@@ -99,31 +75,13 @@
   grid-row: span 1;
 }
 
-/* Make second and third cards horizontal layout */
-.project-card-item:nth-child(2) .project-card-inner,
-.project-card-item:nth-child(3) .project-card-inner {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-}
-
-/* Second card: text left, image right */
-.project-card-item:nth-child(2) .project-card-inner {
-  flex-direction: row;
-}
-
-/* Third card: image left, text right */
-.project-card-item:nth-child(3) .project-card-inner {
-  flex-direction: row-reverse;
-}
 
 .project-card-inner {
-  background: white;
+  background: transparent;
   border-radius: 16px;
   overflow: hidden;
   height: 100%;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
 }
@@ -141,32 +99,20 @@
 }
 
 .project-large .project-image-container {
-  height: 320px;
-  padding:20px;
- 
+  height: 420px;
 }
 
 .project-small .project-image-container {
-  padding:20px;
-  height: 240px;
-
+  height: 195px;
 }
 
-/* Horizontal layout for 2nd and 3rd cards */
-.project-card-item:nth-child(2) .project-image-container,
-.project-card-item:nth-child(3) .project-image-container {
-  width: 50%;
-  height: 100%;
-  flex-shrink: 0;
-}
 
 .project-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  border: 1px solid #e5e7eb;
-  border-radius: 15px;
+  border-radius: 16px;
 }
 
 .project-card-inner:hover .project-image {
@@ -197,39 +143,6 @@
 .project-card-inner:hover .project-category-badge {
   background: rgba(255, 255, 255, 1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Project Content */
-.project-content {
-  padding: 24px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* Adjust padding for horizontal cards */
-.project-card-item:nth-child(2) .project-content,
-.project-card-item:nth-child(3) .project-content {
-  width: 50%;
-  padding: 32px;
-}
-
-.project-title {
-  font-size: clamp(16px, 1.5vw, 18px);
-  font-weight: 500;
-  line-height: 1.4;
-  color: #1f2937;
-  margin-bottom: 12px;
-}
-
-.project-desc {
-  font-size: clamp(13px, 1.1vw, 14px);
-  color: rgba(85, 85, 85, 1);
-  line-height: 1.6;
-  margin: 0;
-  font-weight: 400;
-  line-height: 28px;
 }
 
 /* Projects CTA */
@@ -288,10 +201,6 @@
     padding: 60px 24px;
   }
 
-  .projects-header {
-    margin-bottom: 40px;
-  }
-
   .category-filters {
     gap: 12px;
     margin-bottom: 40px;
@@ -300,10 +209,6 @@
   .filter-btn {
     padding: 12px 24px;
     font-size: 14px;
-  }
-
-  .project-content {
-    padding: 24px;
   }
 
   .project-large .project-image-container,
