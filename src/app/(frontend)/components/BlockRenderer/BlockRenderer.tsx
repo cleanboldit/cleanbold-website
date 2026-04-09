@@ -28,7 +28,13 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
           case 'hero':
             return (
               <div key={key} id="hero">
-                <Hero video={block.video as { url: string } | null} />
+                <Hero
+                  video={block.video as { url: string } | null}
+                  primaryButtonText={block.primaryButtonText as string | null}
+                  primaryButtonUrl={block.primaryButtonUrl as string | null}
+                  secondaryButtonText={block.secondaryButtonText as string | null}
+                  secondaryButtonUrl={block.secondaryButtonUrl as string | null}
+                />
               </div>
             )
 

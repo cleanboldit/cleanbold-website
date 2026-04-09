@@ -1,23 +1,20 @@
 /* ===================== OUR WORK / CORE OFFERINGS SECTION ===================== */
 .core-offerings {
   padding: 120px 0;
-  background: var(--color-gray-light);
   overflow: hidden;
 }
 
 .offerings-container {
   max-width: 100%;
-  margin: 0;
   padding: 0 0 0 60px;
 }
 
 .offerings-header {
-  margin-bottom: 60px;
-  padding-right: 60px;
+  margin-bottom: 50px;
   display: flex;
+  padding-right: 60px;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 40px;
 }
 
 .offerings-header-content {
@@ -63,7 +60,7 @@
   width: 60px;
   height: 60px;
   border-radius: 10%;
-  border: 2px solid rgba(1, 30, 244, 1);
+  border: 1px solid rgba(1, 30, 244, 1);
   background: white;
   color: rgba(1, 30, 244, 1);
   cursor: pointer;
@@ -204,4 +201,60 @@
   background: white;
   color: rgba(1, 30, 244, 1);
   transform: translateY(-2px);
+}
+
+/* ── Carousel dot indicators (mobile only) ── */
+.carousel-dots {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 0 60px;
+}
+
+.carousel-dot {
+  height: 8px;
+  width: 28px;
+  border-radius: 100px;
+  background: rgba(1, 30, 244, 0.18);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: width 0.3s ease, background 0.3s ease;
+  flex-shrink: 0;
+}
+
+.carousel-dot-active {
+  width: 56px;
+  background: rgba(1, 30, 244, 1);
+}
+
+@media (max-width: 768px) {
+  .carousel-dots {
+    display: flex;
+  }
+
+  .carousel-btn {
+    display: none;
+  }
+
+  .core-offerings{
+    padding: 80px 0;
+  }
+
+  .offerings-container {
+    padding: 0 0 0 20px;
+  }
+
+}
+
+@media (max-width: 1024px) {
+  .carousel-dots {
+    display: flex;
+  }
+
+  .carousel-btn {
+    display: none;
+  }
 }

@@ -4,7 +4,7 @@ import styles from './OurWork.module.css'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRef } from 'react'
+import { useRef, useState, useCallback } from 'react'
 
 const offeringColorMap: Record<string, string> = {
   'dark-blue': 'linear-gradient(135deg, #0d1b3e 0%, #1a2f6e 100%)',
@@ -38,6 +38,15 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
   const ref = useRef(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  const handleScroll = useCallback(() => {
+    if (!scrollRef.current) return
+    const { scrollLeft } = scrollRef.current
+    const cardWidth = 320 // card width + gap
+    const index = Math.round(scrollLeft / cardWidth)
+    setActiveIndex(index)
+  }, [])
 
   const handlePrev = () => {
     if (scrollRef.current) {
@@ -92,7 +101,7 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
         </motion.div>
 
         <div className={styles['offerings-carousel']}>
-          <div className={styles['offerings-scroll']} ref={scrollRef}>
+          <div className={styles['offerings-scroll']} ref={scrollRef} onScroll={handleScroll}>
             {offerings?.map((offering: Offering, index: number) => {
               const imageUrl =
                 typeof offering.image === 'object' ? offering.image?.url : offering.image
@@ -160,6 +169,22 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
               )
             })}
           </div>
+        </div>
+
+        {/* Mobile dot indicators */}
+        <div className={styles['carousel-dots']}>
+          {offerings?.map((_, i) => (
+            <button
+              key={i}
+              className={`${styles['carousel-dot']} ${i === activeIndex ? styles['carousel-dot-active'] : ''}`}
+              onClick={() => {
+                if (!scrollRef.current) return
+                scrollRef.current.scrollTo({ left: i * 320, behavior: 'smooth' })
+                setActiveIndex(i)
+              }}
+              aria-label={`Go to card ${i + 1}`}
+            />
+          ))}
         </div>
         <motion.div
           className={styles['offerings-cta-container']}

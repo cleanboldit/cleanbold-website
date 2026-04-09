@@ -184,6 +184,10 @@ export interface Page {
              * Upload an MP4 video file for the hero background.
              */
             video: string | Media;
+            primaryButtonText?: string | null;
+            primaryButtonUrl?: string | null;
+            secondaryButtonText?: string | null;
+            secondaryButtonUrl?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'hero';
@@ -505,6 +509,10 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               video?: T;
+              primaryButtonText?: T;
+              primaryButtonUrl?: T;
+              secondaryButtonText?: T;
+              secondaryButtonUrl?: T;
               id?: T;
               blockName?: T;
             };

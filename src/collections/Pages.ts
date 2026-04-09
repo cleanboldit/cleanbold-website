@@ -16,6 +16,30 @@ export const HeroBlock: Block = {
         description: 'Upload an MP4 video file for the hero background.',
       },
     },
+    {
+      name: 'primaryButtonText',
+      type: 'text',
+      label: 'Primary Button Text',
+      defaultValue: 'Start My Brand Journey',
+    },
+    {
+      name: 'primaryButtonUrl',
+      type: 'text',
+      label: 'Primary Button URL',
+      defaultValue: '#contact',
+    },
+    {
+      name: 'secondaryButtonText',
+      type: 'text',
+      label: 'Secondary Button Text',
+      defaultValue: 'See Our Work',
+    },
+    {
+      name: 'secondaryButtonUrl',
+      type: 'text',
+      label: 'Secondary Button URL',
+      defaultValue: '#work',
+    },
   ],
 }
 

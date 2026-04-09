@@ -2,20 +2,18 @@
    FEATURED CLIENTS
    ================================================================= */
 .featured-clients-section {
-  padding: 100px 0;
+  padding: 100px 60px;
   background: #f8f9fa;
   overflow: hidden;
 }
 
 .clients-container {
-  max-width: 1600px;
-  margin-left:40px;
+  width: 100%;
 }
 
 .clients-header {
   text-align: left;
   margin-bottom: 80px;
-  padding: 0 60px;
 }
 
 .clients-header h2 {
@@ -36,7 +34,6 @@
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(3, auto);
   gap: 16px;
-  padding: 0 60px;
   margin-bottom: 60px;
 }
 

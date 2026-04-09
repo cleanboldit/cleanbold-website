@@ -19,6 +19,7 @@ function isAppRoute(url: string): boolean {
 export default function Header({ data }: HeaderProps) {
   const pathname = usePathname()
   const [isServicesOpen, setIsServicesOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const isHome = pathname === '/'
 
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
@@ -172,7 +173,62 @@ export default function Header({ data }: HeaderProps) {
             </a>
           )}
         </motion.div>
+
+        {/* Hamburger button — mobile only */}
+        <button
+          className={styles['hamburger']}
+          onClick={() => setMobileMenuOpen((o) => !o)}
+          aria-label="Toggle menu"
+          aria-expanded={mobileMenuOpen}
+        >
+          <span className={`${styles['bar']} ${mobileMenuOpen ? styles['bar-open-1'] : ''}`} />
+          <span className={`${styles['bar']} ${mobileMenuOpen ? styles['bar-open-2'] : ''}`} />
+          <span className={`${styles['bar']} ${mobileMenuOpen ? styles['bar-open-3'] : ''}`} />
+        </button>
       </div>
+
+      {/* Mobile drawer */}
+      {mobileMenuOpen && (
+        <div className={styles['mobile-menu']}>
+          <nav className={styles['mobile-nav']}>
+            {data.navigation?.map((item, index: number) => (
+              <div key={index} className={styles['mobile-nav-item']}>
+                {renderNavAnchor(item)}
+              </div>
+            ))}
+          </nav>
+          <div className={styles['mobile-cta']}>
+            {ctaIsRoute ? (
+              <Link
+                href={ctaUrl}
+                className={styles['lets-work-btn']}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {data.ctaButton?.text || "Let's Work Together"}
+              </Link>
+            ) : ctaIsHash && !isHome ? (
+              <Link
+                href={`/${ctaUrl}`}
+                className={styles['lets-work-btn']}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {data.ctaButton?.text || "Let's Work Together"}
+              </Link>
+            ) : (
+              <a
+                href={ctaUrl}
+                className={styles['lets-work-btn']}
+                onClick={(e) => {
+                  setMobileMenuOpen(false)
+                  ctaOnClick?.(e)
+                }}
+              >
+                {data.ctaButton?.text || "Let's Work Together"}
+              </a>
+            )}
+          </div>
+        </div>
+      )}
     </motion.header>
   )
 }
