@@ -103,7 +103,7 @@ export default function Projects({ block }: ProjectsProps) {
                     {imageUrl && (
                       <Image
                         src={imageUrl}
-                        alt={project.title ?? ''}
+                        alt={categoryName ?? ''}
                         width={800}
                         height={600}
                         className={styles['project-image']}
