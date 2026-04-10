@@ -1,47 +1,61 @@
-/* Studio Section Styles */
-.studio-section {
+/* =================================================================
+   STUDIO SECTION
+   ================================================================= */
+
+.studioSection {
   width: 100%;
+  padding: 100px 0 0 0;
+
 }
 
-/* Studio Header Section - White Background */
-.studio-header-section {
+/* ── Header ──────────────────────────────────────────────────────── */
+
+.headerSection {
   background: #ffffff;
-  padding: 80px 40px 60px;
   overflow: hidden;
 }
 
-.studio-header-content {
-  max-width: 1400px;
-  margin: 0 auto;
+.headerContent {
   display: flex;
   justify-content: space-between;
+  padding: 0 100px 50px;
   align-items: flex-start;
-  margin-bottom: 60px;
   gap: 40px;
   flex-wrap: wrap;
 }
 
-.studio-text-content {
-  flex: 1;
-  min-width: 80px;
-  max-width: 430px;
+.textContent {
+  flex: 2;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
 }
 
-.studio-title {
-  font-size: clamp(22px, 4vw, 42px);
-  font-weight: 400;
+.studioTitle {
+  max-width: 489px;
+  font-size: clamp(22px, 4vw, 45px);
+  font-weight: 600;
   color: #000000;
-  line-height: 1.15;
-  margin: 0 0 6px;
+  line-height: 110%;
 }
 
-.studio-subtitle {
+.studioTitle::after {
+  content: '.';
+  color: var(--color-blue-bright, #011ef4);
+}
+
+.studioSubtitle {
+  max-width: 442px;
   color: #000000;
-  line-height: 1.2;
+  line-height: 130%;
+  font-size: 18px;
+  margin-top: 16px;
   margin: 0;
 }
 
-.studio-description {
+.studioDescription {
   flex: 1;
   min-width: 260px;
   max-width: 420px;
@@ -50,319 +64,408 @@
   padding-top: 8px;
 }
 
-.studio-description p {
+.studioDescription p {
   font-size: clamp(15px, 1.3vw, 17px);
   color: #888888;
   line-height: 1.65;
 }
 
-/* Auto-scrolling Images - Perspective Carousel */
-.studio-images-wrapper {
-  width: 100%;
-  overflow: visible;
-  margin-top: 60px;
+/* =================================================================
+   LENS SHAPE — outer wrapper + clipped container
+   ================================================================= */
+
+.lensOuter {
   position: relative;
-  height: 500px;
-  perspective: 1200px;
-}
-
-.studio-images-scroll {
   width: 100%;
-  height: 100%;
+  background: #ffffff;
+  padding: 0;
+  margin: 0;
+}
+
+/*
+  .lensClip is the element that receives clip-path: url(#lensClip).
+  The clipPath SVG is rendered inline inside .lensOuter so the
+  browser can resolve the fragment identifier on the same page.
+
+  Shape (objectBoundingBox, coords 0–1):
+    Top edge   → Q curve bows DOWN  → concave inward from top
+    Bottom edge → Q curve bows UP   → concave inward from bottom
+    = "two eggs facing each other" / lens / vesica shape
+*/
+.lensClip {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.studio-images-track {
-  display: flex;
-  gap: -150px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  animation: carousel-rotate 25s linear infinite;
-  transform-style: preserve-3d;
-}
-
-.studio-images-track:hover {
-  animation-play-state: paused;
-}
-
-@keyframes carousel-rotate {
-  0% {
-    transform: translateX(-50%) translateZ(0);
-  }
-  100% {
-    transform: translateX(-50%) translateZ(0) translateX(-100%);
-  }
-}
-
-.studio-image-item {
-  flex-shrink: 0;
-  width: 550px;
-  height: 380px;
-  border-radius: 24px;
+  width: 100%;
+  height: 520px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  transform-style: preserve-3d;
-  position: relative;
+  clip-path: url(#lensClip);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
 }
 
-.studio-image-item:nth-child(1),
-.studio-image-item:nth-child(4),
-.studio-image-item:nth-child(7),
-.studio-image-item:nth-child(10) {
-  transform: translateZ(-100px) scale(0.85);
-  opacity: 0.7;
-  z-index: 1;
-}
+/* =================================================================
+   SCROLLING IMAGE STRIP
+   Images sit side by side with zero gap (touch edge to edge).
+   Transform is applied directly via DOM ref — no React re-render.
+   ================================================================= */
 
-.studio-image-item:nth-child(2),
-.studio-image-item:nth-child(5),
-.studio-image-item:nth-child(8),
-.studio-image-item:nth-child(11) {
-  transform: translateZ(100px) scale(1.05);
-  z-index: 3;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
-}
-
-.studio-image-item:nth-child(3),
-.studio-image-item:nth-child(6),
-.studio-image-item:nth-child(9),
-.studio-image-item:nth-child(12) {
-  transform: translateZ(-50px) scale(0.9);
-  opacity: 0.8;
-  z-index: 2;
-}
-
-.studio-image-item:hover {
-  transform: translateZ(150px) scale(1.1) !important;
-  z-index: 10 !important;
-  opacity: 1 !important;
-}
-
-.studio-image {
-  width: 100%;
+.lensTrack {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
-  object-fit: cover;
-  display: block;
+  display: flex;
+  gap: 30px;
+  will-change: transform;
+  animation: lensScroll 25s linear infinite;
 }
 
-/* Marquee Section with Blue Background */
-.studio-marquee-section {
-  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 30%, rgba(0, 61, 122, 0.1) 100%),
-              url('/background-image.png');
+@keyframes lensScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.lensImgWrap {
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.lensImg {
+  height: 100%;
+  width: auto;
+  display: block;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* =================================================================
+   MARQUEE SECTION
+   ================================================================= */
+
+.marqueeSection {
   background-size: cover;
   background-position: center;
   padding: 0;
   overflow: hidden;
+  padding-top: 60px;
 }
 
-.studio-marquee-wrapper {
-  background-image: url('/background-image.png');
+.marqueeWrapper {
+  background-image: url('/marquee.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 30px 0;
+  padding: 10px 0;
   overflow: hidden;
 }
 
-.studio-marquee-content {
+.marqueeContent {
+  font-size: 28px;
+  font-weight: 600;
+  color: white;
   display: flex;
   align-items: center;
   gap: 40px;
-  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding-left: 100px;
 }
 
-.studio-marquee-label {
-  font-size: clamp(28px, 3vw, 36px);
-  font-weight: 700;
-  color: white;
+.marqueeLabel {
   white-space: nowrap;
   flex-shrink: 0;
 }
 
-.studio-marquee-track {
+.marqueeTrack {
   flex: 1;
   overflow: hidden;
   position: relative;
 }
 
-.studio-marquee-items {
+.marqueeItems {
   display: flex;
   gap: 60px;
   animation: marquee 30s linear infinite;
   white-space: nowrap;
 }
 
-.studio-marquee-item {
-  font-size: clamp(24px, 2.5vw, 32px);
-  font-weight: 600;
-  color: white;
+.marqueeItem {
   display: inline-flex;
   align-items: center;
   gap: 15px;
 }
 
 @keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-/* Studio Details Section */
-.studio-details-section {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%),
-              url('/background-image.png');
-  background-size: cover;
-  background-position: center;
-  padding: 100px 40px;
+/* =================================================================
+   DETAILS SECTION
+   ================================================================= */
+
+.detailsSection {
+  padding: 100px;
 }
 
-.studio-details-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.detailsContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 80px;
   align-items: center;
 }
 
-.studio-details-left {
+.detailsLeft {
+  max-width: 570px;
   flex: 1;
 }
 
-.studio-details-title {
+.detailsRight {
+  max-width: 570px;
+  flex: 1;
+}
+
+.detailsTitle {
   font-size: 25px;
-  font-style: 'Biennale';
+  font-family: 'Biennale', sans-serif;
   font-weight: 600;
   color: #000000;
   line-height: 1.3;
   margin-bottom: 30px;
 }
 
-.studio-details-description {
+.detailsDescription {
   font-size: 18px;
-  color: rgba(85, 85, 85, 1); 
-  font-weight: 400px;
+  color: rgba(85, 85, 85, 1);
+  font-weight: 400;
   line-height: 1.6;
-  font-style: 'Biennale';
+  font-family: 'Biennale', sans-serif;
 }
 
-.studio-details-right {
-  flex: 1;
-}
-
-.studio-location-title {
+.locationTitle {
   font-size: 25px;
-  font-style: 'Biennale';
+  font-family: 'Biennale', sans-serif;
   font-weight: 600;
   color: #000000;
   margin-bottom: 20px;
 }
 
-.studio-location-address {
+.locationAddress {
   font-size: clamp(16px, 1.5vw, 18px);
   color: #666666;
   line-height: 1.8;
   margin-bottom: 30px;
 }
 
-.studio-book-btn {
+.bookBtn {
   background: rgba(1, 30, 244, 1);
   color: white;
   border: none;
-  height:60px;
+  height: 60px;
   width: 140px;
   padding: 10px 20px;
   border-radius: 10px;
-  font-style: 'Biennale';
+  font-family: 'Biennale', sans-serif;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.studio-book-btn:hover {
+.bookBtn:hover {
   background: #0046dd;
   transform: translateY(-2px);
   box-shadow: 0 6px 30px rgba(0, 82, 255, 0.4);
 }
 
-.studio-book-btn:active {
+.bookBtn:active {
   transform: translateY(0);
 }
 
-/* Responsive Design for Studio Section */
+/* =================================================================
+   RESPONSIVE
+   ================================================================= */
+
+/* ── Tablet landscape (≤1024px) ─────────────────────────────────── */
 @media (max-width: 1024px) {
-  .studio-header-content {
-    flex-direction: column;
+  .studioSection {
+    padding: 80px 0 0;
   }
 
-  .studio-details-container {
-    grid-template-columns: 1fr;
-    gap: 60px;
+  .headerContent {
+    padding: 0 48px 40px;
+    gap: 32px;
   }
 
-  .studio-images-wrapper {
-    height: 400px;
-    perspective: 1000px;
+  .textContent {
+    gap: 24px;
   }
 
-  .studio-image-item {
-    width: 450px;
-    height: 320px;
+  .detailsSection {
+    padding: 80px 48px;
+  }
+
+  .detailsContainer {
+    gap: 48px;
+  }
+
+  .lensClip {
+    height: 440px;
+  }
+
+  .marqueeContent {
+    padding-left: 48px;
   }
 }
 
+/* ── Tablet portrait (≤768px) ───────────────────────────────────── */
 @media (max-width: 768px) {
-  .studio-header-section {
-    padding: 60px 24px 40px;
+  .studioSection {
+    padding: 60px 0 0;
   }
 
-  .studio-details-section {
+  .headerContent {
+    flex-direction: column;
+    padding: 0 24px 32px;
+    gap: 24px;
+  }
+
+  .textContent {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .studioTitle {
+    max-width: 480px;
+    font-size: clamp(28px, 5vw, 40px);
+  }
+
+  .studioSubtitle {
+    max-width: 420px;
+    font-size: 16px;
+    margin-top: 0;
+  }
+
+  .studioDescription {
+    max-width: 100%;
+    min-width: unset;
+    width: 100%;
+  }
+
+  .lensClip {
+    height: 320px;
+  }
+
+  .marqueeSection {
+    padding-top: 40px;
+  }
+
+  .marqueeContent {
+    padding-left: 24px;
+    gap: 24px;
+    font-size: 20px;
+  }
+
+  .marqueeItems {
+    gap: 40px;
+  }
+
+  .detailsSection {
     padding: 60px 24px;
   }
 
-  .studio-images-wrapper {
-    height: 350px;
-    perspective: 800px;
-  }
-
-  .studio-image-item {
-    width: 380px;
-    height: 280px;
-  }
-
-  .studio-marquee-content {
+  .detailsContainer {
     flex-direction: column;
-    gap: 20px;
-    align-items: flex-start;
-    padding: 0 24px;
+    gap: 40px;
+  }
+
+  .detailsLeft,
+  .detailsRight {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .detailsTitle,
+  .locationTitle {
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+
+  .detailsDescription {
+    font-size: 16px;
   }
 }
 
+/* ── Mobile (≤480px) ────────────────────────────────────────────── */
 @media (max-width: 480px) {
-  .studio-images-wrapper {
-    height: 300px;
-    perspective: 600px;
+  .studioSection {
+    padding: 48px 0 0;
   }
 
-  .studio-image-item {
-    width: 300px;
-    height: 220px;
+  .headerContent {
+    padding: 0 16px 24px;
+    gap: 20px;
+  }
+
+  .studioTitle {
+    max-width: 330px;
+    font-size: clamp(24px, 7vw, 32px);
+  }
+
+  .studioSubtitle {
+    max-width: 300px;
+    font-size: 15px;
+    line-height: 150%;
+  }
+
+  .lensClip {
+    height: 240px;
+  }
+
+  .marqueeSection {
+    padding-top: 28px;
+  }
+
+  .marqueeContent {
+    padding-left: 16px;
+    font-size: 17px;
+    gap: 16px;
+  }
+
+  .marqueeItems {
+    gap: 28px;
+  }
+
+  .marqueeLabel {
+    font-size: 17px;
+  }
+
+  .detailsSection {
+    padding: 48px 16px;
+  }
+
+  .detailsTitle,
+  .locationTitle {
+    font-size: 20px;
+  }
+
+  .detailsDescription,
+  .locationAddress {
+    font-size: 15px;
+  }
+
+  .bookBtn {
+    width: 100%;
+    height: 52px;
+    font-size: 15px;
   }
 }
 
-/* Footer Styles */
+/* Footer */
 .footer {
   width: 100%;
 }
-

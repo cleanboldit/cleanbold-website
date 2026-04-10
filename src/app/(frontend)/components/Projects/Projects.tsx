@@ -109,11 +109,7 @@ export default function Projects({ block }: ProjectsProps) {
                         className={styles['project-image']}
                       />
                     )}
-                    <span
-                      className={`${styles['project-category-badge']} ${index % 2 === 1 ? styles['badge-right'] : ''}`}
-                    >
-                      {categoryName}
-                    </span>
+                    <span className={styles['project-category-badge']}>{categoryName}</span>
                   </div>
                 </div>
               </motion.div>

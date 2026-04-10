@@ -1,7 +1,6 @@
 'use client'
 
 import styles from './Hero.module.css'
-import homepagebg from '@/assets/homepagebg.png'
 import Link from 'next/link'
 
 interface HeroProps {

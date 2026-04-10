@@ -22,6 +22,10 @@
   text-align: left;
 }
 
+.section-label-projects {
+  font-size: 22px;
+}
+
 /* Category Filters */
 .category-filters {
   display: flex;
@@ -58,7 +62,8 @@
 /* Projects Grid Layout */
 .projects-grid-layout {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  /* large col ~65% wide (landscape), small col ~35% wide (portrait) */
+  grid-template-columns: 1.8fr 1fr;
   gap: 24px;
   margin-bottom: 50px;
 }
@@ -99,11 +104,16 @@
 }
 
 .project-large .project-image-container {
-  height: 420px;
+  width: 1350px;
+  height: 1080px;
+  object-fit: contain;
+  
 }
 
 .project-small .project-image-container {
-  height: 195px;
+  width: 1080px;
+  height: 1920px;
+  object-fit: contain;
 }
 
 
@@ -133,11 +143,6 @@
   z-index: 2;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
-}
-
-.project-category-badge.badge-right {
-  left: auto;
-  right: 30px;
 }
 
 .project-card-inner:hover .project-category-badge {
