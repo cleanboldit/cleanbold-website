@@ -36,7 +36,7 @@ export default buildConfig({
   },
 
   db: mongooseAdapter({
-    url: process.env.MONGODB_URI || '',
+    url: process.env.DATABASE_URI || process.env.MONGODB_URI || '',
   }),
   sharp,
   plugins: [
