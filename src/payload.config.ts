@@ -53,14 +53,11 @@ export default buildConfig({
       tabbedUI: true,
     }),
     // S3 Storage Plugin - stores media files in Cloudflare R2 (S3-compatible)
-    // clientUploads: true → browser uploads directly to R2 via presigned URLs,
-    // bypassing Vercel's 4.5MB serverless function body limit entirely.
     s3Storage({
       collections: {
         media: true,
       },
       bucket: process.env.S3_BUCKET_NAME || '',
-      clientUploads: true,
       config: {
         credentials: {
           accessKeyId: process.env.S3_ACCESS_KEY_TOKEN || '',
