@@ -3,7 +3,7 @@
 import styles from './Projects.module.css'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 
 interface Project {
   id?: string
@@ -25,6 +25,16 @@ interface ProjectsProps {
 export default function Projects({ block }: ProjectsProps) {
   const { projects = [], sectionLabel, mainTitle, description, exploreButtonText } = block
   const [selectedCategory, setSelectedCategory] = useState('All')
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const SEGMENTS = 5
+
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const max = el.scrollWidth - el.clientWidth
+    setScrollProgress(max > 0 ? el.scrollLeft / max : 0)
+  }, [])
 
   // Derive unique category names from the inline project array
   const categories: string[] = Array.from(
@@ -83,36 +93,51 @@ export default function Projects({ block }: ProjectsProps) {
           ))}
         </motion.div>
 
-        <div className={styles['projects-grid-layout']}>
-          {filteredProjects?.map((project: Project, index: number) => {
-            const imageUrl = typeof project.image === 'object' ? project.image?.url : project.image
-            const categoryName =
-              typeof project.category === 'string' ? project.category : project.category?.name
-
-            return (
-              <motion.div
-                key={project.id || index}
-                className={`${styles['project-card-item']} ${project.size === 'large' ? styles['project-large'] : styles['project-small']}`}
-                initial={{ opacity: 0, y: 80 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.8, delay: index * 0.15 }}
-              >
-                <div className={styles['project-card-inner']}>
-                  <div className={styles['project-image-container']}>
-                    {imageUrl && (
-                      <Image
-                        src={imageUrl}
-                        alt={categoryName ?? ''}
-                        width={800}
-                        height={600}
-                        className={styles['project-image']}
-                      />
-                    )}
+        <div className={styles['masonry-scroll-outer']} ref={scrollRef} onScroll={handleScroll}>
+          <div className={styles['masonry-grid']}>
+            {filteredProjects.map((project, index) => {
+              const imageUrl =
+                typeof project.image === 'object' ? project.image?.url : project.image
+              const categoryName =
+                typeof project.category === 'string' ? project.category : project.category?.name
+              return (
+                <motion.div
+                  key={project.id || index}
+                  className={styles['masonry-item']}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ duration: 0.5, delay: (index % 2) * 0.1 }}
+                >
+                  {imageUrl && (
+                    <Image
+                      src={imageUrl}
+                      alt={categoryName ?? ''}
+                      width={800}
+                      height={600}
+                      className={styles['masonry-img']}
+                    />
+                  )}
+                  {categoryName && (
                     <span className={styles['project-category-badge']}>{categoryName}</span>
-                  </div>
-                </div>
-              </motion.div>
+                  )}
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Custom scroll indicator */}
+        <div className={styles['scroll-indicator']}>
+          {Array.from({ length: SEGMENTS }).map((_, i) => {
+            const segStart = i / SEGMENTS
+            const segEnd = (i + 1) / SEGMENTS
+            const active = scrollProgress >= segStart && scrollProgress < segEnd
+            return (
+              <span
+                key={i}
+                className={`${styles['scroll-seg']} ${active ? styles['scroll-seg-active'] : ''}`}
+              />
             )
           })}
         </div>
