@@ -142,6 +142,8 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
                         width={280}
                         height={200}
                         className={styles['offering-img']}
+                        sizes="(max-width: 768px) 85vw, 280px"
+                        loading="lazy"
                       />
                     </div>
                   )}
@@ -154,6 +156,8 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
                         width={280}
                         height={200}
                         className={styles['offering-img']}
+                        sizes="(max-width: 768px) 85vw, 280px"
+                        loading="lazy"
                       />
                     </div>
                   )}

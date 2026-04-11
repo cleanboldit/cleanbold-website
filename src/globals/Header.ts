@@ -10,6 +10,18 @@ export const Header: GlobalConfig = {
   access: {
     read: () => true,
   },
+  hooks: {
+    afterChange: [
+      async () => {
+        try {
+          const { revalidateGlobalsCache } = await import('@/lib/revalidate')
+          revalidateGlobalsCache()
+        } catch (e) {
+          console.error('[revalidate] header afterChange', e)
+        }
+      },
+    ],
+  },
   fields: [
     {
       name: 'logo',

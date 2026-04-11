@@ -1,0 +1,83 @@
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-light, #f0f0f0) 0%,
+    #e8eaf6 50%,
+    var(--color-gray-light, #f0f0f0) 100%
+  );
+  background-size: 200% 100%;
+  animation: pulse 1.4s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+.page {
+  min-height: 100vh;
+}
+
+.headerBar {
+  composes: skeleton;
+  height: 72px;
+  width: 100%;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+.heroBlock {
+  composes: skeleton;
+  width: 100%;
+  min-height: 55vh;
+  border-radius: 0;
+  margin-bottom: 2rem;
+}
+
+.contentLine {
+  composes: skeleton;
+  height: 14px;
+  margin-bottom: 0.75rem;
+  max-width: 420px;
+}
+
+.contentLineShort {
+  composes: skeleton;
+  height: 14px;
+  margin-bottom: 1.5rem;
+  max-width: 280px;
+}
+
+.gridRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  composes: skeleton;
+  flex: 1;
+  min-width: 120px;
+  height: 100px;
+}
+
+.footerArea {
+  composes: skeleton;
+  height: 200px;
+  width: 100%;
+  margin-top: 3rem;
+  border-radius: 0;
+}
+
+.section {
+  padding: 0 1.5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}

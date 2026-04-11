@@ -25,11 +25,24 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
         const key = block.id ?? block.blockType
 
         switch (block.blockType) {
-          case 'hero':
+          case 'hero': {
+            const posterField = block.posterImage as { url?: string } | string | null | undefined
+            const posterUrl =
+              typeof posterField === 'object' && posterField?.url
+                ? posterField.url
+                : typeof posterField === 'string'
+                  ? posterField
+                  : null
             return (
               <div key={key} id="hero">
                 <Hero
                   video={block.video as { url: string } | null}
+                  posterUrl={posterUrl}
+                  fallbackBackgroundColor={
+                    typeof block.fallbackBackgroundColor === 'string'
+                      ? block.fallbackBackgroundColor
+                      : null
+                  }
                   primaryButtonText={block.primaryButtonText as string | null}
                   primaryButtonUrl={block.primaryButtonUrl as string | null}
                   secondaryButtonText={block.secondaryButtonText as string | null}
@@ -37,6 +50,7 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
                 />
               </div>
             )
+          }
 
           case 'core-offerings':
             return (

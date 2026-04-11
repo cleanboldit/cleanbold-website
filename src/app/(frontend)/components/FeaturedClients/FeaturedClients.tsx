@@ -76,6 +76,8 @@ const LogoCard = memo(function LogoCard({
           width={200}
           height={100}
           className={styles['client-brand-logo']}
+          sizes="(max-width: 768px) 28vw, 160px"
+          loading="lazy"
         />
       </div>
     </div>

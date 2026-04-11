@@ -116,6 +116,8 @@ export default function Projects({ block }: ProjectsProps) {
                       width={800}
                       height={600}
                       className={styles['masonry-img']}
+                      sizes="(max-width: 768px) 88vw, (max-width: 1200px) 45vw, 520px"
+                      loading="lazy"
                     />
                   )}
                   {categoryName && (

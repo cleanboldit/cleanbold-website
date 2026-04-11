@@ -184,6 +184,14 @@ export interface Page {
              * Upload an MP4 video file for the hero background.
              */
             video: string | Media;
+            /**
+             * Still image shown until the video can play. Export a JPEG/WebP frame from your video for best results.
+             */
+            posterImage?: (string | null) | Media;
+            /**
+             * Solid color behind the video while it loads (e.g. #1a237e).
+             */
+            fallbackBackgroundColor?: string | null;
             primaryButtonText?: string | null;
             primaryButtonUrl?: string | null;
             secondaryButtonText?: string | null;
@@ -507,6 +515,8 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               video?: T;
+              posterImage?: T;
+              fallbackBackgroundColor?: T;
               primaryButtonText?: T;
               primaryButtonUrl?: T;
               secondaryButtonText?: T;

@@ -69,7 +69,14 @@ export default function PageHero({ block }: PageHeroProps) {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: i * 0.1 }}
               >
-                <Image src={url} alt={mainTitle ?? ''} fill className={styles.image} />
+                <Image
+                  src={url}
+                  alt={mainTitle ?? ''}
+                  fill
+                  className={styles.image}
+                  sizes="(max-width: 768px) 100vw, (max-width: 900px) 28vw, 26vw"
+                  loading="lazy"
+                />
               </motion.div>
             )
           })}

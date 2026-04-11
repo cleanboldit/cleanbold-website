@@ -1,10 +1,16 @@
-import { redirect, notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
-import Header from '../components/Header/Header'
-import Footer from '../components/Footer/Footer'
-import BlockRenderer from '../components/BlockRenderer/BlockRenderer'
-import { getPageBySlug, getGlobal } from '@/lib/payload'
-import type { Header as HeaderGlobal, Footer as FooterGlobal } from '@/payload-types'
+import React, { Suspense } from 'react'
+import AsyncHeader from '../AsyncHeader'
+import AsyncFooter from '../AsyncFooter'
+import PageBlocksFromSlug from '../PageBlocksFromSlug'
+import {
+  FooterSkeleton,
+  HeaderSkeleton,
+  MainContentSkeleton,
+} from '../components/PageLoadSkeletons/PageLoadSkeletons'
+import { buildPageMetadata } from '@/lib/metadata'
+import { getPageBySlug } from '@/lib/payload'
 
 export async function generateMetadata({
   params,
@@ -12,34 +18,31 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
+  if (slug === 'home') {
+    return buildPageMetadata(undefined, { path: '/' })
+  }
   const page = await getPageBySlug(slug)
-  const title = page?.title
-    ? `${page.title} | Clean Bold Studio`
-    : 'Clean Bold Studio | Creative Digital Agency'
-  return { title }
+  return buildPageMetadata(page ?? undefined, { path: `/${slug}` })
 }
 
-export default async function SlugPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function SlugPage({
+  params,
+}: Readonly<{ params: Promise<{ slug: string }> }>) {
   const { slug } = await params
 
   if (slug === 'home') redirect('/')
 
-  const [page, header, footer] = await Promise.all([
-    getPageBySlug(slug),
-    getGlobal('header') as Promise<HeaderGlobal>,
-    getGlobal('footer') as Promise<FooterGlobal>,
-  ])
-
-  const p = page
-  if (p == null) notFound()
-
   return (
     <div className="home-page">
-      <Header data={header} />
-      <BlockRenderer blocks={p.layout ?? []} />
-      <div id="contact">
-        <Footer data={footer} />
-      </div>
+      <Suspense fallback={<HeaderSkeleton />}>
+        <AsyncHeader />
+      </Suspense>
+      <Suspense fallback={<MainContentSkeleton />}>
+        <PageBlocksFromSlug slug={slug} enforceFound />
+      </Suspense>
+      <Suspense fallback={<FooterSkeleton />}>
+        <AsyncFooter />
+      </Suspense>
     </div>
   )
 }

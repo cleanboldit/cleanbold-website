@@ -11,7 +11,7 @@ export const metadata = {
   },
 }
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
+export default async function RootLayout(props: Readonly<{ children: React.ReactNode }>) {
   const { children } = props
 
   return (

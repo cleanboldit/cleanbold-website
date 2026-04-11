@@ -68,6 +68,8 @@ export default function Industries({ block }: IndustriesProps) {
                     alt={activeIndustry?.name ?? ''}
                     fill
                     className={styles.image}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1100px) 48vw, 520px"
+                    loading="lazy"
                   />
                 </motion.div>
               )}

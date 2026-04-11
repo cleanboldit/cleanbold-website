@@ -17,6 +17,24 @@ export const HeroBlock: Block = {
       },
     },
     {
+      name: 'posterImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Hero poster (optional)',
+      admin: {
+        description:
+          'Still image shown until the video can play. Export a JPEG/WebP frame from your video for best results.',
+      },
+    },
+    {
+      name: 'fallbackBackgroundColor',
+      type: 'text',
+      label: 'Fallback tint (optional)',
+      admin: {
+        description: 'Solid color behind the video while it loads (e.g. #1a237e).',
+      },
+    },
+    {
       name: 'primaryButtonText',
       type: 'text',
       label: 'Primary Button Text',
@@ -496,6 +514,30 @@ export const Pages: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'updatedAt'],
+  },
+  hooks: {
+    afterChange: [
+      async ({ doc }) => {
+        try {
+          const slug = typeof doc.slug === 'string' ? doc.slug : null
+          const { revalidatePagesCache } = await import('@/lib/revalidate')
+          revalidatePagesCache(slug)
+        } catch (e) {
+          console.error('[revalidate] pages afterChange', e)
+        }
+      },
+    ],
+    afterDelete: [
+      async ({ doc }) => {
+        try {
+          const slug = typeof doc.slug === 'string' ? doc.slug : null
+          const { revalidatePagesCache } = await import('@/lib/revalidate')
+          revalidatePagesCache(slug)
+        } catch (e) {
+          console.error('[revalidate] pages afterDelete', e)
+        }
+      },
+    ],
   },
   access: {
     read: () => true,

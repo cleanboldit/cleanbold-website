@@ -10,6 +10,18 @@ export const SiteSettings: GlobalConfig = {
   access: {
     read: () => true,
   },
+  hooks: {
+    afterChange: [
+      async () => {
+        try {
+          const { revalidateGlobalsCache } = await import('@/lib/revalidate')
+          revalidateGlobalsCache()
+        } catch (e) {
+          console.error('[revalidate] site-settings afterChange', e)
+        }
+      },
+    ],
+  },
   fields: [
     {
       name: 'siteTitle',
