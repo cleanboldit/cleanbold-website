@@ -3,11 +3,10 @@ import './styles.css'
 import './components-styles.css'
 
 export const metadata = {
-  description:
-    'Clean Bold - A creative digital studio crafting innovative solutions for brands that dare to be different',
-  title: 'Clean Bold Studio | Creative Digital Agency',
+  title: 'Cleanbold Advertising | Sharp Shots. Bold Stories. Brands That Grow.',
+  description: 'Where Creativity Converts.',
   icons: {
-    icon: '/logo-1.png',
+    icon: '/favicon.ico',
   },
 }
 
