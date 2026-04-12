@@ -170,6 +170,12 @@ export const ProjectsBlock: Block = {
           label: 'Project Image',
         },
         {
+          name: 'video',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Project Video (optional — overrides image)',
+        },
+        {
           name: 'size',
           type: 'select',
           label: 'Card Size',

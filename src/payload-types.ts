@@ -228,6 +228,7 @@ export interface Page {
               | {
                   category?: string | null;
                   image?: (string | null) | Media;
+                  video?: (string | null) | Media;
                   size?: ('large' | 'small') | null;
                   id?: string | null;
                 }[]
@@ -556,6 +557,7 @@ export interface PagesSelect<T extends boolean = true> {
                 | {
                     category?: T;
                     image?: T;
+                    video?: T;
                     size?: T;
                     id?: T;
                   };
