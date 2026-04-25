@@ -3,7 +3,7 @@
 import styles from './Projects.module.css'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 
 interface Project {
   id?: string
@@ -26,11 +26,15 @@ interface ProjectsProps {
 export default function Projects({ block }: ProjectsProps) {
   const { projects = [], sectionLabel, mainTitle, description, exploreButtonText } = block
   const [selectedCategory, setSelectedCategory] = useState('All')
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const dragState = useRef({ startX: 0, scrollLeft: 0 })
 
   const categories: string[] = Array.from(
     new Set(
       projects
-        .map((p) => (typeof p.category === 'string' ? p.category : p.category?.name))
+        .map((p: Project) => (typeof p.category === 'string' ? p.category : p.category?.name))
         .filter((c): c is string => Boolean(c)),
     ),
   ).reverse()
@@ -38,14 +42,48 @@ export default function Projects({ block }: ProjectsProps) {
   const filteredProjects =
     selectedCategory === 'All'
       ? projects
-      : projects.filter((p) => {
-          const cat = typeof p.category === 'string' ? p.category : p.category?.name
-          return cat === selectedCategory
+      : projects.filter((project: Project) => {
+          const category =
+            typeof project.category === 'string' ? project.category : project.category?.name
+          return category === selectedCategory
         })
 
-  // Double the array for seamless marquee loop
-  const marqueeItems = [...filteredProjects, ...filteredProjects]
-  const duration = Math.max(12, filteredProjects.length * 4)
+  // Update scroll progress
+  const updateProgress = useCallback(() => {
+    const el = trackRef.current
+    if (!el) return
+    const max = el.scrollWidth - el.clientWidth
+    setScrollProgress(max > 0 ? el.scrollLeft / max : 0)
+  }, [])
+
+  useEffect(() => {
+    const el = trackRef.current
+    if (!el) return
+    el.addEventListener('scroll', updateProgress, { passive: true })
+    updateProgress()
+    return () => el.removeEventListener('scroll', updateProgress)
+  }, [updateProgress, filteredProjects])
+
+  // Drag to scroll
+  const handlePointerDown = (e: React.PointerEvent) => {
+    const el = trackRef.current
+    if (!el) return
+    setIsDragging(true)
+    dragState.current = { startX: e.clientX, scrollLeft: el.scrollLeft }
+    el.setPointerCapture(e.pointerId)
+  }
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging) return
+    const el = trackRef.current
+    if (!el) return
+    const dx = e.clientX - dragState.current.startX
+    el.scrollLeft = dragState.current.scrollLeft - dx
+  }
+
+  const handlePointerUp = () => {
+    setIsDragging(false)
+  }
 
   return (
     <section className={styles['projects-section']}>
@@ -81,7 +119,7 @@ export default function Projects({ block }: ProjectsProps) {
           </motion.p>
         </div>
 
-        {/* Category filters */}
+        {/* Top bar: filters + arrows */}
         <div className={styles['top-bar']}>
           <motion.div
             className={styles['category-filters']}
@@ -90,7 +128,7 @@ export default function Projects({ block }: ProjectsProps) {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            {['All', ...categories].map((cat, i) => (
+            {['All', ...categories].map((cat: string, i: number) => (
               <motion.button
                 key={cat}
                 className={`${styles['filter-btn']} ${selectedCategory === cat ? styles.active : ''}`}
@@ -109,59 +147,86 @@ export default function Projects({ block }: ProjectsProps) {
         </div>
       </div>
 
-      {/* Infinite marquee track */}
-      <div className={styles['marquee-outer']}>
-        <div
-          className={styles['marquee-inner']}
-          style={{ '--marquee-duration': `${duration}s` } as React.CSSProperties}
-        >
-          {marqueeItems.map((project, index) => {
-            const imageUrl = typeof project.image === 'object' ? project.image?.url : project.image
-            const videoUrl = typeof project.video === 'object' ? project.video?.url : project.video
-            const categoryName =
-              typeof project.category === 'string' ? project.category : project.category?.name
+      {/* ═══ Filmstrip Gallery — full bleed ═══ */}
+      <div
+        className={`${styles['film-track']} ${isDragging ? styles['film-track-grabbing'] : ''}`}
+        ref={trackRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+      >
+        {filteredProjects.map((project, index) => {
+          const imageUrl = typeof project.image === 'object' ? project.image?.url : project.image
+          const videoUrl = typeof project.video === 'object' ? project.video?.url : project.video
+          const categoryName =
+            typeof project.category === 'string' ? project.category : project.category?.name
+          const isOdd = index % 2 === 1
 
-            return (
-              <div
-                key={`${project.id ?? index}-${index}`}
-                className={styles['film-card']}
-              >
-                <div className={styles['film-card-frame']}>
-                  {videoUrl ? (
-                    <video
-                      src={videoUrl}
-                      className={styles['film-card-video']}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      draggable={false}
-                    />
-                  ) : imageUrl ? (
-                    <Image
-                      src={imageUrl}
-                      alt={categoryName ?? ''}
-                      fill
-                      className={styles['film-card-img']}
-                      sizes="(max-width: 768px) 72vw, 340px"
-                      loading="lazy"
-                      draggable={false}
-                    />
-                  ) : null}
-                  {categoryName && (
-                    <div className={styles['film-card-overlay']}>
-                      <span className={styles['film-card-category']}>{categoryName}</span>
-                    </div>
-                  )}
-                </div>
+          return (
+            <motion.div
+              key={project.id || `project-${index}`}
+              className={`${styles['film-card']} ${isOdd ? styles['film-card-offset'] : ''}`}
+              initial={{ opacity: 0, y: 60, scale: 0.92, rotate: isOdd ? 2 : -2 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{
+                duration: 0.7,
+                delay: index * 0.08,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              <div className={styles['film-card-frame']}>
+                {videoUrl ? (
+                  <video
+                    src={videoUrl}
+                    className={styles['film-card-video']}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    draggable={false}
+                  />
+                ) : imageUrl ? (
+                  <Image
+                    src={imageUrl}
+                    alt={categoryName ?? ''}
+                    fill
+                    className={styles['film-card-img']}
+                    sizes="(max-width: 768px) 72vw, 380px"
+                    loading="lazy"
+                    draggable={false}
+                  />
+                ) : null}
+                {/* Category reveal on hover */}
+                {categoryName && (
+                  <div className={styles['film-card-overlay']}>
+                    <span className={styles['film-card-category']}>{categoryName}</span>
+                  </div>
+                )}
               </div>
-            )
-          })}
-        </div>
+              {/* Card number below */}
+              <span className={styles['film-card-index']}>
+                {String(index + 1).padStart(2, '0')}
+              </span>
+            </motion.div>
+          )
+        })}
       </div>
 
-      {/* CTA */}
+      {/* Progress bar + CTA */}
       <div className={styles['projects-inner']}>
+        <div className={styles['bottom-bar']}>
+          <div className={styles['progress-track']}>
+            <motion.div
+              className={styles['progress-fill']}
+              animate={{ scaleX: scrollProgress || 0.02 }}
+              transition={{ type: 'tween', duration: 0.15, ease: 'easeOut' }}
+            />
+          </div>
+          <span className={styles['scroll-hint']}>Drag to explore</span>
+        </div>
+
         <motion.div
           className={styles['projects-cta']}
           initial={{ opacity: 0, y: 30 }}
