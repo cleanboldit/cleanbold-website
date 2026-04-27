@@ -7,9 +7,21 @@ type HeroProps = Readonly<{
   video: { url: string } | null
   posterUrl?: string | null
   fallbackBackgroundColor?: string | null
+  primaryButtonText?: string | null
+  primaryButtonUrl?: string | null
+  secondaryButtonText?: string | null
+  secondaryButtonUrl?: string | null
 }>
 
-export default function Hero({ video, posterUrl, fallbackBackgroundColor }: HeroProps) {
+export default function Hero({
+  video,
+  posterUrl,
+  fallbackBackgroundColor,
+  primaryButtonText,
+  primaryButtonUrl,
+  secondaryButtonText,
+  secondaryButtonUrl,
+}: HeroProps) {
   const [videoReady, setVideoReady] = useState(false)
   const [videoFailed, setVideoFailed] = useState(false)
   const revealVideo = useCallback(() => setVideoReady(true), [])
