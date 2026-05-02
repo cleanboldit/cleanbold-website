@@ -33,23 +33,30 @@ src/
 
 ## Page Block System
 
-Pages use a `layout` blocks field. Each block maps to a React component:
+Pages use a `layout` blocks field. Each block maps to a React component via `BlockRenderer.tsx`.
 
-| Block slug | Component | Purpose |
-|---|---|---|
-| `hero` | `Hero` | Video bg + CTA buttons |
-| `coreOfferings` | `OurWork` | Services grid |
-| `projects` | `Projects` | Portfolio items |
-| `featuredClients` | `FeaturedClients` | Logo marquee |
-| `whyBrandsChoose` | `WhyBrandsChoose` | 3-col comparison |
-| `studioSection` | `StudioSection` | Studio showcase |
-| `pageHero` | `PageHero` | Page header + bento images |
-| `serviceCards` | `ServiceCards` | Service cards |
-| `industries` | `Industries` | Industry showcase |
-| `highlightCard` | `HighlightCard` | Featured callout |
-| `CTASection` | `CTASection` | Call to action |
+**Block slugs are kebab-case** (the actual `blockType` values in DB and CMS config):
 
-`BlockRenderer.tsx` maps block slugs → components.
+| Block slug | Component | Section ID | Purpose |
+|---|---|---|---|
+| `hero` | `Hero` | `#hero` | Video bg + CTA buttons |
+| `core-offerings` | `OurWork` | `#services` | Services grid |
+| `projects` | `Projects` | `#work` | Portfolio items |
+| `featured-clients` | `FeaturedClients` | — | Logo marquee |
+| `why-brands-choose` | `WhyBrandsChoose` | `#about` | 3-col comparison |
+| `studio-section` | `StudioSection` | `#studio` | Studio showcase |
+| `cta-section` | `CTASection` | — | Call to action |
+| `page-hero` | `PageHero` | — | Page header + bento images |
+| `service-cards` | `ServiceCards` | — | Service cards |
+| `industries` | `Industries` | — | Industry showcase |
+| `highlight-card` | `HighlightCard` | — | Featured callout |
+
+Non-block utility components (not in BlockRenderer):
+- `IntroAnimation` — page load intro animation
+- `OverlayImage` — image overlay helper
+- `PageLoadSkeletons` — loading skeletons
+- `Contact` — contact form
+- `AsyncHeader` / `AsyncFooter` — async server components wrapping Header/Footer globals
 
 ## Key Commands
 
@@ -66,14 +73,17 @@ pnpm test:e2e                 # Playwright E2E tests
 
 `.env` (never commit):
 ```
-DATABASE_URI=         # MongoDB connection string
-PAYLOAD_SECRET=       # Random secret for Payload auth
+DATABASE_URI=                     # MongoDB connection string
+PAYLOAD_SECRET=                   # Random secret for Payload auth
 S3_BUCKET_NAME=
-S3_ENDPOINT=          # Cloudflare R2 endpoint
+S3_ENDPOINT=                      # Cloudflare R2 endpoint
 S3_PUBLIC_URL=
 S3_ACCESS_KEY_TOKEN=
 S3_SECRET_KEY=
 S3_REGION=
+NEXT_PUBLIC_IMAGE_REMOTE_HOSTS=   # Comma-separated hostnames for next/image (no https://)
+NEXT_PUBLIC_SITE_URL=             # Canonical URL with https:// for OG/sitemap
+REVALIDATE_SECRET=                # Secret for POST /api/revalidate header x-revalidate-secret
 ```
 
 ## Code Conventions

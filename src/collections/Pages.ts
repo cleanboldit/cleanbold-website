@@ -110,6 +110,19 @@ export const CoreOfferingsBlock: Block = {
           label: 'Card Image',
         },
         {
+          name: 'servicesList',
+          type: 'array',
+          label: 'Services List',
+          fields: [
+            {
+              name: 'item',
+              type: 'text',
+              label: 'Service Item',
+              required: true,
+            },
+          ],
+        },
+        {
           name: 'imagePosition',
           type: 'select',
           label: 'Image Position',

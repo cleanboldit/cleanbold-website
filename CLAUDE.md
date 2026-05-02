@@ -1,3 +1,12 @@
+# Project: Cleanbold Advertising Website
+
+**Stack:** Next.js 15.5 + Payload CMS 3.59 + MongoDB + Cloudflare R2 + TypeScript + React 19
+**Package manager:** pnpm | **Dev:** `pnpm dev` (port 3000)
+
+Full project context → `docs/CLAUDE.md`
+
+---
+
 <!-- code-review-graph MCP tools -->
 ## MCP Tools: code-review-graph
 

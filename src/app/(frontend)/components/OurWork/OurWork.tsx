@@ -1,26 +1,29 @@
 'use client'
 
-import styles from './OurWork.module.css'
-import { motion, useInView } from 'framer-motion'
+import { useRef, useEffect } from 'react'
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValue,
+  useSpring,
+  useMotionTemplate,
+  type MotionValue,
+} from 'framer-motion'
 import Image from 'next/image'
-import Link from 'next/link'
-import { useRef, useState, useCallback } from 'react'
+import styles from './OurWork.module.css'
 
-const offeringColorMap: Record<string, string> = {
-  'dark-blue': 'linear-gradient(135deg, #0d1b3e 0%, #1a2f6e 100%)',
-  'dark-gray': 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-  teal: 'linear-gradient(135deg, #0d3535 0%, #0e5454 100%)',
-  purple: 'linear-gradient(135deg, #1a0a3d 0%, #3b1fa0 100%)',
+interface ServiceItem {
+  item?: string
+  id?: string
 }
 
 interface Offering {
   id?: string
   title?: string
-  description?: string
-  color?: string
   image?: { url?: string } | string | null
-  imagePosition?: string
   backgroundImage?: { url?: string } | string | null
+  servicesList?: ServiceItem[]
 }
 
 interface CoreOfferingsProps {
@@ -29,179 +32,178 @@ interface CoreOfferingsProps {
     mainTitle?: string
     description?: string
     exploreButtonText?: string
+    backgroundColor?: string
     offerings?: Offering[]
   }
 }
 
-export default function CoreOfferings({ block }: CoreOfferingsProps) {
-  const { offerings = [], sectionLabel, mainTitle, description, exploreButtonText } = block
-  const ref = useRef(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
-  const [activeIndex, setActiveIndex] = useState(0)
+interface ScrollCardProps {
+  offering: Offering
+  scrollYProgress: MotionValue<number>
+  animStart: number
+  animEnd: number
+}
 
-  const handleScroll = useCallback(() => {
-    if (!scrollRef.current) return
-    const { scrollLeft } = scrollRef.current
-    const cardWidth = 320 // card width + gap
-    const index = Math.round(scrollLeft / cardWidth)
-    setActiveIndex(index)
-  }, [])
+interface BgLayerProps {
+  scrollYProgress: MotionValue<number>
+  bgUrl: string
+  inputRange: number[]
+  outputRange: number[]
+}
 
-  const handlePrev = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -380, behavior: 'smooth' })
-    }
-  }
+// Per-card section background — fades in when card enters, fades out when next card enters
+function BgLayer({ scrollYProgress, bgUrl, inputRange, outputRange }: BgLayerProps) {
+  const opacity = useTransform(scrollYProgress, inputRange, outputRange)
+  return (
+    <motion.div
+      className={styles.background}
+      style={{
+        opacity,
+        backgroundImage: `url('${bgUrl}')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    />
+  )
+}
 
-  const handleNext = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 380, behavior: 'smooth' })
-    }
-  }
+function ScrollCard({ offering, scrollYProgress, animStart, animEnd }: ScrollCardProps) {
+  const opacity = useTransform(scrollYProgress, [animStart, animEnd], [0, 1])
+  const y = useTransform(scrollYProgress, [animStart, animEnd], ['100vh', '0vh'])
+  const scale = useTransform(scrollYProgress, [animStart, animEnd], [0.93, 1])
+
+  const imageUrl =
+    typeof offering.image === 'object' ? offering.image?.url : offering.image
 
   return (
-    <section className={styles['core-offerings']} ref={ref}>
-      <div className={styles['offerings-container']}>
+    <motion.div
+      className={styles.card}
+      style={{ opacity, y, scale, willChange: 'opacity, transform' }}
+    >
+      {imageUrl && (
+        <div className={styles.cardImage}>
+          <Image
+            src={imageUrl}
+            alt={offering.title ?? ''}
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 1440px) 30vw, 420px"
+          />
+        </div>
+      )}
+
+      <h3 className={styles.cardTitle}>{offering.title}</h3>
+
+      <ul className={styles.servicesList}>
+        {offering.servicesList?.map((s, i) => (
+          <li key={s.id ?? i} className={styles.serviceItem}>
+            <span className={styles.serviceDot} />
+            {s.item}
+          </li>
+        ))}
+      </ul>
+    </motion.div>
+  )
+}
+
+export default function CoreOfferings({ block }: CoreOfferingsProps) {
+  const { offerings = [] } = block
+  const containerRef = useRef<HTMLDivElement>(null)
+  const n = Math.max(offerings.length, 1)
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  })
+
+  // Cursor-tracking overlay — adds directional depth on top of card bg images
+  const rawX = useMotionValue(65)
+  const rawY = useMotionValue(62)
+  const springX = useSpring(rawX, { stiffness: 60, damping: 18 })
+  const springY = useSpring(rawY, { stiffness: 60, damping: 18 })
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      rawX.set((e.clientX / window.innerWidth) * 100)
+      rawY.set((e.clientY / window.innerHeight) * 100)
+    }
+    window.addEventListener('mousemove', onMove)
+    return () => window.removeEventListener('mousemove', onMove)
+  }, [rawX, rawY])
+
+  // Soft dark vignette that follows cursor — sits over the bg images
+  const cursorOverlay = useMotionTemplate`radial-gradient(ellipse 80% 80% at ${springX}% ${springY}%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 100%)`
+
+  const fraction = 0.85 / n
+
+  return (
+    <div
+      ref={containerRef}
+      className={styles.container}
+      style={{ height: `${(n + 1.5) * 100}vh` }}
+    >
+      <div className={styles.stickyPane}>
+
+        {/* Per-card background images — crossfade on scroll */}
+        {offerings.map((offering, index) => {
+          const bgUrl =
+            typeof offering.backgroundImage === 'object'
+              ? offering.backgroundImage?.url
+              : offering.backgroundImage
+          if (!bgUrl) return null
+
+          const animStart = index * fraction
+          const animEnd = animStart + fraction * 0.65
+          const nextStart = (index + 1) * fraction
+          const nextEnd = nextStart + fraction * 0.65
+
+          const inputRange =
+            index < n - 1
+              ? [animStart, animEnd, nextStart, nextEnd]
+              : [animStart, animEnd]
+          const outputRange = index < n - 1 ? [0, 1, 1, 0] : [0, 1]
+
+          return (
+            <BgLayer
+              key={offering.id ?? index}
+              scrollYProgress={scrollYProgress}
+              bgUrl={bgUrl}
+              inputRange={inputRange}
+              outputRange={outputRange}
+            />
+          )
+        })}
+
+        {/* Cursor-tracking dark vignette overlay */}
         <motion.div
-          className={styles['offerings-header']}
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-        >
-          <div className={styles['offerings-header-content']}>
-            <p className={styles['section-label']}>{sectionLabel}</p>
-            <h2>{mainTitle}</h2>
-            <p className={styles['section-description']}>{description}</p>
-          </div>
+          className={styles.background}
+          style={{ background: cursorOverlay }}
+        />
 
-          <div className={styles['offerings-header-controls']}>
-            <button className={styles['carousel-btn']} onClick={handlePrev} aria-label="Previous">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M15 18L9 12L15 6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-
-            <button className={styles['carousel-btn']} onClick={handleNext} aria-label="Next">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M9 18L15 12L9 6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-          </div>
-        </motion.div>
-
-        <div className={styles['offerings-carousel']}>
-          <div className={styles['offerings-scroll']} ref={scrollRef} onScroll={handleScroll}>
-            {offerings?.map((offering: Offering, index: number) => {
-              const imageUrl =
-                typeof offering.image === 'object' ? offering.image?.url : offering.image
-              const bgImageUrl =
-                typeof offering.backgroundImage === 'object'
-                  ? offering.backgroundImage?.url
-                  : offering.backgroundImage
-              // Normalize imagePosition to handle case sensitivity and whitespace
-              const imagePosition = offering.imagePosition?.toString().toLowerCase().trim() || 'top'
-              const isTop = imagePosition === 'top'
-              const isBottom = imagePosition === 'bottom'
-              const colorKey = offering.color?.toString().toLowerCase().trim() || 'dark-blue'
-              const contentBackground = offeringColorMap[colorKey] ?? offeringColorMap['dark-blue']
-
+        <div className={styles.inner}>
+          <div
+            className={styles.grid}
+            style={{
+              gridTemplateColumns: `repeat(${n}, 1fr)`,
+              gap: 'clamp(24px, 3vw, 48px)',
+            }}
+          >
+            {offerings.map((offering, index) => {
+              const start = index * fraction
+              const end = start + fraction * 0.65
               return (
-                <motion.div
-                  key={offering.id || index}
-                  className={`${styles['offering-card']} ${isTop ? styles['image-top'] : styles['image-bottom']} ${bgImageUrl ? styles['has-bg-image'] : ''}`}
-                  style={
-                    bgImageUrl
-                      ? {
-                          backgroundImage: `url('${bgImageUrl}')`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }
-                      : undefined
-                  }
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                >
-                  {isTop && imageUrl && (
-                    <div className={styles['card-image-top']}>
-                      <Image
-                        src={imageUrl}
-                        alt={offering.title ?? ''}
-                        width={280}
-                        height={200}
-                        className={styles['offering-img']}
-                        sizes="(max-width: 768px) 85vw, 280px"
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
-
-                  {isBottom && imageUrl && (
-                    <div className={styles['card-image-bottom']}>
-                      <Image
-                        src={imageUrl}
-                        alt={offering.title ?? ''}
-                        width={280}
-                        height={200}
-                        className={styles['offering-img']}
-                        sizes="(max-width: 768px) 85vw, 280px"
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
-
-                  <div
-                    className={styles['card-content']}
-                    style={bgImageUrl ? undefined : { background: contentBackground }}
-                  >
-                    <h2>{offering.title}</h2>
-                    <p>{offering.description}</p>
-                  </div>
-                </motion.div>
+                <ScrollCard
+                  key={offering.id ?? index}
+                  offering={offering}
+                  scrollYProgress={scrollYProgress}
+                  animStart={start}
+                  animEnd={end}
+                />
               )
             })}
           </div>
         </div>
-
-        {/* Mobile dot indicators */}
-        <div className={styles['carousel-dots']}>
-          {offerings?.map((_, i) => (
-            <button
-              key={i}
-              className={`${styles['carousel-dot']} ${i === activeIndex ? styles['carousel-dot-active'] : ''}`}
-              onClick={() => {
-                if (!scrollRef.current) return
-                scrollRef.current.scrollTo({ left: i * 320, behavior: 'smooth' })
-                setActiveIndex(i)
-              }}
-              aria-label={`Go to card ${i + 1}`}
-            />
-          ))}
-        </div>
-        <motion.div
-          className={styles['offerings-cta-container']}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <Link href="/services" className={styles['offerings-cta']}>
-            {exploreButtonText || 'Explore All Services'}
-          </Link>
-        </motion.div>
       </div>
-    </section>
+    </div>
   )
 }

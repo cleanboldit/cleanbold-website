@@ -45,7 +45,7 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   color: var(--color-black);
-  overflow-x: hidden;
+  overflow-x: clip;
   background: var(--color-white);
 }
 

@@ -210,6 +210,12 @@ export interface Page {
                   title: string;
                   description: string;
                   image?: (string | null) | Media;
+                  servicesList?:
+                    | {
+                        item: string;
+                        id?: string | null;
+                      }[]
+                    | null;
                   imagePosition?: ('top' | 'bottom') | null;
                   backgroundImage?: (string | null) | Media;
                   id?: string | null;
@@ -538,6 +544,12 @@ export interface PagesSelect<T extends boolean = true> {
                     title?: T;
                     description?: T;
                     image?: T;
+                    servicesList?:
+                      | T
+                      | {
+                          item?: T;
+                          id?: T;
+                        };
                     imagePosition?: T;
                     backgroundImage?: T;
                     id?: T;

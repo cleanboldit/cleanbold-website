@@ -1,260 +1,86 @@
-/* ===================== OUR WORK / CORE OFFERINGS SECTION ===================== */
-.core-offerings {
-  padding: 120px 0;
+/* ── Scroll-pinned services section ── */
+
+.container {
+  /* height set inline: (n + 1.5) * 100vh */
+  background: #000;
+}
+
+.stickyPane {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   overflow: hidden;
+  background: #000000;
 }
 
-.offerings-container {
-  max-width: 100%;
-  padding: 0 0 0 60px;
-}
-
-.offerings-header {
-  margin-bottom: 50px;
-  display: flex;
-  padding-right: 60px;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.offerings-header-content {
-  flex: 1;
-}
-
-.offerings-header-controls {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-shrink: 0;
-  margin-top: 72px;
-}
-
-.section-label {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  font-style: 'Biennale';
-}
-
-.offerings-header h2 {
-  font-size: 48px;
-  font-weight: 600;
-  color: var(--color-black);
-  margin-bottom: 16px;
-}
-
-.section-description {
-  font-size: 18px;
-  color: rgba(85, 85, 85, 1);;
-  max-width: 1250px;
-  line-height: 1.6;
-}
-
-.offerings-carousel {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-}
-
-.carousel-btn {
-  width: 60px;
-  height: 60px;
-  border-radius: 10%;
-  border: 1px solid rgba(1, 30, 244, 1);
-  background: white;
-  color: rgba(1, 30, 244, 1);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-}
-
-.carousel-btn:hover {
-  background: rgba(1, 30, 244, 1);
-  color: white;
-  transform: scale(1.1);
-}
-
-.offerings-scroll {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: 10px 60px 10px 0;
-  width: 100%;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.offerings-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.offering-card {
-  min-width: 300px;
-  width: 300px;
-  flex: 1 1 300px;
-  height: 600px !important;
-  padding: 0;
-  border-radius: 20px;
-  color: white;
-  position: relative;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.offering-card.image-top {
-  flex-direction: column;
-    border-radius: 20px !important;
-}
-
-.offering-card.image-bottom {
-  flex-direction: column-reverse;
-  border-radius: 20px !important;
-}
-
-/* When a background image is set, add a dark gradient overlay */
-.offering-card.has-bg-image::before {
-  content: '';
+.background {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.72) 100%);
-  border-radius: 20px;
-  z-index: 0;
   pointer-events: none;
+  /* opacity + gradient set inline via Framer Motion */
 }
 
-.card-content {
-  padding: 32px 28px;
-  flex: 1;
+.inner {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 8%;
+}
+
+.grid {
+  display: grid;
+  width: 100%;
+  /* gridTemplateColumns + gap set inline */
+}
+
+/* ── Card ── */
+.card {
   display: flex;
   flex-direction: column;
+  /* opacity, transform set inline via Framer Motion */
+}
+
+.cardImage {
   position: relative;
-  z-index: 1;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 28px;
 }
 
-.card-content h2 {
-  font-size: 35px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  line-height: 1.2;
-  margin-top: 12px;
+.cardTitle {
+  color: #ffffff;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+  font-size: clamp(28px, 2.6vw, 42px);
 }
 
-.card-content p {
-  font-size: 16px;
-  line-height: 28px;
-  opacity: 0.9;
-  margin-top:12px;
+.servicesList {
+  display: flex;
+  flex-direction: column;
+}
+
+.serviceItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: rgba(255, 255, 255, 0.70);
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  font-size: 15px;
   font-weight: 400;
-  flex: 1;
+  line-height: 1.4;
 }
 
-.card-image-top,
-.card-image-bottom {
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  height: 288px; /* 248px image + 40px padding (20px top + 20px bottom) */
-  position: relative;
-  z-index: 1;
-}
-
-.offering-img {
-  width: 100%;
-  height: 248px;
-  border-radius: 20px !important;
-  object-fit: cover;
-}
-
-.offerings-cta-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 48px;
-}
-
-.offerings-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 32px;
-  border-radius: 10px;
-  border: 2px solid rgba(1, 30, 244, 1);
-  background: rgba(1, 30, 244, 1);
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.offerings-cta:hover {
-  background: white;
-  color: rgba(1, 30, 244, 1);
-  transform: translateY(-2px);
-}
-
-/* ── Carousel dot indicators (mobile only) ── */
-.carousel-dots {
-  display: none;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 20px;
-  padding: 0 60px;
-}
-
-.carousel-dot {
-  height: 8px;
-  width: 28px;
-  border-radius: 100px;
-  background: rgba(1, 30, 244, 0.18);
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: width 0.3s ease, background 0.3s ease;
-  flex-shrink: 0;
-}
-
-.carousel-dot-active {
-  width: 56px;
-  background: rgba(1, 30, 244, 1);
-}
-
-@media (max-width: 768px) {
-  .carousel-dots {
-    display: flex;
-  }
-
-  .carousel-btn {
-    display: none;
-  }
-
-  .core-offerings{
-    padding: 80px 0;
-  }
-
-  .offerings-container {
-    padding: 0 0 0 20px;
-  }
-
-}
-
-@media (max-width: 1024px) {
-  .carousel-dots {
-    display: flex;
-  }
-
-  .carousel-btn {
-    display: none;
-  }
+.serviceDot {
+  width: 6px;
+  height: 6px;
+  min-width: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.40);
 }
