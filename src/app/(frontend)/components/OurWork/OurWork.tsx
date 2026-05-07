@@ -72,8 +72,7 @@ function ScrollCard({ offering, scrollYProgress, animStart, animEnd }: ScrollCar
   const y = useTransform(scrollYProgress, [animStart, animEnd], ['100vh', '0vh'])
   const scale = useTransform(scrollYProgress, [animStart, animEnd], [0.93, 1])
 
-  const imageUrl =
-    typeof offering.image === 'object' ? offering.image?.url : offering.image
+  const imageUrl = typeof offering.image === 'object' ? offering.image?.url : offering.image
 
   return (
     <motion.div
@@ -134,15 +133,22 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
   // Soft dark vignette that follows cursor — sits over the bg images
   const cursorOverlay = useMotionTemplate`radial-gradient(ellipse 80% 80% at ${springX}% ${springY}%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 100%)`
 
-  const fraction = 0.85 / n
+  const fraction = 0.75 / n
+
+  // Intro title animation: scale down from large to small, then fade out
+  const titleScale = useTransform(scrollYProgress, [0, 0.12], [1, 0.4])
+  const titleOpacity = useTransform(scrollYProgress, [0.08, 0.15], [1, 0])
 
   return (
-    <div
-      ref={containerRef}
-      className={styles.container}
-      style={{ height: `${(n + 1.5) * 100}vh` }}
-    >
+    <div ref={containerRef} className={styles.container} style={{ height: `${(n + 2.5) * 100}vh` }}>
       <div className={styles.stickyPane}>
+        {/* Intro title — zooms out on scroll */}
+        <motion.div
+          className={styles.introTitle}
+          style={{ scale: titleScale, opacity: titleOpacity }}
+        >
+          OUR SERVICES<span className={styles.introDot}>.</span>
+        </motion.div>
 
         {/* Per-card background images — crossfade on scroll */}
         {offerings.map((offering, index) => {
@@ -152,15 +158,13 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
               : offering.backgroundImage
           if (!bgUrl) return null
 
-          const animStart = index * fraction
+          const animStart = 0.15 + index * fraction
           const animEnd = animStart + fraction * 0.65
-          const nextStart = (index + 1) * fraction
+          const nextStart = 0.15 + (index + 1) * fraction
           const nextEnd = nextStart + fraction * 0.65
 
           const inputRange =
-            index < n - 1
-              ? [animStart, animEnd, nextStart, nextEnd]
-              : [animStart, animEnd]
+            index < n - 1 ? [animStart, animEnd, nextStart, nextEnd] : [animStart, animEnd]
           const outputRange = index < n - 1 ? [0, 1, 1, 0] : [0, 1]
 
           return (
@@ -175,10 +179,7 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
         })}
 
         {/* Cursor-tracking dark vignette overlay */}
-        <motion.div
-          className={styles.background}
-          style={{ background: cursorOverlay }}
-        />
+        <motion.div className={styles.background} style={{ background: cursorOverlay }} />
 
         <div className={styles.inner}>
           <div
@@ -189,7 +190,7 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
             }}
           >
             {offerings.map((offering, index) => {
-              const start = index * fraction
+              const start = 0.15 + index * fraction
               const end = start + fraction * 0.65
               return (
                 <ScrollCard

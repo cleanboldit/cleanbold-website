@@ -101,3 +101,76 @@
   box-shadow: 0 10px 30px rgba(0, 102, 255, 0.4);
 }
 
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .contact-section {
+    padding: 80px 40px;
+  }
+
+  .contact-container {
+    gap: 50px;
+  }
+
+  .contact-content h2 {
+    font-size: 44px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-section {
+    padding: 60px 24px;
+  }
+
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .contact-content h2 {
+    font-size: 36px;
+  }
+
+  .contact-content p {
+    margin-top: 20px;
+    max-width: 100%;
+  }
+
+  .contact-form-wrapper {
+    padding: 32px 24px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-section {
+    padding: 48px 16px;
+  }
+
+  .contact-content h2 {
+    font-size: 28px;
+  }
+
+  .contact-form-wrapper {
+    padding: 24px 16px;
+    border-radius: 16px;
+  }
+
+  .form-header h3 {
+    font-size: 20px;
+    margin-bottom: 24px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+
+  .submit-btn {
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+}

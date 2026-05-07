@@ -122,10 +122,7 @@ export default function Projects({ block }: ProjectsProps) {
               typeof project.category === 'string' ? project.category : project.category?.name
 
             return (
-              <div
-                key={`${project.id ?? index}-${index}`}
-                className={styles['film-card']}
-              >
+              <div key={`${project.id ?? index}-${index}`} className={styles['film-card']}>
                 <div className={styles['film-card-frame']}>
                   {videoUrl ? (
                     <video
@@ -169,9 +166,9 @@ export default function Projects({ block }: ProjectsProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <button className={styles['explore-more-btn']}>
-            {exploreButtonText || 'Explore More'}
-          </button>
+          <a href="#contact" className={styles['explore-more-btn']}>
+            {exploreButtonText || 'Own The Spotlight'}
+          </a>
         </motion.div>
       </div>
     </section>
