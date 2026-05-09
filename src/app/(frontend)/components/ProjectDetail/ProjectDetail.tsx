@@ -33,10 +33,6 @@ export default function ProjectDetail({ project }: Props) {
           <div className={styles.copy}>
             {project.category ? <p className={styles.eyebrow}>{project.category}</p> : null}
             <h1 className={styles.title}>{project.title}</h1>
-            <div className={styles.metaRow}>
-              <span className={styles.metaChip}>{project.route}</span>
-              {project.size ? <span className={styles.metaChip}>{project.size}</span> : null}
-            </div>
           </div>
         </div>
 

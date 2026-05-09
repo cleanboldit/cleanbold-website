@@ -78,28 +78,6 @@
   color: #fff;
 }
 
-.metaRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 22px;
-}
-
-.metaChip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 38px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
 .mediaFrame {
   position: relative;
   min-height: 620px;
@@ -238,8 +216,4 @@
     padding: 36px 20px 56px;
   }
 
-  .metaChip {
-    min-height: 34px;
-    font-size: 11px;
-  }
 }
