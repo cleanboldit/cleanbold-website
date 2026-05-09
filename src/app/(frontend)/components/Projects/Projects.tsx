@@ -3,14 +3,19 @@
 import styles from './Projects.module.css'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
+import { getProjectRouteHref } from '@/lib/project-route'
 
 interface Project {
   id?: string
+  title?: string
   category?: string | { name?: string }
+  route?: string | null
   image?: { url?: string } | string | null
   video?: { url?: string; mimeType?: string } | string | null
   size?: string
+  projectDescription?: unknown
 }
 
 interface ProjectsProps {
@@ -120,37 +125,54 @@ export default function Projects({ block }: ProjectsProps) {
             const videoUrl = typeof project.video === 'object' ? project.video?.url : project.video
             const categoryName =
               typeof project.category === 'string' ? project.category : project.category?.name
+            const projectHref = getProjectRouteHref(project as Record<string, unknown>)
+            const title = project.title || categoryName || 'Project'
+            const cardContent = (
+              <div className={styles['film-card-frame']}>
+                {videoUrl ? (
+                  <video
+                    src={videoUrl}
+                    className={styles['film-card-video']}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    draggable={false}
+                  />
+                ) : imageUrl ? (
+                  <Image
+                    src={imageUrl}
+                    alt={title}
+                    fill
+                    className={styles['film-card-img']}
+                    sizes="(max-width: 768px) 72vw, 340px"
+                    loading="lazy"
+                    draggable={false}
+                  />
+                ) : null}
+                {(categoryName || project.title) && (
+                  <div className={styles['film-card-overlay']}>
+                    {categoryName ? (
+                      <span className={styles['film-card-category']}>{categoryName}</span>
+                    ) : null}
+                    {project.title ? <h3 className={styles['film-card-title']}>{project.title}</h3> : null}
+                  </div>
+                )}
+              </div>
+            )
 
             return (
-              <div key={`${project.id ?? index}-${index}`} className={styles['film-card']}>
-                <div className={styles['film-card-frame']}>
-                  {videoUrl ? (
-                    <video
-                      src={videoUrl}
-                      className={styles['film-card-video']}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      draggable={false}
-                    />
-                  ) : imageUrl ? (
-                    <Image
-                      src={imageUrl}
-                      alt={categoryName ?? ''}
-                      fill
-                      className={styles['film-card-img']}
-                      sizes="(max-width: 768px) 72vw, 340px"
-                      loading="lazy"
-                      draggable={false}
-                    />
-                  ) : null}
-                  {categoryName && (
-                    <div className={styles['film-card-overlay']}>
-                      <span className={styles['film-card-category']}>{categoryName}</span>
-                    </div>
-                  )}
-                </div>
+              <div
+                key={`${project.id ?? index}-${index}`}
+                className={`${styles['film-card']} ${projectHref ? styles['film-card-clickable'] : ''}`}
+              >
+                {projectHref ? (
+                  <Link href={projectHref} className={styles['film-card-link']}>
+                    {cardContent}
+                  </Link>
+                ) : (
+                  cardContent
+                )}
               </div>
             )
           })}

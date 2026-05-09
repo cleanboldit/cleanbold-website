@@ -1,0 +1,245 @@
+.page {
+  position: relative;
+  background:
+    radial-gradient(circle at top center, rgba(0, 82, 255, 0.18), transparent 34%),
+    linear-gradient(180deg, #000814 0%, #020b18 42%, #000814 100%);
+  color: #fff;
+  overflow: hidden;
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url('/top.png') center/cover no-repeat;
+  opacity: 0.18;
+  mix-blend-mode: screen;
+}
+
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 36px;
+  align-items: stretch;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 140px 48px 72px;
+  z-index: 1;
+}
+
+.heroTop {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+  min-height: 100%;
+}
+
+.backLink {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  backdrop-filter: blur(14px);
+}
+
+.backLink:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  opacity: 1;
+}
+
+.copy {
+  max-width: 560px;
+}
+
+.eyebrow {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.title {
+  margin: 0;
+  color: #fff;
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.metaChip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.mediaFrame {
+  position: relative;
+  min-height: 620px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.media,
+.mediaFallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.media {
+  object-fit: cover;
+}
+
+.mediaFallback {
+  background:
+    radial-gradient(circle at top right, rgba(0, 82, 255, 0.28), transparent 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+}
+
+.contentSection {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 56px 48px 96px;
+}
+
+.contentInner {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 4px;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 26px;
+}
+
+.sectionLabel {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.contentTitle {
+  margin: 0;
+  color: #fff;
+}
+
+.richText {
+  max-width: 860px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.06rem;
+  line-height: 1.85;
+}
+
+.richText :global(p),
+.richText :global(ul),
+.richText :global(ol),
+.richText :global(blockquote) {
+  margin: 0 0 18px;
+}
+
+.richText :global(h2),
+.richText :global(h3),
+.richText :global(h4) {
+  margin: 32px 0 16px;
+  color: #fff;
+}
+
+.richText :global(ul),
+.richText :global(ol) {
+  padding-left: 22px;
+}
+
+.richText :global(a) {
+  color: #8cc3ff;
+  text-decoration: underline;
+}
+
+.emptyState {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+@media (max-width: 1024px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 126px 28px 56px;
+  }
+
+  .heroTop {
+    min-height: auto;
+  }
+
+  .mediaFrame {
+    min-height: 460px;
+  }
+
+  .contentSection {
+    padding: 48px 28px 72px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 112px 20px 36px;
+    gap: 24px;
+  }
+
+  .backLink {
+    font-size: 12px;
+    padding: 8px 14px;
+  }
+
+  .mediaFrame {
+    min-height: 320px;
+    border-radius: 22px;
+  }
+
+  .contentSection {
+    padding: 36px 20px 56px;
+  }
+
+  .metaChip {
+    min-height: 34px;
+    font-size: 11px;
+  }
+}

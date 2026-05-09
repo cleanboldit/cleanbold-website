@@ -104,6 +104,14 @@
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.film-card-link {
+  display: block;
+}
+
+.film-card-clickable {
+  cursor: pointer;
+}
+
 .film-card:hover {
   transform: translateY(-10px);
 }
@@ -171,6 +179,13 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.film-card-title {
+  margin: 12px 0 0;
+  color: #fff;
+  font-size: 22px;
+  line-height: 1.2;
 }
 
 /* ── CTA ───────────────────────────────────────────────────────── */

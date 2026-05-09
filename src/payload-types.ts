@@ -236,10 +236,30 @@ export interface Page {
             exploreButtonText?: string | null;
             projects?:
               | {
+                  title?: string | null;
                   category?: string | null;
+                  /**
+                   * Use a single route like /event or /brand-launch for the project detail page.
+                   */
+                  route?: string | null;
                   image?: (string | null) | Media;
                   video?: (string | null) | Media;
                   size?: ('large' | 'small') | null;
+                  projectDescription?: {
+                    root: {
+                      type: string;
+                      children: {
+                        type: any;
+                        version: number;
+                        [k: string]: unknown;
+                      }[];
+                      direction: ('ltr' | 'rtl') | null;
+                      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                      indent: number;
+                      version: number;
+                    };
+                    [k: string]: unknown;
+                  } | null;
                   id?: string | null;
                 }[]
               | null;
@@ -699,10 +719,13 @@ export interface PagesSelect<T extends boolean = true> {
               projects?:
                 | T
                 | {
+                    title?: T;
                     category?: T;
+                    route?: T;
                     image?: T;
                     video?: T;
                     size?: T;
+                    projectDescription?: T;
                     id?: T;
                   };
               id?: T;
