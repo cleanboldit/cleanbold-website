@@ -1,6 +1,7 @@
 // storage-adapter-import-placeholder
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
+import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { seoPlugin } from '@payloadcms/plugin-seo'
@@ -41,6 +42,23 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
+    formBuilderPlugin({
+      fields: {
+        text: true,
+        email: true,
+        textarea: true,
+        select: false,
+        radio: false,
+        state: false,
+        country: false,
+        checkbox: false,
+        number: false,
+        message: false,
+        date: false,
+        payment: false,
+      },
+      redirectRelationships: ['pages'],
+    }),
     // SEO Plugin - adds SEO fields to all collections and globals in a separate tab
     seoPlugin({
       collections: ['pages'],

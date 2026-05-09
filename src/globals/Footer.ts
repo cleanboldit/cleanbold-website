@@ -51,6 +51,16 @@ export const Footer: GlobalConfig = {
       ],
     },
     {
+      name: 'contactForm',
+      type: 'relationship',
+      relationTo: 'forms',
+      label: 'Footer Contact Form',
+      admin: {
+        description:
+          'Select the Payload form definition used to store Start The Conversation submissions.',
+      },
+    },
+    {
       name: 'companyInfo',
       type: 'group',
       label: 'Company Information',
