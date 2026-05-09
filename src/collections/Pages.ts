@@ -172,9 +172,22 @@ export const ProjectsBlock: Block = {
       label: 'Projects',
       fields: [
         {
+          name: 'title',
+          type: 'text',
+          label: 'Project Title',
+        },
+        {
           name: 'category',
           type: 'text',
           label: 'Category',
+        },
+        {
+          name: 'route',
+          type: 'text',
+          label: 'Detail Route',
+          admin: {
+            description: 'Use a single route like /event or /brand-launch for the project detail page.',
+          },
         },
         {
           name: 'image',
@@ -196,6 +209,11 @@ export const ProjectsBlock: Block = {
             { label: 'Large', value: 'large' },
             { label: 'Small', value: 'small' },
           ],
+        },
+        {
+          name: 'projectDescription',
+          type: 'richText',
+          label: 'Project Description',
         },
       ],
     },

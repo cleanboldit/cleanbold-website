@@ -57,6 +57,25 @@ export default function Hero({
             <source src={videoUrl} type="video/mp4" />
           </video>
         )}
+
+        {/* Dark overlay */}
+        <div className={styles['hero-overlay']} aria-hidden />
+
+        {/* CTA Buttons */}
+        {(primaryButtonText || secondaryButtonText) && (
+          <div className={styles['hero-cta']}>
+            {primaryButtonText && (
+              <a href={primaryButtonUrl || '#'} className={styles['hero-btn-primary']}>
+                {primaryButtonText}
+              </a>
+            )}
+            {secondaryButtonText && (
+              <a href={secondaryButtonUrl || '#'} className={styles['hero-btn-secondary']}>
+                {secondaryButtonText}
+              </a>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

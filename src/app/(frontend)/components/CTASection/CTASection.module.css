@@ -54,3 +54,35 @@
 .button:hover {
   background: #2818ff;
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .section {
+    padding: 80px 24px;
+  }
+
+  .inner {
+    gap: 16px;
+  }
+
+  .button {
+    padding: 14px 32px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 60px 16px;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
+
+  .button {
+    padding: 12px 28px;
+    width: 100%;
+    text-align: center;
+  }
+}

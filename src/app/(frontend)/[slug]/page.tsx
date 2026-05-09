@@ -4,12 +4,14 @@ import React, { Suspense } from 'react'
 import AsyncHeader from '../AsyncHeader'
 import AsyncFooter from '../AsyncFooter'
 import PageBlocksFromSlug from '../PageBlocksFromSlug'
+import ProjectDetail from '../components/ProjectDetail/ProjectDetail'
 import {
   FooterSkeleton,
   HeaderSkeleton,
   MainContentSkeleton,
 } from '../components/PageLoadSkeletons/PageLoadSkeletons'
 import { buildPageMetadata } from '@/lib/metadata'
+import { getProjectByRouteSlug } from '@/lib/project-details'
 import { getPageBySlug } from '@/lib/payload'
 
 export async function generateMetadata({
@@ -22,7 +24,18 @@ export async function generateMetadata({
     return buildPageMetadata(undefined, { path: '/' })
   }
   const page = await getPageBySlug(slug)
-  return buildPageMetadata(page ?? undefined, { path: `/${slug}` })
+  if (page) {
+    return buildPageMetadata(page ?? undefined, { path: `/${slug}` })
+  }
+
+  const project = await getProjectByRouteSlug(slug)
+  if (project) {
+    return {
+      title: `${project.title} | Cleanbold Advertising`,
+      description: project.category || project.title,
+    }
+  }
+  return buildPageMetadata(undefined, { path: `/${slug}` })
 }
 
 export default async function SlugPage({
@@ -32,13 +45,16 @@ export default async function SlugPage({
 
   if (slug === 'home') redirect('/')
 
+  const page = await getPageBySlug(slug)
+  const project = page ? null : await getProjectByRouteSlug(slug)
+
   return (
     <div className="home-page">
       <Suspense fallback={<HeaderSkeleton />}>
         <AsyncHeader />
       </Suspense>
       <Suspense fallback={<MainContentSkeleton />}>
-        <PageBlocksFromSlug slug={slug} enforceFound />
+        {page ? <PageBlocksFromSlug slug={slug} enforceFound /> : project ? <ProjectDetail project={project} /> : <PageBlocksFromSlug slug={slug} enforceFound />}
       </Suspense>
       <Suspense fallback={<FooterSkeleton />}>
         <AsyncFooter />

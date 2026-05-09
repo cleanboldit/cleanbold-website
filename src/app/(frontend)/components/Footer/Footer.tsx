@@ -5,31 +5,92 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { JSX, useState } from 'react'
 import type { Footer as FooterGlobal } from '@/payload-types'
+import {
+  getCanonicalIndianMobile,
+  getFooterInquiryDefaults,
+  validateFooterInquiry,
+  type FooterInquiryErrors,
+} from '@/lib/footer-inquiry'
 
 interface FooterProps {
   data: FooterGlobal
 }
 
 export default function Footer({ data }: FooterProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    companyName: '',
-    email: '',
-    phone: '',
-    message: '',
-  })
+  const [formData, setFormData] = useState(getFooterInquiryDefaults)
+  const [errors, setErrors] = useState<FooterInquiryErrors>({})
+  const [submitState, setSubmitState] = useState<'idle' | 'submitting' | 'success' | 'error'>(
+    'idle',
+  )
+  const [submitMessage, setSubmitMessage] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log('Form submitted:', formData)
+    const validation = validateFooterInquiry(formData)
+    setErrors(validation.errors)
+
+    if (!validation.isValid) {
+      setSubmitState('error')
+      setSubmitMessage('Please fix the highlighted fields and try again.')
+      return
+    }
+
+    setSubmitState('submitting')
+    setSubmitMessage('')
+
+    try {
+      const response = await fetch('/api/forms/footer-contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...validation.values,
+          phone: getCanonicalIndianMobile(validation.values.phone),
+        }),
+      })
+
+      const result = (await response.json()) as {
+        ok: boolean
+        message?: string
+        errors?: FooterInquiryErrors
+      }
+
+      if (!response.ok || !result.ok) {
+        setErrors(result.errors ?? {})
+        setSubmitState('error')
+        setSubmitMessage(result.message || 'Unable to submit your inquiry right now.')
+        return
+      }
+
+      setFormData(getFooterInquiryDefaults())
+      setErrors({})
+      setSubmitState('success')
+      setSubmitMessage('Thanks. Your inquiry has been submitted successfully.')
+    } catch {
+      setSubmitState('error')
+      setSubmitMessage('Unable to submit your inquiry right now.')
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     })
+
+    if (errors[name as keyof FooterInquiryErrors]) {
+      setErrors((current) => ({
+        ...current,
+        [name]: undefined,
+      }))
+    }
+
+    if (submitState !== 'idle') {
+      setSubmitState('idle')
+      setSubmitMessage('')
+    }
   }
 
   return (
@@ -68,56 +129,99 @@ export default function Footer({ data }: FooterProps) {
               <h3 className={styles['footer-form-title']}>
                 {data.contactSection?.formTitle || 'Start The Conversation'}
               </h3>
+              {submitMessage ? (
+                <p
+                  className={
+                    submitState === 'success'
+                      ? styles['footer-form-success']
+                      : styles['footer-form-error']
+                  }
+                >
+                  {submitMessage}
+                </p>
+              ) : null}
               <form className={styles['footer-form']} onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className={styles['footer-input']}
-                  required
-                />
-                <input
-                  type="text"
-                  name="companyName"
-                  placeholder="Company Name"
-                  value={formData.companyName}
-                  onChange={handleChange}
-                  className={styles['footer-input']}
-                  required
-                />
-                <div className={styles['footer-input-row']}>
+                <div>
                   <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    value={formData.name}
                     onChange={handleChange}
-                    className={styles['footer-input']}
+                    className={`${styles['footer-input']} ${errors.name ? styles['footer-input-invalid'] : ''}`}
+                    aria-invalid={errors.name ? 'true' : 'false'}
                     required
                   />
-                  <input
-                    type="tel"
-                    name="phone"
-                    placeholder="Phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className={styles['footer-input']}
-                    required
-                  />
+                  {errors.name ? <p className={styles['footer-field-error']}>{errors.name}</p> : null}
                 </div>
-                <textarea
-                  name="message"
-                  placeholder="Message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  className={styles['footer-textarea']}
-                  rows={4}
-                  required
-                />
-                <button type="submit" className={styles['footer-submit-btn']}>
-                  Submit
+                <div>
+                  <input
+                    type="text"
+                    name="companyName"
+                    placeholder="Company Name"
+                    value={formData.companyName}
+                    onChange={handleChange}
+                    className={`${styles['footer-input']} ${errors.companyName ? styles['footer-input-invalid'] : ''}`}
+                    aria-invalid={errors.companyName ? 'true' : 'false'}
+                    required
+                  />
+                  {errors.companyName ? (
+                    <p className={styles['footer-field-error']}>{errors.companyName}</p>
+                  ) : null}
+                </div>
+                <div className={styles['footer-input-row']}>
+                  <div>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`${styles['footer-input']} ${errors.email ? styles['footer-input-invalid'] : ''}`}
+                      aria-invalid={errors.email ? 'true' : 'false'}
+                      required
+                    />
+                    {errors.email ? (
+                      <p className={styles['footer-field-error']}>{errors.email}</p>
+                    ) : null}
+                  </div>
+                  <div>
+                    <input
+                      type="tel"
+                      name="phone"
+                      placeholder="Phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className={`${styles['footer-input']} ${errors.phone ? styles['footer-input-invalid'] : ''}`}
+                      aria-invalid={errors.phone ? 'true' : 'false'}
+                      required
+                    />
+                    {errors.phone ? (
+                      <p className={styles['footer-field-error']}>{errors.phone}</p>
+                    ) : null}
+                  </div>
+                </div>
+                <div>
+                  <textarea
+                    name="message"
+                    placeholder="Message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    className={`${styles['footer-textarea']} ${errors.message ? styles['footer-input-invalid'] : ''}`}
+                    aria-invalid={errors.message ? 'true' : 'false'}
+                    rows={4}
+                    required
+                  />
+                  {errors.message ? (
+                    <p className={styles['footer-field-error']}>{errors.message}</p>
+                  ) : null}
+                </div>
+                <button
+                  type="submit"
+                  className={styles['footer-submit-btn']}
+                  disabled={submitState === 'submitting'}
+                >
+                  {submitState === 'submitting' ? 'Submitting...' : 'Submit'}
                 </button>
               </form>
             </motion.div>
