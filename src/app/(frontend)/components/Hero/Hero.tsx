@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import styles from './Hero.module.css'
 
 type HeroProps = Readonly<{
@@ -13,6 +13,8 @@ type HeroProps = Readonly<{
   secondaryButtonUrl?: string | null
 }>
 
+const preventContextMenu = (e: React.MouseEvent) => e.preventDefault()
+
 export default function Hero({
   video,
   posterUrl,
@@ -24,59 +26,59 @@ export default function Hero({
 }: HeroProps) {
   const [videoReady, setVideoReady] = useState(false)
   const [videoFailed, setVideoFailed] = useState(false)
-  const revealVideo = useCallback(() => setVideoReady(true), [])
 
-  const videoUrl = video?.url ?? ''
-  const hasVideo = videoUrl.length > 0
-  const showVideoLayer = hasVideo && videoReady && !videoFailed
+  const videoUrl = video?.url
+  const hasVideo = Boolean(videoUrl)
+  const showVideo = hasVideo && videoReady && !videoFailed
+
+  const hasCta = primaryButtonText || secondaryButtonText
 
   return (
-    <div className={styles['hero-scroll-wrapper']} id="hero">
-      <div className={styles['hero-sticky']}>
+    <section className={styles.scrollWrapper} id="hero" aria-label="Hero">
+      <div className={styles.sticky}>
         <div
-          className={styles['hero-backdrop']}
+          className={styles.backdrop}
           style={fallbackBackgroundColor ? { background: fallbackBackgroundColor } : undefined}
-          aria-hidden
+          aria-hidden="true"
         />
-        {hasVideo && (
+
+        {hasVideo && videoUrl && (
           <video
             autoPlay
             loop
             muted
             playsInline
             preload="metadata"
-            poster={posterUrl || undefined}
+            poster={posterUrl ?? undefined}
             disablePictureInPicture
             controlsList="nodownload nofullscreen noremoteplayback"
-            className={`${styles['hero-video-bg']} ${showVideoLayer ? styles['hero-video-visible'] : ''}`}
-            onContextMenu={(e) => e.preventDefault()}
-            onCanPlay={revealVideo}
-            onLoadedData={revealVideo}
+            className={`${styles.videoBg} ${showVideo ? styles.videoVisible : ''}`}
+            onContextMenu={preventContextMenu}
+            onCanPlay={() => setVideoReady(true)}
             onError={() => setVideoFailed(true)}
+            aria-hidden="true"
           >
             <source src={videoUrl} type="video/mp4" />
           </video>
         )}
 
-        {/* Dark overlay */}
-        <div className={styles['hero-overlay']} aria-hidden />
+        <div className={styles.overlay} aria-hidden="true" />
 
-        {/* CTA Buttons */}
-        {(primaryButtonText || secondaryButtonText) && (
-          <div className={styles['hero-cta']}>
+        {hasCta && (
+          <nav className={styles.cta} aria-label="Hero actions">
             {primaryButtonText && (
-              <a href={primaryButtonUrl || '#'} className={styles['hero-btn-primary']}>
+              <a href={primaryButtonUrl ?? '#'} className={styles.btnPrimary}>
                 {primaryButtonText}
               </a>
             )}
             {secondaryButtonText && (
-              <a href={secondaryButtonUrl || '#'} className={styles['hero-btn-secondary']}>
+              <a href={secondaryButtonUrl ?? '#'} className={styles.btnSecondary}>
                 {secondaryButtonText}
               </a>
             )}
-          </div>
+          </nav>
         )}
       </div>
-    </div>
+    </section>
   )
 }
