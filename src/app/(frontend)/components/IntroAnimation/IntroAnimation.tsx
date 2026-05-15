@@ -32,7 +32,7 @@ type Phase = 'scatter' | 'assemble' | 'hold' | 'erasing' | 'exploding' | 'done'
 
 export default function IntroAnimation() {
   const [phase, setPhase] = useState<Phase>('scatter')
-  const [visibleCount, setVisibleCount] = useState(CHARS.length)
+  const [visibleCount, setVisibleCount] = useState<number>(CHARS.length)
   const dotRef = useRef<HTMLSpanElement>(null)
   const [dotCenter, setDotCenter] = useState('50% 50%')
   const scatterPositions = useMemo(() => buildScatterPositions(CHARS.length), [])

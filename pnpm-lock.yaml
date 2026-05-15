@@ -90,6 +90,9 @@ importers:
       jsdom:
         specifier: 26.1.0
         version: 26.1.0
+      lexical:
+        specifier: 0.41.0
+        version: 0.41.0
       playwright:
         specifier: ^1.57.0
         version: 1.60.0
