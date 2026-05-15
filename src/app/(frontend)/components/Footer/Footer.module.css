@@ -59,10 +59,7 @@
 }
 
 .footer-contact-right {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 50px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: 50px 0;
 }
 
 .footer-form-title {
@@ -317,58 +314,142 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
+  .footer-unified-section {
+    padding: 70px 28px 50px;
+    background-attachment: scroll;
+  }
+
   .footer-contact-container {
     grid-template-columns: 1fr;
-    gap: 60px;
-    margin-bottom: 80px;
+    gap: 48px;
+    margin-bottom: 70px;
     padding-bottom: 60px;
   }
 
+  .footer-contact-left {
+    text-align: center;
+  }
+
+  .footer-contact-subtitle {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
   .footer-contact-right {
-    padding: 40px;
+    padding: 32px 0;
+  }
+
+  .footer-form-title {
+    text-align: center;
+  }
+
+  .footer-info-container {
+    padding: 48px 40px;
+  }
+
+  .footer-brand-tagline {
+    font-size: 48px;
   }
 }
 
 @media (max-width: 768px) {
   .footer-unified-section {
-    padding: 60px 24px 40px;
+    background-attachment: scroll;
   }
 
   .footer-contact-container {
-    margin-bottom: 60px;
-    padding-bottom: 50px;
+    grid-template-columns: 1fr;
+    gap: 36px;
+    margin-bottom: 48px;
+    padding-bottom: 40px;
+  }
+
+  .footer-contact-left {
+    text-align: center;
+  }
+
+  .footer-contact-title {
+    font-size: clamp(32px, 8vw, 52px);
+  }
+
+  .footer-contact-subtitle {
+    max-width: 100%;
+    margin: 0 auto;
+    font-size: 15px;
   }
 
   .footer-contact-right {
-    padding: 30px 24px;
+    padding: 20px 0;
+  }
+
+  .footer-form-title {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 24px;
   }
 
   .footer-input-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .footer-input,
+  .footer-textarea {
+    padding: 14px 18px;
+    font-size: 15px;
+    border-radius: 14px;
+  }
+
+  .footer-submit-btn {
+    padding: 16px 24px;
+    font-size: 16px;
+    border-radius: 10px;
+    width: 100%;
+  }
+
+  .footer-info-container {
+    padding: 32px 20px;
+    border-radius: 20px;
   }
 
   .footer-info-content {
-    gap: 40px;
+    gap: 28px;
+    margin-bottom: 32px;
   }
 
   .footer-brand-section {
-    gap: 24px;
+    gap: 16px;
+  }
+
+  .footer-brand-name {
+    font-size: clamp(22px, 6vw, 36px);
+    white-space: normal;
+    flex-wrap: wrap;
+  }
+
+  .footer-brand-tagline {
+    font-size: clamp(28px, 7vw, 44px);
   }
 
   .footer-contact-info {
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     align-items: flex-start;
+  }
+
+  .footer-info-item {
+    font-size: 14px;
   }
 
   .footer-bottom-section {
     flex-direction: column;
-    text-align: center;
-    gap: 20px;
+    align-items: flex-start;
+    gap: 16px;
+    padding-top: 24px;
   }
 
-  .footer-brand-name {
-    font-size: clamp(24px, 6vw, 40px);
+  .footer-copyright {
+    font-size: 12px;
   }
 }
 
@@ -655,21 +736,6 @@
     gap: 32px;
   }
 
-  .footer-info-container {
-    padding: 40px;
-  }
-
-  .footer-brand-tagline {
-    font-size: 40px;
-  }
-}
-
-@media (max-width: 768px) {
-  .footer-links {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 28px;
-  }
-
   .footer-bottom {
     flex-direction: column;
     gap: 16px;
@@ -681,25 +747,24 @@
     flex-wrap: wrap;
     justify-content: center;
   }
+}
 
-  .footer-info-container {
-    padding: 32px 24px;
-    border-radius: 20px;
+@media (max-width: 768px) {
+  .footer-links {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
 
-  .footer-brand-tagline {
-    font-size: 32px;
-  }
-
-  .footer-contact-title {
-    font-size: 36px;
-  }
-
-  .hero-cta-a {
+  .footer-bottom {
     flex-direction: column;
-    gap: 12px;
-    left: 50%;
-    bottom: -120px;
+    gap: 14px;
+    text-align: center;
+  }
+
+  .footer-legal {
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .overlay-pill {
@@ -709,6 +774,13 @@
 
   .hero-text {
     font-size: clamp(20px, 5vw, 32px);
+  }
+
+  .hero-cta-a {
+    flex-direction: column;
+    gap: 12px;
+    left: 50%;
+    bottom: -120px;
   }
 
   .brand-second {
@@ -729,20 +801,7 @@
 @media (max-width: 480px) {
   .footer-links {
     grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .footer-info-container {
-    padding: 24px 16px;
-    border-radius: 16px;
-  }
-
-  .footer-brand-name {
-    font-size: clamp(20px, 5.5vw, 28px);
-  }
-
-  .footer-brand-tagline {
-    font-size: 24px;
+    gap: 20px;
   }
 
   .overlay-pill {

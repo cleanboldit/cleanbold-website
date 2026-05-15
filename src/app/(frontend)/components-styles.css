@@ -36,8 +36,7 @@
   .featured-clients-section,
   .why-brands-section,
   .studio-section,
-  .contact-section,
-  .footer {
+  .contact-section {
     padding-left: 24px;
     padding-right: 24px;
   }
@@ -449,10 +448,6 @@
   background: var(--color-bg-light);
   overflow: hidden;
 
-  @media (max-width: 768px) {
-    padding: 80px 24px 32px;
-    margin-top: 80px;
-  }
 }
 
 .footer-content {
