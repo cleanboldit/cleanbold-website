@@ -1,3 +1,19 @@
+@font-face {
+  font-family: 'Kamerik';
+  src: url('../../../fonts/fonnts.com-Kamerik-205-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Kamerik';
+  src: url('../../../fonts/fonnts.com-Kamerik-205-Bold.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
 /* ── Fixed fullscreen overlay ── */
 .intro {
   position: fixed;
@@ -104,7 +120,7 @@
 .charLight {
   display: inline-block;
   font-family: 'Kamerik', sans-serif;
-  font-weight: 200;
+  font-weight: 300;
   color: #ffffff;
   vertical-align: baseline;
   letter-spacing: -0.06em;
@@ -118,7 +134,7 @@
   font-family: 'Kamerik', sans-serif;
   font-weight: 400;
   color: #ffffff;
-  font-size: clamp(52px, 9vw, 100px);
+  font-size: clamp(42px, 9vw, 100px);
   vertical-align: baseline;
   letter-spacing: -0.06em;
   margin-right: 0.03em;
