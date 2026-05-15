@@ -365,11 +365,6 @@ export const StudioSectionBlock: Block = {
       label: 'Subtitle',
     },
     {
-      name: 'description',
-      type: 'textarea',
-      label: 'Description',
-    },
-    {
       name: 'studioImages',
       type: 'array',
       label: 'Studio Images',

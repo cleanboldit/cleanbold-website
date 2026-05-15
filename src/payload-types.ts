@@ -320,7 +320,6 @@ export interface Page {
         | {
             title?: string | null;
             subtitle?: string | null;
-            description?: string | null;
             studioImages?:
               | {
                   image: string | Media;
@@ -805,7 +804,6 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               title?: T;
               subtitle?: T;
-              description?: T;
               studioImages?:
                 | T
                 | {
