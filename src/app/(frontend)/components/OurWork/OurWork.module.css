@@ -1,214 +1,235 @@
-/* ── Scroll-pinned services section ── */
+/* ─────────────────────────────────────────
+   Base — mobile first
+───────────────────────────────────────── */
 
 .container {
-  /* height set inline: (n + 1.5) * 100vh */
   background: #000;
 }
 
 .stickyPane {
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  background: #000;
   overflow: hidden;
-  background: #000000;
+  padding: 48px 0 64px;
 }
 
-/* ── Intro Title ── */
-.introTitle {
+.srOnly {
   position: absolute;
-  inset: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(48px, 8vw, 120px);
-  font-weight: 800;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Static block on mobile/tablet; absolute overlay on desktop */
+.introTitle {
+  display: block;
+  font-size: clamp(16px, 6.5vw, 52px);
+  font-weight: 700;
   color: #ffffff;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
+  padding: 0 24px 36px;
   pointer-events: none;
-  will-change: transform, opacity;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .introDot {
-  color: #2B2BFF;
+  color: #2b2bff;
   display: inline-block;
   margin-left: 2px;
 }
 
+/* Desktop-only layers rendered conditionally in JS */
 .background {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* opacity + gradient set inline via Framer Motion */
 }
 
 .inner {
   position: relative;
   z-index: 10;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  padding: 0 6%;
+  padding: 0 24px;
 }
 
 .grid {
   display: grid;
+  grid-template-columns: 1fr;
   width: 100%;
-  /* gridTemplateColumns + gap set inline */
+  gap: 40px;
 }
 
 /* ── Card ── */
 .card {
   display: flex;
   flex-direction: column;
-  /* opacity, transform set inline via Framer Motion */
-  width: 352px;
-  margin: 0 auto;
 }
 
 .cardImage {
   position: relative;
   width: 100%;
-  height: 380px;
-  border-radius: 30px;
+  aspect-ratio: 4 / 5;
+  border-radius: 20px;
   overflow: hidden;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .cardTitle {
   color: #ffffff;
   font-weight: 700;
   line-height: 1.1;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   letter-spacing: -0.02em;
-  font-size: clamp(24px, 2.2vw, 36px);
+  font-size: clamp(20px, 5vw, 28px);
 }
 
 .servicesList {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 16px;
 }
 
 .serviceItem {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 400;
   line-height: 1.4;
 }
 
 .serviceDot {
-  width: 10px;
-  height: 10px;
-  min-width: 10px;
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #333333;
+  background: #444444;
 }
 
-/* ── Responsive ── */
-@media (max-width: 1024px) {
-  .inner {
-    padding: 0 4%;
-  }
+/* ─────────────────────────────────────────
+   Tablet — 2-column grid + whileInView cards
+───────────────────────────────────────── */
 
-  .cardTitle {
-    font-size: 22px;
-    margin-bottom: 16px;
-  }
-
-  .serviceItem {
-    font-size: 14px;
-    gap: 10px;
-  }
-
-  .servicesList {
-    gap: 14px;
-  }
-}
-
-@media (max-width: 768px) {
-  .container {
-    height: auto !important;
+@media (min-width: 640px) {
+  .stickyPane {
+    padding: 56px 0 80px;
   }
 
   .introTitle {
-    position: relative;
-    font-size: 32px;
-    padding: 40px 24px;
-    inset: unset;
-    z-index: 1;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  .stickyPane {
-    position: relative;
-    height: auto;
-    padding: 0 0 60px;
+    font-size: clamp(36px, 6vw, 72px);
+    padding: 0 40px 48px;
   }
 
   .inner {
-    padding: 0 24px;
-    align-items: flex-start;
-    height: auto;
+    padding: 0 40px;
   }
 
   .grid {
-    grid-template-columns: 1fr !important;
-    gap: 48px !important;
-  }
-
-  .card {
-    opacity: 1 !important;
-    transform: none !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
   }
 
   .cardImage {
-    width: 352px;
-    height: 380px;
-    border-radius: 30px;
+    border-radius: 24px;
+    margin-bottom: 24px;
   }
 
   .cardTitle {
-    font-size: 24px;
-  }
-
-  .serviceItem {
-    font-size: 15px;
+    font-size: clamp(22px, 2.8vw, 30px);
+    margin-bottom: 20px;
   }
 
   .servicesList {
     gap: 18px;
   }
+
+  .serviceItem {
+    font-size: 16px;
+  }
 }
 
-@media (max-width: 480px) {
+/* ─────────────────────────────────────────
+   Desktop — scroll-pinned experience
+───────────────────────────────────────── */
+
+@media (min-width: 1280px) {
   .stickyPane {
-    padding: 48px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 0;
+  }
+
+  .introTitle {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: clamp(48px, 8vw, 120px);
+    will-change: transform, opacity;
   }
 
   .inner {
-    padding: 0 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 6%;
   }
 
   .grid {
-    gap: 40px !important;
+    gap: clamp(24px, 3vw, 48px);
+  }
+
+  .card {
+    width: 352px;
+    margin: 0 auto;
+    will-change: opacity, transform;
   }
 
   .cardImage {
-    height: 240px;
-    border-radius: 20px;
+    aspect-ratio: unset;
+    height: 380px;
+    border-radius: 30px;
+    margin-bottom: 28px;
   }
 
   .cardTitle {
-    font-size: 22px;
+    font-size: clamp(24px, 2.2vw, 36px);
+    margin-bottom: 24px;
+  }
+
+  .servicesList {
+    gap: 14px;
   }
 
   .serviceItem {
-    font-size: 14px;
+    font-size: 16px;
+    gap: 14px;
+  }
+
+  .serviceDot {
+    width: 10px;
+    height: 10px;
+    background: #333333;
+  }
+}
+
+/* ─────────────────────────────────────────
+   Reduced motion
+───────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .introTitle,
+  .card {
+    will-change: auto;
   }
 }
