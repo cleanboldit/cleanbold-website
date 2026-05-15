@@ -1,7 +1,6 @@
 import React from 'react'
 import { Caveat, Lato } from 'next/font/google'
 import './styles.css'
-import './components-styles.css'
 import IntroAnimation from './components/IntroAnimation/IntroAnimation'
 
 const caveat = Caveat({
