@@ -37,7 +37,7 @@ interface LogoCardProps {
 const GRID_COUNTS = { mobile: 12, tablet: 16, desktop: 24 } as const
 
 function useGridCount() {
-  const [count, setCount] = useState(GRID_COUNTS.desktop)
+  const [count, setCount] = useState<number>(GRID_COUNTS.desktop)
 
   useEffect(() => {
     const mqMobile = window.matchMedia('(max-width: 767px)')
