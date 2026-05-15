@@ -4,71 +4,79 @@ import { useEffect, useRef, useState, useMemo } from 'react'
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
 import styles from './IntroAnimation.module.css'
 
-const CHARS = ['C', 'l', 'e', 'a', 'n', 'b', 'o', 'l', 'd']
+const CHARS = ['C', 'l', 'e', 'a', 'n', 'b', 'o', 'l', 'd'] as const
 const DOT = '.'
-const ERASE_INTERVAL = 80
+const DUST_COUNT = 30
+const ERASE_INTERVAL_BASE = 80
+const SCATTER_RADIUS_BASE = 35
+const SCATTER_RADIUS_STEP = 15
+const SCATTER_ANGLE_OFFSET = 0.7
+const SCATTER_SCALE_BASE = 0.3
+const SCATTER_SCALE_STEP = 0.25
 
-/* deterministic scatter positions */
-function getScatterPositions(count: number) {
-  const positions: { x: number; y: number; r: number; s: number }[] = []
-  for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2 + 0.7
-    const radius = 35 + (i % 3) * 15
-    positions.push({
+/** Deterministic per-character scatter positions — stable across renders */
+function buildScatterPositions(count: number) {
+  return Array.from({ length: count }, (_, i) => {
+    const angle = (i / count) * Math.PI * 2 + SCATTER_ANGLE_OFFSET
+    const radius = SCATTER_RADIUS_BASE + (i % 3) * SCATTER_RADIUS_STEP
+    return {
       x: Math.cos(angle) * radius,
       y: Math.sin(angle) * radius,
       r: ((i * 137) % 360) - 180,
-      s: 0.3 + (i % 4) * 0.25,
-    })
-  }
-  return positions
+      s: SCATTER_SCALE_BASE + (i % 4) * SCATTER_SCALE_STEP,
+    }
+  })
 }
 
+type Phase = 'scatter' | 'assemble' | 'hold' | 'erasing' | 'exploding' | 'done'
+
 export default function IntroAnimation() {
-  const [phase, setPhase] = useState<
-    'scatter' | 'assemble' | 'hold' | 'erasing' | 'exploding' | 'done'
-  >('scatter')
+  const [phase, setPhase] = useState<Phase>('scatter')
   const [visibleCount, setVisibleCount] = useState(CHARS.length)
   const dotRef = useRef<HTMLSpanElement>(null)
   const [dotCenter, setDotCenter] = useState('50% 50%')
-  const scatterPositions = useMemo(() => getScatterPositions(CHARS.length), [])
+  const scatterPositions = useMemo(() => buildScatterPositions(CHARS.length), [])
 
-  /* Lock scroll */
+  /* Lock scroll; restore on unmount in case phase never reaches 'done' */
   useEffect(() => {
     document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = ''
+    }
   }, [])
 
   /* Phase sequencer */
   useEffect(() => {
-    if (phase === 'scatter') {
-      const t = setTimeout(() => setPhase('assemble'), 400)
-      return () => clearTimeout(t)
+    const delays: Partial<Record<Phase, number>> = {
+      scatter: 400,
+      assemble: 1100,
+      hold: 700,
     }
-    if (phase === 'assemble') {
-      const t = setTimeout(() => setPhase('hold'), 1100)
-      return () => clearTimeout(t)
+    const next: Partial<Record<Phase, Phase>> = {
+      scatter: 'assemble',
+      assemble: 'hold',
+      hold: 'erasing',
     }
-    if (phase === 'hold') {
-      const t = setTimeout(() => setPhase('erasing'), 700)
-      return () => clearTimeout(t)
-    }
+    const delay = delays[phase]
+    if (delay === undefined) return
+    const t = setTimeout(() => setPhase(next[phase]!), delay)
+    return () => clearTimeout(t)
   }, [phase])
 
   /* Erase letters one by one (backwards) */
   useEffect(() => {
     if (phase !== 'erasing') return
     if (visibleCount === 0) {
-      /* Capture dot position for the wipe origin */
       if (dotRef.current) {
-        const r = dotRef.current.getBoundingClientRect()
-        setDotCenter(`${r.left + r.width / 2}px ${r.top + r.height / 2}px`)
+        const { left, top, width, height } = dotRef.current.getBoundingClientRect()
+        setDotCenter(`${left + width / 2}px ${top + height / 2}px`)
       }
       const t = setTimeout(() => setPhase('exploding'), 200)
       return () => clearTimeout(t)
     }
     const t = setTimeout(
       () => setVisibleCount((n) => n - 1),
-      ERASE_INTERVAL - visibleCount * 3,
+      ERASE_INTERVAL_BASE - visibleCount * 3,
     )
     return () => clearTimeout(t)
   }, [visibleCount, phase])
@@ -77,15 +85,17 @@ export default function IntroAnimation() {
 
   const isAssembled = phase !== 'scatter'
   const isErasing = phase === 'erasing' || phase === 'exploding'
+  const charIndices = isErasing
+    ? Array.from({ length: visibleCount }, (_, i) => i)
+    : CHARS.map((_, i) => i)
 
   return (
-    <div className={styles.intro} aria-hidden>
+    <div className={styles.intro} aria-hidden="true">
       <div className={styles.base} />
 
-      {/* Dust particles during scatter/assemble */}
       {(phase === 'scatter' || phase === 'assemble') && (
         <div className={styles.dustField}>
-          {Array.from({ length: 30 }, (_, i) => (
+          {Array.from({ length: DUST_COUNT }, (_, i) => (
             <span
               key={i}
               className={styles.dust}
@@ -100,7 +110,6 @@ export default function IntroAnimation() {
         </div>
       )}
 
-      {/* Circle wipe reveal from the dot */}
       <AnimatePresence>
         {phase === 'exploding' && (
           <motion.div
@@ -116,27 +125,19 @@ export default function IntroAnimation() {
         )}
       </AnimatePresence>
 
-      {/* Letters + dot */}
       {phase !== 'exploding' && (
         <motion.div
           className={styles.letterStage}
-          /* fade-in the whole stage on first appear */
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
-          {/* Glow ring behind the assembled text */}
           {isAssembled && !isErasing && <div className={styles.glowRing} />}
 
           <div className={styles.logoWrap}>
             <LayoutGroup>
               <AnimatePresence initial={false}>
-                {/* During scatter/assemble: all letters with scatter animation */}
-                {/* During erasing: only visibleCount letters */}
-                {(isErasing
-                  ? Array.from({ length: visibleCount }, (_, i) => i)
-                  : CHARS.map((_, i) => i)
-                ).map((i) => {
+                {charIndices.map((i) => {
                   const scatter = scatterPositions[i]
                   const isBold = i >= 5
 
@@ -155,14 +156,7 @@ export default function IntroAnimation() {
                           filter: 'blur(8px)',
                         },
                         animate: isAssembled
-                          ? {
-                              x: 0,
-                              y: 0,
-                              rotate: 0,
-                              scale: 1,
-                              opacity: 1,
-                              filter: 'blur(0px)',
-                            }
+                          ? { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1, filter: 'blur(0px)' }
                           : {
                               x: `${scatter.x}vw`,
                               y: `${scatter.y}vh`,
@@ -187,7 +181,6 @@ export default function IntroAnimation() {
                 })}
               </AnimatePresence>
 
-              {/* The dot — persists, layout-animates to stay attached */}
               <motion.span
                 ref={dotRef}
                 className={styles.charDot}
@@ -215,7 +208,6 @@ export default function IntroAnimation() {
             </LayoutGroup>
           </div>
 
-          {/* Light sweep shimmer after assembly */}
           {phase === 'hold' && (
             <motion.div
               className={styles.lightSweep}
