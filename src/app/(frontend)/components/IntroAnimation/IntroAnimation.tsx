@@ -171,6 +171,7 @@ export default function IntroAnimation() {
                           type: 'spring',
                           stiffness: 120,
                           damping: 14,
+                          filter: { type: 'tween', duration: 0.5, ease: 'easeOut', delay: i * 0.05 },
                         },
                       })}
                       exit={{ opacity: 0, y: -8, transition: { duration: 0.06 } }}
@@ -200,6 +201,7 @@ export default function IntroAnimation() {
                         type: 'spring',
                         stiffness: 200,
                         damping: 18,
+                        filter: { type: 'tween', duration: 0.5, ease: 'easeOut', delay: CHARS.length * 0.05 },
                       }
                 }
               >
