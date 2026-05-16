@@ -573,6 +573,9 @@ export const Pages: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: ({ req }) => !!req.user,
+    update: ({ req }) => !!req.user,
+    delete: ({ req }) => !!req.user,
   },
   versions: {
     drafts: {

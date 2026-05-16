@@ -24,6 +24,15 @@ const dirname = path.dirname(filename)
 
 const { RESEND_API_KEY } = process.env
 
+if (
+  process.env.NODE_ENV === 'production' &&
+  process.env.NEXT_PHASE !== 'phase-production-build'
+) {
+  const required = ['PAYLOAD_SECRET', 'DATABASE_URI', 'RESEND_API_KEY', 'S3_ACCESS_KEY_TOKEN', 'S3_SECRET_KEY', 'S3_BUCKET_NAME', 'S3_ENDPOINT']
+  const missing = required.filter((k) => !process.env[k])
+  if (missing.length) throw new Error(`Missing required env vars: ${missing.join(', ')}`)
+}
+
 export default buildConfig({
   email: resendAdapter({
     defaultFromAddress: 'cleanboldit@gmail.com',
@@ -70,11 +79,14 @@ export default buildConfig({
         const sub: { field: string; value: string }[] = (data as any)?.submissionData ?? []
         const get = (field: string) => sub.find((s) => s.field === field)?.value ?? '—'
 
-        const name = get('name')
-        const companyName = get('companyName')
-        const email = get('email')
-        const phone = get('phone')
-        const message = get('message')
+        const esc = (s: string) =>
+          s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!))
+
+        const name = esc(get('name'))
+        const companyName = esc(get('companyName'))
+        const email = esc(get('email'))
+        const phone = esc(get('phone'))
+        const message = esc(get('message'))
 
         const html = `
 <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#1a1a1a">

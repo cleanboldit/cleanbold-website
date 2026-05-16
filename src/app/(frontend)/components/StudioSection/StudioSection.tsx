@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import styles from './StudioSection.module.css'
 import { motion } from 'framer-motion'
 
@@ -84,13 +85,14 @@ export default function StudioSection({ block }: StudioSectionProps) {
             <div className={styles.lensTrack} aria-hidden="true">
               {looped.map((url, idx) => (
                 <div key={idx} className={styles.lensImgWrap}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={url}
                     alt=""
-                    loading="lazy"
+                    width={350}
+                    height={520}
                     draggable={false}
                     className={styles.lensImg}
+                    sizes="350px"
                   />
                 </div>
               ))}

@@ -50,11 +50,17 @@ export function validateFooterInquiry(input: Partial<FooterInquiryValues>): {
   const errors: FooterInquiryErrors = {}
 
   if (!values.name) errors.name = 'Please enter your name.'
+  else if (values.name.length > 100) errors.name = 'Name must be 100 characters or less.'
+
   if (!values.companyName) errors.companyName = 'Please enter your company name.'
+  else if (values.companyName.length > 100) errors.companyName = 'Company name must be 100 characters or less.'
+
   if (!values.email) {
     errors.email = 'Please enter your email address.'
   } else if (!EMAIL_REGEX.test(values.email)) {
     errors.email = 'Please enter a valid email address.'
+  } else if (values.email.length > 254) {
+    errors.email = 'Email address is too long.'
   }
 
   if (!values.phone) {
@@ -64,6 +70,7 @@ export function validateFooterInquiry(input: Partial<FooterInquiryValues>): {
   }
 
   if (!values.message) errors.message = 'Please enter your message.'
+  else if (values.message.length > 2000) errors.message = 'Message must be 2000 characters or less.'
 
   return {
     values,

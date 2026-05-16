@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
 import type { Media, Page } from '@/payload-types'
 
-const BRAND = 'Clean Bold Studio'
-const DEFAULT_TITLE = `${BRAND} | Creative Digital Agency`
-const DEFAULT_DESCRIPTION =
-  'Clean Bold - A creative digital studio crafting innovative solutions for brands that dare to be different'
+const BRAND = 'Cleanbold Advertising'
+const DEFAULT_TITLE = `${BRAND} | Sharp Shots. Bold Stories. Brands That Grow.`
+const DEFAULT_DESCRIPTION = 'Where Creativity Converts.'
 
 function siteOrigin(): string {
   const raw =

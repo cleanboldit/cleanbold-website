@@ -1,7 +1,7 @@
 {
-  "name": "my-app",
+  "name": "cleanbold-website",
   "version": "1.0.0",
-  "description": "A blank template to get started with Payload 3.0",
+  "description": "Cleanbold Advertising — Next.js 15 + Payload CMS website",
   "license": "MIT",
   "type": "module",
   "scripts": {
