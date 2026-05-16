@@ -76,6 +76,8 @@ export default buildConfig({
         media: true,
       },
       bucket: process.env.S3_BUCKET_NAME || '',
+      baseUrl: process.env.S3_PUBLIC_URL || '',
+      disableLocalStorage: true,
       config: {
         credentials: {
           accessKeyId: process.env.S3_ACCESS_KEY_TOKEN || '',
