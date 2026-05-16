@@ -126,7 +126,7 @@ export default buildConfig({
           ? {
               disablePayloadAccessControl: true,
               generateFileURL: ({ filename, prefix }) =>
-                `${process.env.S3_PUBLIC_URL}${prefix ? `/${prefix}` : ''}/${filename}`,
+                `${process.env.S3_PUBLIC_URL}/${process.env.S3_BUCKET_NAME}${prefix ? `/${prefix}` : ''}/${filename}`,
             }
           : true,
       },
