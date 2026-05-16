@@ -1,6 +1,7 @@
 // storage-adapter-import-placeholder
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
+import { resendAdapter } from '@payloadcms/email-resend'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
@@ -21,7 +22,23 @@ import { SiteSettings } from './globals/SiteSettings'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const { RESEND_API_KEY } = process.env
+
+if (
+  process.env.NODE_ENV === 'production' &&
+  process.env.NEXT_PHASE !== 'phase-production-build'
+) {
+  const required = ['PAYLOAD_SECRET', 'DATABASE_URI', 'RESEND_API_KEY', 'S3_ACCESS_KEY_TOKEN', 'S3_SECRET_KEY', 'S3_BUCKET_NAME', 'S3_ENDPOINT']
+  const missing = required.filter((k) => !process.env[k])
+  if (missing.length) throw new Error(`Missing required env vars: ${missing.join(', ')}`)
+}
+
 export default buildConfig({
+  email: resendAdapter({
+    defaultFromAddress: 'cleanboldit@gmail.com',
+    defaultFromName: 'Cleanbold',
+    apiKey: RESEND_API_KEY || '',
+  }),
   admin: {
     user: Users.slug,
     importMap: {
@@ -58,6 +75,38 @@ export default buildConfig({
         payment: false,
       },
       redirectRelationships: ['pages'],
+      beforeEmail: (emails, { data }) => {
+        const sub: { field: string; value: string }[] = (data as any)?.submissionData ?? []
+        const get = (field: string) => sub.find((s) => s.field === field)?.value ?? '—'
+
+        const esc = (s: string) =>
+          s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!))
+
+        const name = esc(get('name'))
+        const companyName = esc(get('companyName'))
+        const email = esc(get('email'))
+        const phone = esc(get('phone'))
+        const message = esc(get('message'))
+
+        const html = `
+<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#1a1a1a">
+  <h2 style="margin:0 0 20px">New Inquiry — Cleanbold</h2>
+
+  <p style="margin:0 0 8px"><strong>Name:</strong> ${name}</p>
+  <p style="margin:0 0 8px"><strong>Company:</strong> ${companyName}</p>
+  <p style="margin:0 0 8px"><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+  <p style="margin:0 0 20px"><strong>Mobile:</strong> <a href="tel:+91${phone}">+91 ${phone}</a></p>
+
+  <p style="margin:0 0 8px"><strong>Message:</strong></p>
+  <p style="margin:0;white-space:pre-wrap;background:#f5f5f5;padding:12px 16px;border-radius:6px">${message}</p>
+</div>`
+
+        return emails.map((e) => ({
+          ...e,
+          subject: `New Inquiry from ${name} — ${companyName}`,
+          html,
+        }))
+      },
     }),
     // SEO Plugin - adds SEO fields to all collections and globals in a separate tab
     seoPlugin({

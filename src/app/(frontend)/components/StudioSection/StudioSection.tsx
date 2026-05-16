@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import styles from './StudioSection.module.css'
 import { motion } from 'framer-motion'
 
@@ -7,7 +8,6 @@ interface StudioSectionProps {
   block: {
     title?: string
     subtitle?: string
-    description?: string
     studioImages?: { image: { url?: string } | string | null }[]
     perfectFor?: { item: string }[]
     detailsSection?: {
@@ -20,21 +20,21 @@ interface StudioSectionProps {
   }
 }
 
-export default function StudioSection({ block }: StudioSectionProps) {
-  const { title, subtitle, description, studioImages = [], perfectFor = [], detailsSection } = block
+const EASE = [0.22, 1, 0.36, 1] as const
 
-  const imageUrls: string[] = studioImages
+export default function StudioSection({ block }: StudioSectionProps) {
+  const { title, subtitle, studioImages = [], perfectFor = [], detailsSection } = block
+
+  const imageUrls = studioImages
     .map((s) => (typeof s.image === 'object' ? s.image?.url : s.image))
     .filter((u): u is string => Boolean(u))
 
-  const marqueeItems = perfectFor.length > 0 ? perfectFor.map((p) => p.item) : []
+  const marqueeItems = perfectFor.map((p) => p.item)
   const displayMarquee = [...marqueeItems, ...marqueeItems]
-
-  const looped = [...imageUrls, ...imageUrls]
+  const looped = [...imageUrls, ...imageUrls, ...imageUrls]
 
   return (
     <section className={styles.studioSection}>
-      {/* ── Header ─────────────────────────────────────────────── */}
       <div className={styles.headerSection}>
         <div className={styles.headerContent}>
           <motion.div
@@ -42,43 +42,31 @@ export default function StudioSection({ block }: StudioSectionProps) {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.8, ease: EASE }}
           >
-            {title && <p className={styles.studioTitle}>{title}</p>}
+            {title && (
+              <h2 className={styles.studioTitle}>
+                {title.split('|').map((line, i, arr) => (
+                  <span key={i}>
+                    {line.trim()}
+                    {i < arr.length - 1 && <br />}
+                  </span>
+                ))}
+              </h2>
+            )}
             {subtitle && <p className={styles.studioSubtitle}>{subtitle}</p>}
           </motion.div>
-
-          {/* {description && (
-            <motion.div
-              className={styles.studioDescription}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <p>{description}</p>
-            </motion.div>
-          )} */}
         </div>
       </div>
 
-      {/* ── Lens-shaped image strip ─────────────────────────────── */}
       {imageUrls.length > 0 && (
         <motion.div
           className={styles.lensOuter}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1, ease: EASE }}
         >
-          {/*
-            Inline SVG defines the lens clip-path using objectBoundingBox
-            coordinates (0–1). The shape:
-              Top edge  — Q curve bowing DOWN  (concave inward from top)
-              Bottom edge — Q curve bowing UP  (concave inward from bottom)
-            Together they form the "two eggs facing each other" lens from
-            the reference sketch.
-          */}
           <svg
             width="0"
             height="0"
@@ -93,15 +81,18 @@ export default function StudioSection({ block }: StudioSectionProps) {
           </svg>
 
           <div className={styles.lensClip}>
-            <div className={styles.lensTrack}>
+            {/* aria-hidden: decorative looping strip, not meaningful content */}
+            <div className={styles.lensTrack} aria-hidden="true">
               {looped.map((url, idx) => (
                 <div key={idx} className={styles.lensImgWrap}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={url}
-                    alt={`Studio ${(idx % imageUrls.length) + 1}`}
+                    alt=""
+                    width={350}
+                    height={520}
                     draggable={false}
                     className={styles.lensImg}
+                    sizes="350px"
                   />
                 </div>
               ))}
@@ -110,10 +101,10 @@ export default function StudioSection({ block }: StudioSectionProps) {
         </motion.div>
       )}
 
-      {/* ── Marquee + Details ──────────────────────────────────── */}
       <div className={styles.marqueeSection}>
         {displayMarquee.length > 0 && (
-          <div className={styles.marqueeWrapper}>
+          /* aria-hidden: purely decorative marquee, content duplicated for CSS loop */
+          <div className={styles.marqueeWrapper} aria-hidden="true">
             <div className={styles.marqueeContent}>
               <span className={styles.marqueeLabel}>Perfect For:</span>
               <div className={styles.marqueeTrack}>
@@ -137,7 +128,7 @@ export default function StudioSection({ block }: StudioSectionProps) {
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.8, ease: EASE }}
               >
                 {detailsSection.title && (
                   <h3 className={styles.detailsTitle}>{detailsSection.title}</h3>
@@ -152,7 +143,7 @@ export default function StudioSection({ block }: StudioSectionProps) {
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.8, ease: EASE }}
               >
                 {detailsSection.locationTitle && (
                   <h4 className={styles.locationTitle}>{detailsSection.locationTitle}</h4>
@@ -160,9 +151,9 @@ export default function StudioSection({ block }: StudioSectionProps) {
                 {detailsSection.locationAddress && (
                   <p className={styles.locationAddress}>{detailsSection.locationAddress}</p>
                 )}
-                <button className={styles.bookBtn}>
+                <a href="#contact" className={styles.bookBtn}>
                   {detailsSection.bookButtonText || 'Book Studio'}
-                </button>
+                </a>
               </motion.div>
             </div>
           </div>

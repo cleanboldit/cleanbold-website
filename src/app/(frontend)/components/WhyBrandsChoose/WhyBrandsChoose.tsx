@@ -1,7 +1,7 @@
 'use client'
 
+import { motion, useReducedMotion } from 'framer-motion'
 import styles from './WhyBrandsChoose.module.css'
-import { motion } from 'framer-motion'
 
 interface Feature {
   id?: string
@@ -36,6 +36,7 @@ function SectionCard({ section, index }: { section: BrandSection; index: number 
   const bg = bgImages[index] ?? bgImages[0]
   const hasFeatures = (section.features?.length ?? 0) > 0
   const hasSteps = (section.approachSteps?.length ?? 0) > 0
+  const reduceMotion = useReducedMotion()
 
   return (
     <div
@@ -44,12 +45,11 @@ function SectionCard({ section, index }: { section: BrandSection; index: number 
     >
       <motion.div
         className={styles.cardInner}
-        initial={{ opacity: 0, y: 80 }}
+        initial={{ opacity: 0, y: reduceMotion ? 0 : 80 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.3 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={reduceMotion ? { duration: 0 } : { duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
-        {/* LEFT COLUMN */}
         <div className={styles.cardLeft}>
           {section.sectionLabel && (
             <p className={styles.sectionLabel}>{section.sectionLabel}</p>
@@ -58,10 +58,8 @@ function SectionCard({ section, index }: { section: BrandSection; index: number 
           <p className={styles.cardDescription}>{section.description}</p>
         </div>
 
-        {/* DIVIDER */}
-        <div className={styles.cardDivider} />
+        <div className={styles.cardDivider} aria-hidden="true" />
 
-        {/* RIGHT COLUMN */}
         <div className={styles.cardRight}>
           {hasFeatures && (
             <>
@@ -71,7 +69,7 @@ function SectionCard({ section, index }: { section: BrandSection; index: number 
               <ul className={styles.itemList}>
                 {section.features!.map((f, i) => (
                   <li key={f.id ?? i} className={styles.listItem}>
-                    <span className={styles.bullet} />
+                    <span className={styles.bullet} aria-hidden="true" />
                     {f.text}
                   </li>
                 ))}

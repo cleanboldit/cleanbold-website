@@ -34,7 +34,32 @@ interface LogoCardProps {
   tick: number
 }
 
-const GRID_COUNT = 24 // 4 rows × 6 columns
+const GRID_COUNTS = { mobile: 12, tablet: 16, desktop: 24 } as const
+
+function useGridCount() {
+  const [count, setCount] = useState<number>(GRID_COUNTS.desktop)
+
+  useEffect(() => {
+    const mqMobile = window.matchMedia('(max-width: 767px)')
+    const mqTablet = window.matchMedia('(min-width: 768px) and (max-width: 1023px)')
+
+    const update = () => {
+      if (mqMobile.matches) setCount(GRID_COUNTS.mobile)
+      else if (mqTablet.matches) setCount(GRID_COUNTS.tablet)
+      else setCount(GRID_COUNTS.desktop)
+    }
+
+    update()
+    mqMobile.addEventListener('change', update)
+    mqTablet.addEventListener('change', update)
+    return () => {
+      mqMobile.removeEventListener('change', update)
+      mqTablet.removeEventListener('change', update)
+    }
+  }, [])
+
+  return count
+}
 
 const LogoCard = memo(function LogoCard({
   logoPool,
@@ -72,7 +97,7 @@ const LogoCard = memo(function LogoCard({
       >
         <Image
           src={logo.url}
-          alt={logo.name}
+          alt={`${logo.name} logo`}
           width={200}
           height={100}
           className={styles['client-brand-logo']}
@@ -96,6 +121,13 @@ export default function FeaturedClients({ block }: FeaturedClientsProps) {
         }))
         .filter((l) => l.url !== ''),
     [clients],
+  )
+
+  const gridCount = useGridCount()
+
+  const initialIndices = useMemo(
+    () => Array.from({ length: gridCount }, (_, i) => i % logoPool.length),
+    [gridCount, logoPool.length],
   )
 
   const [phase, setPhase] = useState<'idle' | 'exiting' | 'entering'>('idle')
@@ -127,8 +159,6 @@ export default function FeaturedClients({ block }: FeaturedClientsProps) {
 
   if (logoPool.length === 0) return null
 
-  const initialIndices = Array.from({ length: GRID_COUNT }, (_, i) => i % logoPool.length)
-
   return (
     <section className={styles['featured-clients-section']}>
       <div className={styles['clients-container']}>
@@ -140,9 +170,9 @@ export default function FeaturedClients({ block }: FeaturedClientsProps) {
           transition={{ duration: 0.8 }}
         >
           <p className={styles['section-label']}>{sectionLabel || 'Featured Clients/Impact'}</p>
-          <h2 style={{ fontSize: '45px', fontStyle: 'Biennale', fontWeight: '600' }}>
+          <h2 className={styles['clients-heading']}>
             {mainTitle || 'Brands That Trusted The Bold'}
-            <span className={styles['dot-accent']}>.</span>
+            <span className={styles['dot-accent']} aria-hidden="true" />
           </h2>
           <p className={styles['section-description']}>
             {description ||
@@ -170,7 +200,9 @@ export default function FeaturedClients({ block }: FeaturedClientsProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <button className={styles['see-work-btn']}>{ctaButtonText || 'See Our Work'}</button>
+          <a href="#contact" className={styles['see-work-btn']}>
+            {ctaButtonText || 'See Our Work'}
+          </a>
         </motion.div>
       </div>
     </section>

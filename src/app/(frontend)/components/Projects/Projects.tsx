@@ -4,7 +4,7 @@ import styles from './Projects.module.css'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { getProjectRouteHref } from '@/lib/project-route'
 
 interface Project {
@@ -14,7 +14,6 @@ interface Project {
   route?: string | null
   image?: { url?: string } | string | null
   video?: { url?: string; mimeType?: string } | string | null
-  size?: string
   projectDescription?: unknown
 }
 
@@ -28,34 +27,42 @@ interface ProjectsProps {
   }
 }
 
+function getCategoryName(category: Project['category']): string | undefined {
+  return typeof category === 'string' ? category : category?.name
+}
+
 export default function Projects({ block }: ProjectsProps) {
   const { projects = [], sectionLabel, mainTitle, description, exploreButtonText } = block
   const [selectedCategory, setSelectedCategory] = useState('All')
 
-  const categories: string[] = Array.from(
-    new Set(
-      projects
-        .map((p) => (typeof p.category === 'string' ? p.category : p.category?.name))
-        .filter((c): c is string => Boolean(c)),
-    ),
-  ).reverse()
+  const categories = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          projects.map((p) => getCategoryName(p.category)).filter((c): c is string => Boolean(c)),
+        ),
+      ).reverse(),
+    [projects],
+  )
 
-  const filteredProjects =
-    selectedCategory === 'All'
-      ? projects
-      : projects.filter((p) => {
-          const cat = typeof p.category === 'string' ? p.category : p.category?.name
-          return cat === selectedCategory
-        })
+  const filteredProjects = useMemo(
+    () =>
+      selectedCategory === 'All'
+        ? projects
+        : projects.filter((p) => getCategoryName(p.category) === selectedCategory),
+    [projects, selectedCategory],
+  )
 
-  // Double the array for seamless marquee loop
-  const marqueeItems = [...filteredProjects, ...filteredProjects]
-  const duration = Math.max(12, filteredProjects.length * 4)
+  const marqueeItems = useMemo(
+    () => [...filteredProjects, ...filteredProjects],
+    [filteredProjects],
+  )
+
+  const duration = useMemo(() => Math.max(12, filteredProjects.length * 4), [filteredProjects])
 
   return (
-    <section className={styles['projects-section']}>
+    <section className={styles['projects-section']} aria-labelledby="projects-title">
       <div className={styles['projects-inner']}>
-        {/* Header */}
         <div className={styles['projects-header']}>
           <motion.p
             className={styles['section-label-projects']}
@@ -67,6 +74,7 @@ export default function Projects({ block }: ProjectsProps) {
             {sectionLabel}
           </motion.p>
           <motion.h2
+            id="projects-title"
             className={styles['projects-main-title']}
             initial={{ opacity: 0, y: 40, clipPath: 'inset(0 0 100% 0)' }}
             whileInView={{ opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)' }}
@@ -86,48 +94,49 @@ export default function Projects({ block }: ProjectsProps) {
           </motion.p>
         </div>
 
-        {/* Category filters */}
-        <div className={styles['top-bar']}>
-          <motion.div
-            className={styles['category-filters']}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            {['All', ...categories].map((cat, i) => (
-              <motion.button
-                key={cat}
-                className={`${styles['filter-btn']} ${selectedCategory === cat ? styles.active : ''}`}
-                onClick={() => setSelectedCategory(cat)}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {cat}
-              </motion.button>
-            ))}
-          </motion.div>
-        </div>
+        <motion.div
+          className={styles['category-filters']}
+          role="group"
+          aria-label="Filter projects by category"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          {['All', ...categories].map((cat, i) => (
+            <motion.button
+              key={cat}
+              className={`${styles['filter-btn']} ${selectedCategory === cat ? styles.active : ''}`}
+              onClick={() => setSelectedCategory(cat)}
+              aria-pressed={selectedCategory === cat}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {cat}
+            </motion.button>
+          ))}
+        </motion.div>
       </div>
 
-      {/* Infinite marquee track */}
-      <div className={styles['marquee-outer']}>
+      <div className={styles['marquee-outer']} aria-label="Project showcase" role="region">
         <div
           className={styles['marquee-inner']}
           style={{ '--marquee-duration': `${duration}s` } as React.CSSProperties}
         >
           {marqueeItems.map((project, index) => {
-            const imageUrl = typeof project.image === 'object' ? project.image?.url : project.image
-            const videoUrl = typeof project.video === 'object' ? project.video?.url : project.video
-            const categoryName =
-              typeof project.category === 'string' ? project.category : project.category?.name
+            const imageUrl =
+              typeof project.image === 'object' ? project.image?.url : project.image
+            const videoUrl =
+              typeof project.video === 'object' ? project.video?.url : project.video
+            const categoryName = getCategoryName(project.category)
             const projectHref = getProjectRouteHref(project as Record<string, unknown>)
             const title = project.title || categoryName || 'Project'
-            const cardContent = (
+
+            const cardFrame = (
               <div className={styles['film-card-frame']}>
                 {videoUrl ? (
                   <video
@@ -138,6 +147,7 @@ export default function Projects({ block }: ProjectsProps) {
                     loop
                     playsInline
                     draggable={false}
+                    aria-label={title}
                   />
                 ) : imageUrl ? (
                   <Image
@@ -151,11 +161,13 @@ export default function Projects({ block }: ProjectsProps) {
                   />
                 ) : null}
                 {(categoryName || project.title) && (
-                  <div className={styles['film-card-overlay']}>
-                    {categoryName ? (
+                  <div className={styles['film-card-overlay']} aria-hidden="true">
+                    {categoryName && (
                       <span className={styles['film-card-category']}>{categoryName}</span>
-                    ) : null}
-                    {project.title ? <h3 className={styles['film-card-title']}>{project.title}</h3> : null}
+                    )}
+                    {project.title && (
+                      <p className={styles['film-card-title']}>{project.title}</p>
+                    )}
                   </div>
                 )}
               </div>
@@ -165,13 +177,18 @@ export default function Projects({ block }: ProjectsProps) {
               <div
                 key={`${project.id ?? index}-${index}`}
                 className={`${styles['film-card']} ${projectHref ? styles['film-card-clickable'] : ''}`}
+                aria-hidden={index >= filteredProjects.length ? true : undefined}
               >
                 {projectHref ? (
-                  <Link href={projectHref} className={styles['film-card-link']}>
-                    {cardContent}
+                  <Link
+                    href={projectHref}
+                    className={styles['film-card-link']}
+                    aria-label={`View project: ${title}`}
+                  >
+                    {cardFrame}
                   </Link>
                 ) : (
-                  cardContent
+                  cardFrame
                 )}
               </div>
             )
@@ -179,7 +196,6 @@ export default function Projects({ block }: ProjectsProps) {
         </div>
       </div>
 
-      {/* CTA */}
       <div className={styles['projects-inner']}>
         <motion.div
           className={styles['projects-cta']}

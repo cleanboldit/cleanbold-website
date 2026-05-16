@@ -1,7 +1,7 @@
 {
-  "name": "my-app",
+  "name": "cleanbold-website",
   "version": "1.0.0",
-  "description": "A blank template to get started with Payload 3.0",
+  "description": "Cleanbold Advertising — Next.js 15 + Payload CMS website",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -18,20 +18,21 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
-    "@payloadcms/db-mongodb": "3.59.1",
-    "@payloadcms/next": "3.59.1",
-    "@payloadcms/payload-cloud": "3.59.1",
-    "@payloadcms/plugin-form-builder": "^3.59.1",
-    "@payloadcms/plugin-seo": "3.59.1",
-    "@payloadcms/richtext-lexical": "3.59.1",
-    "@payloadcms/storage-s3": "3.59.1",
-    "@payloadcms/ui": "3.59.1",
+    "@payloadcms/db-mongodb": "3.84.1",
+    "@payloadcms/email-resend": "3.84.1",
+    "@payloadcms/next": "3.84.1",
+    "@payloadcms/payload-cloud": "3.84.1",
+    "@payloadcms/plugin-form-builder": "3.84.1",
+    "@payloadcms/plugin-seo": "3.84.1",
+    "@payloadcms/richtext-lexical": "3.84.1",
+    "@payloadcms/storage-s3": "3.84.1",
+    "@payloadcms/ui": "3.84.1",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
     "framer-motion": "^11.18.2",
     "graphql": "^16.8.1",
     "next": "^15.5.9",
-    "payload": "3.59.1",
+    "payload": "3.84.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "sharp": "0.34.2"
@@ -46,6 +47,7 @@
     "eslint": "^9.16.0",
     "eslint-config-next": "15.4.4",
     "jsdom": "26.1.0",
+    "lexical": "0.41.0",
     "playwright": "^1.57.0",
     "playwright-core": "1.54.1",
     "prettier": "^3.4.2",
@@ -63,5 +65,6 @@
       "esbuild",
       "unrs-resolver"
     ]
-  }
+  },
+  "packageManager": "pnpm@10.17.1+sha512.17c560fca4867ae9473a3899ad84a88334914f379be46d455cbf92e5cf4b39d34985d452d2583baf19967fa76cb5c17bc9e245529d0b98745721aa7200ecaf7a"
 }
