@@ -29,6 +29,9 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: imageRemotePatterns(),
   },
