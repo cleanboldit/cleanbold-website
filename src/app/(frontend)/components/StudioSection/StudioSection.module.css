@@ -5,7 +5,6 @@
 .studioSection {
   width: 100%;
   padding: 100px 0 0 0;
-
 }
 
 /* ── Header ──────────────────────────────────────────────────────── */
@@ -34,11 +33,16 @@
 }
 
 .studioTitle {
-  max-width: 489px;
+  max-width: 518px;
+  font-family: 'Biennale', sans-serif;
   font-size: clamp(22px, 4vw, 45px);
   font-weight: 600;
+  font-style: normal;
+  line-height: 120%;
+  letter-spacing: 0;
   color: #000000;
-  line-height: 110%;
+  text-transform: capitalize;
+  margin: 0;
 }
 
 .studioTitle::after {
@@ -48,26 +52,14 @@
 
 .studioSubtitle {
   max-width: 442px;
-  color: #000000;
-  line-height: 130%;
+  font-family: 'Biennale', sans-serif;
   font-size: 18px;
-  margin-top: 16px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 28px;
+  letter-spacing: 0;
+  color: #555555;
   margin: 0;
-}
-
-.studioDescription {
-  flex: 1;
-  min-width: 260px;
-  max-width: 420px;
-  display: flex;
-  align-items: flex-start;
-  padding-top: 8px;
-}
-
-.studioDescription p {
-  font-size: clamp(15px, 1.3vw, 17px);
-  color: #888888;
-  line-height: 1.65;
 }
 
 /* =================================================================
@@ -82,16 +74,6 @@
   margin: 0;
 }
 
-/*
-  .lensClip is the element that receives clip-path: url(#lensClip).
-  The clipPath SVG is rendered inline inside .lensOuter so the
-  browser can resolve the fragment identifier on the same page.
-
-  Shape (objectBoundingBox, coords 0–1):
-    Top edge   → Q curve bows DOWN  → concave inward from top
-    Bottom edge → Q curve bows UP   → concave inward from bottom
-    = "two eggs facing each other" / lens / vesica shape
-*/
 .lensClip {
   position: relative;
   width: 100%;
@@ -105,8 +87,6 @@
 
 /* =================================================================
    SCROLLING IMAGE STRIP
-   Images sit side by side with zero gap (touch edge to edge).
-   Transform is applied directly via DOM ref — no React re-render.
    ================================================================= */
 
 .lensTrack {
@@ -145,9 +125,6 @@
    ================================================================= */
 
 .marqueeSection {
-  background-size: cover;
-  background-position: center;
-  padding: 0;
   overflow: hidden;
   padding-top: 60px;
 }
@@ -213,9 +190,8 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 80px;
   align-items: center;
+  gap: 80px;
 }
 
 .detailsLeft {
@@ -261,6 +237,9 @@
 }
 
 .bookBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(1, 30, 244, 1);
   color: white;
   border: none;
@@ -272,7 +251,8 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .bookBtn:hover {
@@ -283,6 +263,25 @@
 
 .bookBtn:active {
   transform: translateY(0);
+}
+
+.bookBtn:focus-visible {
+  outline: 3px solid #011ef4;
+  outline-offset: 3px;
+}
+
+/* =================================================================
+   REDUCED MOTION
+   ================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .lensTrack {
+    animation: none;
+  }
+
+  .marqueeItems {
+    animation: none;
+  }
 }
 
 /* =================================================================
@@ -340,7 +339,7 @@
   }
 
   .studioTitle {
-    max-width: 480px;
+    max-width: 360px;
     font-size: clamp(28px, 5vw, 40px);
   }
 
@@ -348,12 +347,6 @@
     max-width: 420px;
     font-size: 16px;
     margin-top: 0;
-  }
-
-  .studioDescription {
-    max-width: 100%;
-    min-width: unset;
-    width: 100%;
   }
 
   .lensClip {
@@ -412,7 +405,7 @@
   }
 
   .studioTitle {
-    max-width: 330px;
+    max-width: 345px;
     font-size: clamp(24px, 7vw, 32px);
   }
 
@@ -463,9 +456,4 @@
     height: 52px;
     font-size: 15px;
   }
-}
-
-/* Footer */
-.footer {
-  width: 100%;
 }

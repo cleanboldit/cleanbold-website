@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useMemo, useState } from 'react'
 import {
   motion,
   useScroll,
@@ -8,6 +8,7 @@ import {
   useMotionValue,
   useSpring,
   useMotionTemplate,
+  useReducedMotion,
   type MotionValue,
 } from 'framer-motion'
 import Image from 'next/image'
@@ -28,10 +29,7 @@ interface Offering {
 
 interface CoreOfferingsProps {
   block: {
-    sectionLabel?: string
     mainTitle?: string
-    description?: string
-    exploreButtonText?: string
     backgroundColor?: string
     offerings?: Offering[]
   }
@@ -42,6 +40,8 @@ interface ScrollCardProps {
   scrollYProgress: MotionValue<number>
   animStart: number
   animEnd: number
+  isDesktop: boolean
+  reduceMotion: boolean
 }
 
 interface BgLayerProps {
@@ -51,7 +51,22 @@ interface BgLayerProps {
   outputRange: number[]
 }
 
-// Per-card section background — fades in when card enters, fades out when next card enters
+/** Resolves Payload image field (object or string URL) to a plain URL string */
+function resolveImageUrl(
+  img: { url?: string } | string | null | undefined,
+): string | undefined {
+  return typeof img === 'object' ? img?.url : img ?? undefined
+}
+
+/** ≥1024px = desktop scroll experience; below = simple grid with whileInView */
+function useIsNarrow(): boolean {
+  const [isNarrow, setIsNarrow] = useState(true) // safe SSR default: mobile-first
+  useEffect(() => {
+    setIsNarrow(window.matchMedia('(max-width: 1279px)').matches)
+  }, [])
+  return isNarrow
+}
+
 function BgLayer({ scrollYProgress, bgUrl, inputRange, outputRange }: BgLayerProps) {
   const opacity = useTransform(scrollYProgress, inputRange, outputRange)
   return (
@@ -67,26 +82,43 @@ function BgLayer({ scrollYProgress, bgUrl, inputRange, outputRange }: BgLayerPro
   )
 }
 
-function ScrollCard({ offering, scrollYProgress, animStart, animEnd }: ScrollCardProps) {
-  const opacity = useTransform(scrollYProgress, [animStart, animEnd], [0, 1])
-  const y = useTransform(scrollYProgress, [animStart, animEnd], ['100vh', '0vh'])
-  const scale = useTransform(scrollYProgress, [animStart, animEnd], [0.93, 1])
+function ScrollCard({
+  offering,
+  scrollYProgress,
+  animStart,
+  animEnd,
+  isDesktop,
+  reduceMotion,
+}: ScrollCardProps) {
+  // Always compute — hooks must be unconditional
+  const scrollOpacity = useTransform(scrollYProgress, [animStart, animEnd], [0, 1])
+  const scrollY = useTransform(scrollYProgress, [animStart, animEnd], ['100vh', '0vh'])
+  const scrollScale = useTransform(scrollYProgress, [animStart, animEnd], [0.93, 1])
 
-  const imageUrl = typeof offering.image === 'object' ? offering.image?.url : offering.image
+  const imageUrl = resolveImageUrl(offering.image)
+
+  const motionProps =
+    isDesktop && !reduceMotion
+      ? { style: { opacity: scrollOpacity, y: scrollY, scale: scrollScale } }
+      : !reduceMotion
+        ? {
+            initial: { opacity: 0, y: 48 },
+            whileInView: { opacity: 1, y: 0 },
+            viewport: { once: true, margin: '-60px' },
+            transition: { duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] as const },
+          }
+        : {}
 
   return (
-    <motion.div
-      className={styles.card}
-      style={{ opacity, y, scale, willChange: 'opacity, transform' }}
-    >
+    <motion.article className={styles.card} {...motionProps}>
       {imageUrl && (
         <div className={styles.cardImage}>
           <Image
             src={imageUrl}
             alt={offering.title ?? ''}
             fill
+            sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, (max-width: 1440px) 30vw, 420px"
             style={{ objectFit: 'cover' }}
-            sizes="(max-width: 1440px) 30vw, 420px"
           />
         </div>
       )}
@@ -96,18 +128,22 @@ function ScrollCard({ offering, scrollYProgress, animStart, animEnd }: ScrollCar
       <ul className={styles.servicesList}>
         {offering.servicesList?.map((s, i) => (
           <li key={s.id ?? i} className={styles.serviceItem}>
-            <span className={styles.serviceDot} />
+            <span className={styles.serviceDot} aria-hidden="true" />
             {s.item}
           </li>
         ))}
       </ul>
-    </motion.div>
+    </motion.article>
   )
 }
 
 export default function CoreOfferings({ block }: CoreOfferingsProps) {
-  const { offerings = [] } = block
+  const { offerings = [], mainTitle, backgroundColor } = block
   const containerRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion()
+  const isNarrow = useIsNarrow()
+  const isDesktop = !isNarrow
+  const reduceMotion = !!prefersReducedMotion
   const n = Math.max(offerings.length, 1)
 
   const { scrollYProgress } = useScroll({
@@ -115,57 +151,66 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
     offset: ['start start', 'end end'],
   })
 
-  // Cursor-tracking overlay — adds directional depth on top of card bg images
   const rawX = useMotionValue(65)
   const rawY = useMotionValue(62)
   const springX = useSpring(rawX, { stiffness: 60, damping: 18 })
   const springY = useSpring(rawY, { stiffness: 60, damping: 18 })
 
   useEffect(() => {
+    if (!isDesktop || reduceMotion) return
     const onMove = (e: MouseEvent) => {
       rawX.set((e.clientX / window.innerWidth) * 100)
       rawY.set((e.clientY / window.innerHeight) * 100)
     }
-    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mousemove', onMove, { passive: true })
     return () => window.removeEventListener('mousemove', onMove)
-  }, [rawX, rawY])
+  }, [rawX, rawY, isDesktop, reduceMotion])
 
-  // Soft dark vignette that follows cursor — sits over the bg images
   const cursorOverlay = useMotionTemplate`radial-gradient(ellipse 80% 80% at ${springX}% ${springY}%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 100%)`
 
-  const fraction = 0.75 / n
-
-  // Intro title animation: scale down from large to small, then fade out
+  // Hooks must run unconditionally — values not applied on narrow/reduced-motion
   const titleScale = useTransform(scrollYProgress, [0, 0.12], [1, 0.4])
   const titleOpacity = useTransform(scrollYProgress, [0.08, 0.15], [1, 0])
 
+  const animRanges = useMemo(() => {
+    const fraction = 0.75 / n
+    return offerings.map((_, i) => {
+      const start = 0.15 + i * fraction
+      return { start, end: start + fraction * 0.65 }
+    })
+  }, [offerings, n])
+
   return (
-    <div ref={containerRef} className={styles.container} style={{ height: `${(n + 2.5) * 100}vh` }}>
+    <section
+      ref={containerRef}
+      className={styles.container}
+      style={{
+        // CSS owns height on narrow — don't set inline or it will override
+        height: isDesktop ? `${(n + 2.5) * 100}vh` : undefined,
+        ...(backgroundColor ? { background: backgroundColor } : {}),
+      }}
+      aria-label="Our services"
+    >
       <div className={styles.stickyPane}>
-        {/* Intro title — zooms out on scroll */}
         <motion.div
           className={styles.introTitle}
-          style={{ scale: titleScale, opacity: titleOpacity }}
+          style={isDesktop && !reduceMotion ? { scale: titleScale, opacity: titleOpacity } : undefined}
+          aria-hidden="true"
         >
-          OUR SERVICES<span className={styles.introDot}>.</span>
+          {mainTitle ?? 'OUR SERVICES'}
+          <span className={styles.introDot}>.</span>
         </motion.div>
 
-        {/* Per-card background images — crossfade on scroll */}
-        {offerings.map((offering, index) => {
-          const bgUrl =
-            typeof offering.backgroundImage === 'object'
-              ? offering.backgroundImage?.url
-              : offering.backgroundImage
+        <h2 className={styles.srOnly}>{mainTitle ?? 'Our Services'}</h2>
+
+        {isDesktop && !reduceMotion && offerings.map((offering, index) => {
+          const bgUrl = resolveImageUrl(offering.backgroundImage)
           if (!bgUrl) return null
 
-          const animStart = 0.15 + index * fraction
-          const animEnd = animStart + fraction * 0.65
-          const nextStart = 0.15 + (index + 1) * fraction
-          const nextEnd = nextStart + fraction * 0.65
-
-          const inputRange =
-            index < n - 1 ? [animStart, animEnd, nextStart, nextEnd] : [animStart, animEnd]
-          const outputRange = index < n - 1 ? [0, 1, 1, 0] : [0, 1]
+          const { start, end } = animRanges[index]!
+          const next = animRanges[index + 1]
+          const inputRange = next ? [start, end, next.start, next.end] : [start, end]
+          const outputRange = next ? [0, 1, 1, 0] : [0, 1]
 
           return (
             <BgLayer
@@ -178,20 +223,18 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
           )
         })}
 
-        {/* Cursor-tracking dark vignette overlay */}
-        <motion.div className={styles.background} style={{ background: cursorOverlay }} />
+        {isDesktop && !reduceMotion && (
+          <motion.div className={styles.background} style={{ background: cursorOverlay }} />
+        )}
 
         <div className={styles.inner}>
           <div
             className={styles.grid}
-            style={{
-              gridTemplateColumns: `repeat(${n}, 1fr)`,
-              gap: 'clamp(24px, 3vw, 48px)',
-            }}
+            // CSS handles columns on narrow; desktop needs dynamic repeat(n) for variable offering count
+            style={isDesktop ? { gridTemplateColumns: `repeat(${n}, 1fr)` } : undefined}
           >
             {offerings.map((offering, index) => {
-              const start = 0.15 + index * fraction
-              const end = start + fraction * 0.65
+              const { start, end } = animRanges[index]!
               return (
                 <ScrollCard
                   key={offering.id ?? index}
@@ -199,12 +242,14 @@ export default function CoreOfferings({ block }: CoreOfferingsProps) {
                   scrollYProgress={scrollYProgress}
                   animStart={start}
                   animEnd={end}
+                  isDesktop={isDesktop}
+                  reduceMotion={reduceMotion}
                 />
               )
             })}
           </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

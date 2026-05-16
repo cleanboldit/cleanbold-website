@@ -3,7 +3,7 @@
 import styles from './Footer.module.css'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { JSX, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import type { Footer as FooterGlobal } from '@/payload-types'
 import {
   getCanonicalIndianMobile,
@@ -11,6 +11,23 @@ import {
   validateFooterInquiry,
   type FooterInquiryErrors,
 } from '@/lib/footer-inquiry'
+
+const SLIDE_TRANSITION = { duration: 0.8, ease: [0.22, 1, 0.36, 1] } as const
+
+const SOCIAL_ICONS: Record<string, ReactNode> = {
+  linkedin: (
+    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+  ),
+  facebook: (
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  ),
+  instagram: (
+    <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z" />
+  ),
+  twitter: (
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  ),
+}
 
 interface FooterProps {
   data: FooterGlobal
@@ -41,9 +58,7 @@ export default function Footer({ data }: FooterProps) {
     try {
       const response = await fetch('/api/forms/footer-contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...validation.values,
           phone: getCanonicalIndianMobile(validation.values.phone),
@@ -75,16 +90,10 @@ export default function Footer({ data }: FooterProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
+    setFormData((prev) => ({ ...prev, [name]: value }))
 
     if (errors[name as keyof FooterInquiryErrors]) {
-      setErrors((current) => ({
-        ...current,
-        [name]: undefined,
-      }))
+      setErrors((prev) => ({ ...prev, [name]: undefined }))
     }
 
     if (submitState !== 'idle') {
@@ -94,17 +103,16 @@ export default function Footer({ data }: FooterProps) {
   }
 
   return (
-    <footer id="contact" className="footer">
+    <footer id="contact" className={styles.footer}>
       <div className={styles['footer-unified-section']}>
         <div className={styles['footer-unified-container']}>
-          {/* Contact Form Section */}
           <div className={styles['footer-contact-container']}>
             <motion.div
               className={styles['footer-contact-left']}
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              transition={SLIDE_TRANSITION}
             >
               <h2 className={styles['footer-contact-title']}>
                 {data.contactSection?.title?.split('\\n').map((line: string, i: number) => (
@@ -124,13 +132,14 @@ export default function Footer({ data }: FooterProps) {
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              transition={SLIDE_TRANSITION}
             >
               <h3 className={styles['footer-form-title']}>
                 {data.contactSection?.formTitle || 'Start The Conversation'}
               </h3>
-              {submitMessage ? (
+              {submitMessage && (
                 <p
+                  role="status"
                   className={
                     submitState === 'success'
                       ? styles['footer-form-success']
@@ -139,8 +148,13 @@ export default function Footer({ data }: FooterProps) {
                 >
                   {submitMessage}
                 </p>
-              ) : null}
-              <form className={styles['footer-form']} onSubmit={handleSubmit}>
+              )}
+              <form
+                className={styles['footer-form']}
+                onSubmit={handleSubmit}
+                aria-label="Contact inquiry form"
+                noValidate
+              >
                 <div>
                   <input
                     type="text"
@@ -149,10 +163,15 @@ export default function Footer({ data }: FooterProps) {
                     value={formData.name}
                     onChange={handleChange}
                     className={`${styles['footer-input']} ${errors.name ? styles['footer-input-invalid'] : ''}`}
-                    aria-invalid={errors.name ? 'true' : 'false'}
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? 'error-name' : undefined}
                     required
                   />
-                  {errors.name ? <p className={styles['footer-field-error']}>{errors.name}</p> : null}
+                  {errors.name && (
+                    <p id="error-name" className={styles['footer-field-error']} role="alert">
+                      {errors.name}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <input
@@ -162,12 +181,15 @@ export default function Footer({ data }: FooterProps) {
                     value={formData.companyName}
                     onChange={handleChange}
                     className={`${styles['footer-input']} ${errors.companyName ? styles['footer-input-invalid'] : ''}`}
-                    aria-invalid={errors.companyName ? 'true' : 'false'}
+                    aria-invalid={!!errors.companyName}
+                    aria-describedby={errors.companyName ? 'error-company' : undefined}
                     required
                   />
-                  {errors.companyName ? (
-                    <p className={styles['footer-field-error']}>{errors.companyName}</p>
-                  ) : null}
+                  {errors.companyName && (
+                    <p id="error-company" className={styles['footer-field-error']} role="alert">
+                      {errors.companyName}
+                    </p>
+                  )}
                 </div>
                 <div className={styles['footer-input-row']}>
                   <div>
@@ -178,12 +200,15 @@ export default function Footer({ data }: FooterProps) {
                       value={formData.email}
                       onChange={handleChange}
                       className={`${styles['footer-input']} ${errors.email ? styles['footer-input-invalid'] : ''}`}
-                      aria-invalid={errors.email ? 'true' : 'false'}
+                      aria-invalid={!!errors.email}
+                      aria-describedby={errors.email ? 'error-email' : undefined}
                       required
                     />
-                    {errors.email ? (
-                      <p className={styles['footer-field-error']}>{errors.email}</p>
-                    ) : null}
+                    {errors.email && (
+                      <p id="error-email" className={styles['footer-field-error']} role="alert">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <input
@@ -193,12 +218,15 @@ export default function Footer({ data }: FooterProps) {
                       value={formData.phone}
                       onChange={handleChange}
                       className={`${styles['footer-input']} ${errors.phone ? styles['footer-input-invalid'] : ''}`}
-                      aria-invalid={errors.phone ? 'true' : 'false'}
+                      aria-invalid={!!errors.phone}
+                      aria-describedby={errors.phone ? 'error-phone' : undefined}
                       required
                     />
-                    {errors.phone ? (
-                      <p className={styles['footer-field-error']}>{errors.phone}</p>
-                    ) : null}
+                    {errors.phone && (
+                      <p id="error-phone" className={styles['footer-field-error']} role="alert">
+                        {errors.phone}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div>
@@ -208,18 +236,22 @@ export default function Footer({ data }: FooterProps) {
                     value={formData.message}
                     onChange={handleChange}
                     className={`${styles['footer-textarea']} ${errors.message ? styles['footer-input-invalid'] : ''}`}
-                    aria-invalid={errors.message ? 'true' : 'false'}
+                    aria-invalid={!!errors.message}
+                    aria-describedby={errors.message ? 'error-message' : undefined}
                     rows={4}
                     required
                   />
-                  {errors.message ? (
-                    <p className={styles['footer-field-error']}>{errors.message}</p>
-                  ) : null}
+                  {errors.message && (
+                    <p id="error-message" className={styles['footer-field-error']} role="alert">
+                      {errors.message}
+                    </p>
+                  )}
                 </div>
                 <button
                   type="submit"
                   className={styles['footer-submit-btn']}
                   disabled={submitState === 'submitting'}
+                  aria-busy={submitState === 'submitting'}
                 >
                   {submitState === 'submitting' ? 'Submitting...' : 'Submit'}
                 </button>
@@ -227,17 +259,16 @@ export default function Footer({ data }: FooterProps) {
             </motion.div>
           </div>
 
-          {/* Footer Info Section */}
           <motion.div
             className={styles['footer-info-container']}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            transition={SLIDE_TRANSITION}
           >
             <div className={styles['footer-info-content']}>
               <div className={styles['footer-brand-section']}>
-                <h1 className={styles['footer-brand-name']}>
+                <p className={styles['footer-brand-name']}>
                   {data.companyInfo?.brandName && (
                     <>
                       {data.companyInfo.brandName.split('bold')[0]}
@@ -250,11 +281,11 @@ export default function Footer({ data }: FooterProps) {
                       )}
                     </>
                   )}
-                </h1>
-                <h1 className={styles['footer-brand-tagline']}>{data.companyInfo?.tagline}</h1>
+                </p>
+                <p className={styles['footer-brand-tagline']}>{data.companyInfo?.tagline}</p>
               </div>
 
-              <div className={styles['footer-contact-info']}>
+              <address className={styles['footer-contact-info']}>
                 <div className={styles['footer-info-item']}>
                   <svg
                     className={styles['footer-icon']}
@@ -263,6 +294,7 @@ export default function Footer({ data }: FooterProps) {
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
                   >
                     <path
                       d="M20 10.999h2C22 5.869 18.127 2 12.99 2v2C17.052 4 20 6.943 20 10.999z"
@@ -273,7 +305,9 @@ export default function Footer({ data }: FooterProps) {
                       fill="currentColor"
                     />
                   </svg>
-                  <span>{data.companyInfo?.phone || '+91 79902 34633'}</span>
+                  <a href={`tel:${(data.companyInfo?.phone || '+919790234633').replace(/\s/g, '')}`}>
+                    {data.companyInfo?.phone || '+91 79902 34633'}
+                  </a>
                 </div>
 
                 <div className={styles['footer-info-item']}>
@@ -284,13 +318,16 @@ export default function Footer({ data }: FooterProps) {
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
                   >
                     <path
                       d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 0 0 1.228 0L20 9.044 20.002 18H4z"
                       fill="currentColor"
                     />
                   </svg>
-                  <span>{data.companyInfo?.email || 'cleanboldadvertising@gmail.com'}</span>
+                  <a href={`mailto:${data.companyInfo?.email || 'cleanboldadvertising@gmail.com'}`}>
+                    {data.companyInfo?.email || 'cleanboldadvertising@gmail.com'}
+                  </a>
                 </div>
 
                 <div className={styles['footer-info-item']}>
@@ -301,6 +338,7 @@ export default function Footer({ data }: FooterProps) {
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
                   >
                     <path
                       d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"
@@ -309,54 +347,36 @@ export default function Footer({ data }: FooterProps) {
                   </svg>
                   <span>{data.companyInfo?.location || 'Ahmedabad, India'}</span>
                 </div>
-              </div>
+              </address>
             </div>
 
             <div className={styles['footer-bottom-section']}>
               <p className={styles['footer-copyright']}>
-                {data.copyright || '© 2025 Cleanbold Advertising. All Rights Reserved.'}
+                {data.copyright || '© 2026 Cleanbold Advertising. All Rights Reserved.'}
               </p>
-              <div className={styles['footer-social-links']}>
-                {data.socialLinks?.map((link, index: number) => {
-                  const getSocialIcon = (platform: string) => {
-                    const icons: { [key: string]: JSX.Element } = {
-                      linkedin: (
-                        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
-                      ),
-                      facebook: (
-                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                      ),
-                      instagram: (
-                        <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z" />
-                      ),
-                      twitter: (
-                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                      ),
-                    }
-                    return icons[platform.toLowerCase()] || null
-                  }
-
-                  return (
-                    <Link
-                      key={index}
-                      href={link.url || '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles['footer-social-link']}
+              <nav className={styles['footer-social-links']} aria-label="Social media links">
+                {data.socialLinks?.map((link, index: number) => (
+                  <Link
+                    key={link.url ?? index}
+                    href={link.url || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles['footer-social-link']}
+                    aria-label={`${link.platform} (opens in new tab)`}
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
                     >
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        {getSocialIcon(link.platform)}
-                      </svg>
-                    </Link>
-                  )
-                })}
-              </div>
+                      {SOCIAL_ICONS[link.platform.toLowerCase()] ?? null}
+                    </svg>
+                  </Link>
+                ))}
+              </nav>
             </div>
           </motion.div>
         </div>

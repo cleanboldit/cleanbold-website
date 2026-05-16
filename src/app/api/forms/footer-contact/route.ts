@@ -1,3 +1,4 @@
+import { createHmac } from 'crypto'
 import { NextResponse } from 'next/server'
 import { getPayloadClient } from '@/lib/payload'
 import {
@@ -5,6 +6,76 @@ import {
   validateFooterInquiry,
   type FooterInquiryValues,
 } from '@/lib/footer-inquiry'
+
+const WINDOW_MS = 10 * 60 * 1000 // 10 minutes
+const MAX_REQUESTS = 5
+const COOKIE_NAME = '__cb_rl'
+
+interface RateLimitState {
+  count: number
+  resetAt: number
+}
+
+function hmac(data: string): string {
+  const secret = process.env.PAYLOAD_SECRET ?? 'dev-secret'
+  return createHmac('sha256', secret).update(data).digest('hex')
+}
+
+function parseCookie(value: string): RateLimitState | null {
+  try {
+    const dot = value.lastIndexOf('.')
+    if (dot === -1) return null
+    const encoded = value.slice(0, dot)
+    const sig = value.slice(dot + 1)
+    if (hmac(encoded) !== sig) return null
+    return JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')) as RateLimitState
+  } catch {
+    return null
+  }
+}
+
+function serializeCookie(state: RateLimitState): string {
+  const encoded = Buffer.from(JSON.stringify(state)).toString('base64url')
+  return `${encoded}.${hmac(encoded)}`
+}
+
+function checkRateLimit(cookieHeader: string | null): {
+  limited: boolean
+  newState: RateLimitState
+} {
+  const now = Date.now()
+
+  let existing: RateLimitState | null = null
+  if (cookieHeader) {
+    const match = cookieHeader
+      .split(';')
+      .map((c) => c.trim())
+      .find((c) => c.startsWith(`${COOKIE_NAME}=`))
+    if (match) {
+      existing = parseCookie(match.slice(COOKIE_NAME.length + 1))
+    }
+  }
+
+  if (!existing || now > existing.resetAt) {
+    return { limited: false, newState: { count: 1, resetAt: now + WINDOW_MS } }
+  }
+  if (existing.count >= MAX_REQUESTS) {
+    return { limited: true, newState: existing }
+  }
+  return { limited: false, newState: { ...existing, count: existing.count + 1 } }
+}
+
+function applyRateLimitCookie(response: NextResponse, state: RateLimitState): NextResponse {
+  const maxAge = Math.ceil((state.resetAt - Date.now()) / 1000)
+  response.cookies.set(COOKIE_NAME, serializeCookie(state), {
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: maxAge > 0 ? maxAge : 1,
+    path: '/',
+  })
+  return response
+}
 
 type FooterGlobalWithContactForm = {
   contactForm?: string | { id?: string | null } | null
@@ -59,6 +130,16 @@ async function resolveFooterFormID(payload: Awaited<ReturnType<typeof getPayload
 }
 
 export async function POST(request: Request) {
+  const { limited, newState } = checkRateLimit(request.headers.get('cookie'))
+
+  if (limited) {
+    const res = NextResponse.json(
+      { ok: false, message: 'Too many requests. Please try again later.' },
+      { status: 429 },
+    )
+    return applyRateLimitCookie(res, newState)
+  }
+
   let body: Partial<FooterInquiryValues> = {}
 
   try {
@@ -102,7 +183,8 @@ export async function POST(request: Request) {
       } as never,
     })
 
-    return NextResponse.json({ ok: true })
+    const res = NextResponse.json({ ok: true })
+    return applyRateLimitCookie(res, newState)
   } catch (error) {
     console.error('[footer-contact] submission failed', error)
     return NextResponse.json(

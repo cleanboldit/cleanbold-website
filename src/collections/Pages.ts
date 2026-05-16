@@ -365,11 +365,6 @@ export const StudioSectionBlock: Block = {
       label: 'Subtitle',
     },
     {
-      name: 'description',
-      type: 'textarea',
-      label: 'Description',
-    },
-    {
       name: 'studioImages',
       type: 'array',
       label: 'Studio Images',
@@ -578,6 +573,9 @@ export const Pages: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: ({ req }) => !!req.user,
+    update: ({ req }) => !!req.user,
+    delete: ({ req }) => !!req.user,
   },
   versions: {
     drafts: {
