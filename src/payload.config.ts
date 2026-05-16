@@ -55,6 +55,12 @@ export default buildConfig({
 
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || process.env.MONGODB_URI || '',
+    connectOptions: {
+      maxPoolSize: 1,
+      minPoolSize: 0,
+      maxIdleTimeMS: 10000,
+      serverSelectionTimeoutMS: 5000,
+    },
   }),
   sharp,
   plugins: [
