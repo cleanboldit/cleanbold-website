@@ -35,7 +35,7 @@ if (
 
 export default buildConfig({
   email: resendAdapter({
-    defaultFromAddress: 'cleanboldit@gmail.com',
+    defaultFromAddress: 'noreply@cleanboldadvertising.com',
     defaultFromName: 'Cleanbold',
     apiKey: RESEND_API_KEY || '',
   }),
@@ -109,6 +109,7 @@ export default buildConfig({
 
         return emails.map((e) => ({
           ...e,
+          replyTo: get('email'),
           subject: `New Inquiry from ${name} — ${companyName}`,
           html,
         }))
