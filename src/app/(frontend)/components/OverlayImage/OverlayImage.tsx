@@ -1,6 +1,9 @@
+import Image from 'next/image'
 import styles from './OverlayImage.module.css'
 import { motion } from 'framer-motion'
 import React from 'react'
+
+const MotionImage = motion(Image)
 
 type OverlappingHeroProps = {
   imageSrc: string
@@ -20,8 +23,10 @@ export default function OverlappingHero({
   return (
     <div className={styles['hero-image-container']}>
       {/* Main Image */}
-      <motion.img
+      <MotionImage
         src={imageSrc}
+        width={1320}
+        height={792}
         className={styles['hero-image']}
         alt="hero"
         initial={{ scale: 1.05, opacity: 0 }}

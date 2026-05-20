@@ -273,7 +273,6 @@ export default function Footer({ data }: FooterProps) {
                     <>
                       {data.companyInfo.brandName.split('bold')[0]}
                       <span className={styles['footer-brand-bold']}>bold</span>
-                      <span className={styles['footer-brand-dot']}>.</span>{' '}
                       {data.companyInfo.advertising && (
                         <span className={styles['footer-brand-advertising']}>
                           {data.companyInfo.advertising}
@@ -305,7 +304,9 @@ export default function Footer({ data }: FooterProps) {
                       fill="currentColor"
                     />
                   </svg>
-                  <a href={`tel:${(data.companyInfo?.phone || '+919790234633').replace(/\s/g, '')}`}>
+                  <a
+                    href={`tel:${(data.companyInfo?.phone || '+919790234633').replace(/\s/g, '')}`}
+                  >
                     {data.companyInfo?.phone || '+91 79902 34633'}
                   </a>
                 </div>

@@ -24,12 +24,11 @@ export default function Hero({
   secondaryButtonText,
   secondaryButtonUrl,
 }: HeroProps) {
-  const [videoReady, setVideoReady] = useState(false)
   const [videoFailed, setVideoFailed] = useState(false)
 
   const videoUrl = video?.url
   const hasVideo = Boolean(videoUrl)
-  const showVideo = hasVideo && videoReady && !videoFailed
+  const showVideo = hasVideo && !videoFailed
 
   const hasCta = primaryButtonText || secondaryButtonText
 
@@ -48,21 +47,18 @@ export default function Hero({
             loop
             muted
             playsInline
-            preload="metadata"
+            preload="auto"
             poster={posterUrl ?? undefined}
             disablePictureInPicture
             controlsList="nodownload nofullscreen noremoteplayback"
-            className={`${styles.videoBg} ${showVideo ? styles.videoVisible : ''}`}
+            className={styles.videoBg}
             onContextMenu={preventContextMenu}
-            onCanPlay={() => setVideoReady(true)}
             onError={() => setVideoFailed(true)}
             aria-hidden="true"
           >
             <source src={videoUrl} type="video/mp4" />
           </video>
         )}
-
-        <div className={styles.overlay} aria-hidden="true" />
 
         {hasCta && (
           <nav className={styles.cta} aria-label="Hero actions">

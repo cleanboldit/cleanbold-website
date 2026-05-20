@@ -54,6 +54,15 @@ function extractProjectEntries(page: Page): ProjectDetail[] {
   })
 }
 
+export async function getAllProjectSlugs(): Promise<string[]> {
+  const result = await getCollection('pages', { depth: 2, limit: 100 })
+  const pages = result.docs as Page[]
+  return pages
+    .flatMap(extractProjectEntries)
+    .map((p) => normalizeProjectSlugSegment(p.route))
+    .filter(Boolean)
+}
+
 export async function getProjectByRouteSlug(slug: string) {
   const slugSegment = normalizeProjectSlugSegment(slug)
 

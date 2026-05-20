@@ -30,7 +30,7 @@ interface WhyBrandsChooseProps {
   }
 }
 
-const bgImages = ['/one-1.png', '/two-2.png', '/three-3.png']
+const bgImages = ['/why-brands-card-1.webp', '/why-brands-card-2.webp', '/why-brands-card-3.webp']
 
 function SectionCard({ section, index }: { section: BrandSection; index: number }) {
   const bg = bgImages[index] ?? bgImages[0]

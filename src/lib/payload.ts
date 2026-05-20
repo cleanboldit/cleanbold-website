@@ -33,7 +33,7 @@ export async function getPageBySlug(slug: string) {
       return result.docs[0] ?? null
     },
     ['cms-page', slug],
-    { tags: [TAG_CMS_PAGES, tagForCollection('pages')] },
+    { tags: [TAG_CMS_PAGES, tagForCollection('pages')], revalidate: 3600 },
   )()
 }
 
@@ -45,7 +45,7 @@ export async function getGlobal(slug: GlobalSlug) {
       return await payload.findGlobal({ slug })
     },
     ['cms-global', slug],
-    { tags: [TAG_CMS_GLOBALS, `cms:global:${slug}`] },
+    { tags: [TAG_CMS_GLOBALS, `cms:global:${slug}`], revalidate: 3600 },
   )()
 }
 
@@ -64,6 +64,6 @@ export async function getCollection(
       })
     },
     ['cms-collection', collection, JSON.stringify(options)],
-    { tags: [tag] },
+    { tags: [tag], revalidate: 3600 },
   )()
 }

@@ -11,8 +11,21 @@ import {
   MainContentSkeleton,
 } from '../components/PageLoadSkeletons/PageLoadSkeletons'
 import { buildPageMetadata } from '@/lib/metadata'
-import { getProjectByRouteSlug } from '@/lib/project-details'
-import { getPageBySlug } from '@/lib/payload'
+import { getAllProjectSlugs, getProjectByRouteSlug } from '@/lib/project-details'
+import { getCollection, getPageBySlug } from '@/lib/payload'
+
+export async function generateStaticParams() {
+  const [pagesResult, projectSlugs] = await Promise.all([
+    getCollection('pages', { limit: 100 }),
+    getAllProjectSlugs(),
+  ])
+
+  const pageSlugs = (pagesResult.docs as { slug: string }[])
+    .map((p) => p.slug)
+    .filter((s) => s !== 'home')
+
+  return [...new Set([...pageSlugs, ...projectSlugs])].map((slug) => ({ slug }))
+}
 
 export async function generateMetadata({
   params,

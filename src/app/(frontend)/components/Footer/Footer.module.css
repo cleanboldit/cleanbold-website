@@ -6,7 +6,7 @@
 }
 
 .footer-unified-section {
-  background: url('/background-image.png');
+  background: url('/footer-bg.webp');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -236,12 +236,6 @@
 
 .footer-brand-bold {
   font-weight: 700;
-}
-
-.footer-brand-dot {
-  color: #0052ff;
-  font-weight: 700;
-  font-size: clamp(40px, 5vw, 56px);
 }
 
 .footer-brand-advertising {
