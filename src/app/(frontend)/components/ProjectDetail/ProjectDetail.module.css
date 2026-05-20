@@ -12,7 +12,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: url('/top.png') center/cover no-repeat;
+  background: url('/section-texture.webp') center/cover no-repeat;
   opacity: 0.18;
   mix-blend-mode: screen;
 }

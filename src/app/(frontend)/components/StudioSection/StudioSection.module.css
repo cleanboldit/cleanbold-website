@@ -97,7 +97,7 @@
   display: flex;
   gap: 30px;
   will-change: transform;
-  animation: lensScroll 25s linear infinite;
+  animation: lensScroll 15s linear infinite;
 }
 
 @keyframes lensScroll {
@@ -130,7 +130,7 @@
 }
 
 .marqueeWrapper {
-  background-image: url('/marquee.png');
+  background-image: url('/studio-marquee-bg.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -163,7 +163,7 @@
 .marqueeItems {
   display: flex;
   gap: 60px;
-  animation: marquee 30s linear infinite;
+  animation: marquee 15s linear infinite;
   white-space: nowrap;
 }
 
