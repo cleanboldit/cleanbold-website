@@ -129,16 +129,14 @@ export default buildConfig({
     // S3 Storage Plugin - stores media files in Cloudflare R2 (S3-compatible)
     s3Storage({
       collections: {
-        media: process.env.NODE_ENV === 'production'
-          ? {
-              disablePayloadAccessControl: true,
-              generateFileURL: ({ filename, prefix }) =>
-                `${process.env.S3_PUBLIC_URL}/${process.env.S3_BUCKET_NAME}${prefix ? `/${prefix}` : ''}/${filename}`,
-            }
-          : true,
+        media: {
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename, prefix }) =>
+            `${process.env.S3_PUBLIC_URL}/${process.env.S3_BUCKET_NAME}${prefix ? `/${prefix}` : ''}/${filename}`,
+        },
       },
       bucket: process.env.S3_BUCKET_NAME || '',
-      disableLocalStorage: process.env.NODE_ENV === 'production',
+      disableLocalStorage: true,
       config: {
         credentials: {
           accessKeyId: process.env.S3_ACCESS_KEY_TOKEN || '',

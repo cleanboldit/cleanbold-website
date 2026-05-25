@@ -7,7 +7,6 @@ import Image from 'next/image'
 
 interface Client {
   id?: string
-  name?: string
   logo?: { url?: string } | string | null
 }
 
@@ -23,15 +22,12 @@ interface FeaturedClientsProps {
 
 interface LogoEntry {
   url: string
-  name: string
 }
 
 interface LogoCardProps {
-  logoPool: LogoEntry[]
-  initialIndex: number
+  logo: LogoEntry
   direction: 'up' | 'down'
   phase: 'idle' | 'exiting' | 'entering'
-  tick: number
 }
 
 const GRID_COUNTS = { mobile: 12, tablet: 16, desktop: 24 } as const
@@ -61,30 +57,7 @@ function useGridCount() {
   return count
 }
 
-const LogoCard = memo(function LogoCard({
-  logoPool,
-  initialIndex,
-  direction,
-  phase,
-  tick,
-}: LogoCardProps) {
-  const [activeIndex, setActiveIndex] = useState(initialIndex)
-
-  useEffect(() => {
-    if (logoPool.length <= 1) return
-    setActiveIndex((prev) => {
-      let next: number
-      do {
-        next = Math.floor(Math.random() * logoPool.length)
-      } while (next === prev && logoPool.length > 1)
-      return next
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tick])
-
-  const logo = logoPool[activeIndex]
-  if (!logo) return null
-
+const LogoCard = memo(function LogoCard({ logo, direction, phase }: LogoCardProps) {
   const exitClass = direction === 'up' ? styles['logo-exit-up'] : styles['logo-exit-down']
   const enterClass = direction === 'up' ? styles['logo-enter-up'] : styles['logo-enter-down']
 
@@ -97,7 +70,7 @@ const LogoCard = memo(function LogoCard({
       >
         <Image
           src={logo.url}
-          alt={`${logo.name} logo`}
+          alt="Client logo"
           width={200}
           height={100}
           className={styles['client-brand-logo']}
@@ -112,27 +85,40 @@ const LogoCard = memo(function LogoCard({
 export default function FeaturedClients({ block }: FeaturedClientsProps) {
   const { clients = [], sectionLabel, mainTitle, description, ctaButtonText } = block
 
-  const logoPool: LogoEntry[] = useMemo(
-    () =>
-      clients
-        .map((client) => ({
-          url: typeof client.logo === 'object' ? (client.logo?.url ?? '') : (client.logo ?? ''),
-          name: client.name ?? 'Brand',
-        }))
-        .filter((l) => l.url !== ''),
-    [clients],
-  )
+  const logoPool: LogoEntry[] = useMemo(() => {
+    const seen = new Set<string>()
+    const out: LogoEntry[] = []
+    for (const client of clients) {
+      const url =
+        typeof client.logo === 'object' ? (client.logo?.url ?? '') : (client.logo ?? '')
+      if (!url || seen.has(url)) continue
+      seen.add(url)
+      out.push({ url })
+    }
+    return out
+  }, [clients])
 
   const gridCount = useGridCount()
 
-  const initialIndices = useMemo(
-    () => Array.from({ length: gridCount }, (_, i) => i % logoPool.length),
-    [gridCount, logoPool.length],
-  )
+  const shuffledPool = useMemo(() => {
+    const arr = [...logoPool]
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+    }
+    return arr
+  }, [logoPool])
 
   const [phase, setPhase] = useState<'idle' | 'exiting' | 'entering'>('idle')
   const [tick, setTick] = useState(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const visibleLogos = useMemo(() => {
+    const pool = shuffledPool
+    if (pool.length === 0) return []
+    const offset = (tick * gridCount) % pool.length
+    return Array.from({ length: gridCount }, (_, i) => pool[(offset + i) % pool.length])
+  }, [shuffledPool, gridCount, tick])
 
   useEffect(() => {
     if (logoPool.length <= 1) return
@@ -181,14 +167,12 @@ export default function FeaturedClients({ block }: FeaturedClientsProps) {
         </motion.div>
 
         <div className={styles['clients-grid-wrapper']}>
-          {initialIndices.map((logoIndex, cardIndex) => (
+          {visibleLogos.map((logo, cardIndex) => (
             <LogoCard
               key={cardIndex}
-              logoPool={logoPool}
-              initialIndex={logoIndex}
+              logo={logo}
               direction={cardIndex % 2 === 0 ? 'up' : 'down'}
               phase={phase}
-              tick={tick}
             />
           ))}
         </div>

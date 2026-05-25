@@ -4,8 +4,57 @@ import styles from './Projects.module.css'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect, useRef, memo } from 'react'
 import { getProjectRouteHref } from '@/lib/project-route'
+
+const IO_ROOT_MARGIN = '200px'
+const MIN_MARQUEE_DURATION_SECONDS = 12
+const SECONDS_PER_PROJECT = 4
+
+const observerCallbacks = new Map<Element, (entry: IntersectionObserverEntry) => void>()
+let sharedObserver: IntersectionObserver | null = null
+
+function getSharedObserver(): IntersectionObserver | null {
+  if (typeof window === 'undefined') return null
+  if (sharedObserver) return sharedObserver
+  sharedObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const cb = observerCallbacks.get(entry.target)
+        if (cb) cb(entry)
+      }
+    },
+    { rootMargin: IO_ROOT_MARGIN },
+  )
+  return sharedObserver
+}
+
+function observeUntilVisible(
+  element: Element,
+  onVisible: (entry: IntersectionObserverEntry) => void,
+): () => void {
+  const observer = getSharedObserver()
+  if (!observer) return () => {}
+  const wrapped = (entry: IntersectionObserverEntry) => {
+    if (entry.isIntersecting) {
+      onVisible(entry)
+      observer.unobserve(element)
+      observerCallbacks.delete(element)
+    }
+  }
+  observerCallbacks.set(element, wrapped)
+  observer.observe(element)
+  return () => {
+    observer.unobserve(element)
+    observerCallbacks.delete(element)
+  }
+}
+
+function logPlayError(err: unknown) {
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn('[LazyVideo] play() failed:', err)
+  }
+}
 
 interface Project {
   id?: string
@@ -27,9 +76,141 @@ interface ProjectsProps {
   }
 }
 
+const LazyVideo = memo(function LazyVideo({
+  src,
+  className,
+  title,
+  isVisible,
+}: {
+  src: string
+  className: string
+  title: string
+  isVisible: boolean
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const isVisibleRef = useRef(isVisible)
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    isVisibleRef.current = isVisible
+  }, [isVisible])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    const currentSrc = video.getAttribute('src')
+    if (currentSrc === src) return
+
+    if (currentSrc) {
+      video.src = src
+      video.load()
+      setReady(false)
+      if (isVisibleRef.current) video.play().catch(logPlayError)
+      return
+    }
+
+    return observeUntilVisible(video, () => {
+      video.src = src
+      video.load()
+      if (isVisibleRef.current) video.play().catch(logPlayError)
+    })
+  }, [src])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !video.getAttribute('src')) return
+    if (isVisible) {
+      video.play().catch(logPlayError)
+    } else {
+      video.pause()
+    }
+  }, [isVisible])
+
+  return (
+    <video
+      ref={videoRef}
+      className={className}
+      muted
+      loop
+      playsInline
+      preload="none"
+      draggable={false}
+      aria-label={title}
+      onCanPlay={() => setReady(true)}
+      style={{ opacity: ready ? 1 : 0, transition: 'opacity 0.3s ease' }}
+    />
+  )
+})
+
 function getCategoryName(category: Project['category']): string | undefined {
   return typeof category === 'string' ? category : category?.name
 }
+
+const ProjectCard = memo(function ProjectCard({
+  project,
+  isVisible,
+  isSecondHalf,
+}: {
+  project: Project
+  isVisible: boolean
+  isSecondHalf: boolean
+}) {
+  const imageUrl = typeof project.image === 'object' ? project.image?.url : project.image
+  const videoUrl = typeof project.video === 'object' ? project.video?.url : project.video
+  const categoryName = getCategoryName(project.category)
+  const projectHref = getProjectRouteHref(project as Record<string, unknown>)
+  const title = project.title || categoryName || 'Project'
+
+  const cardFrame = (
+    <div className={styles['film-card-frame']}>
+      {imageUrl && (
+        <Image
+          src={imageUrl}
+          alt=""
+          fill
+          className={styles['film-card-img']}
+          sizes="(max-width: 768px) 72vw, 340px"
+          loading="lazy"
+          draggable={false}
+        />
+      )}
+      {videoUrl && (
+        <LazyVideo
+          src={videoUrl}
+          className={styles['film-card-video']}
+          title={title}
+          isVisible={isVisible}
+        />
+      )}
+      {(categoryName || project.title) && (
+        <div className={styles['film-card-overlay']} aria-hidden="true">
+          {categoryName && <span className={styles['film-card-category']}>{categoryName}</span>}
+          {project.title && <p className={styles['film-card-title']}>{project.title}</p>}
+        </div>
+      )}
+    </div>
+  )
+
+  return (
+    <div
+      className={`${styles['film-card']} ${projectHref ? styles['film-card-clickable'] : ''} ${!isVisible ? styles['film-card-hidden'] : ''}`}
+      aria-hidden={!isVisible || isSecondHalf ? true : undefined}
+    >
+      {projectHref ? (
+        <Link
+          href={projectHref}
+          className={styles['film-card-link']}
+          aria-label={`View project: ${title}`}
+        >
+          {cardFrame}
+        </Link>
+      ) : (
+        cardFrame
+      )}
+    </div>
+  )
+})
 
 export default function Projects({ block }: ProjectsProps) {
   const { projects = [], sectionLabel, mainTitle, description, exploreButtonText } = block
@@ -45,20 +226,26 @@ export default function Projects({ block }: ProjectsProps) {
     [projects],
   )
 
-  const filteredProjects = useMemo(
-    () =>
-      selectedCategory === 'All'
-        ? projects
-        : projects.filter((p) => getCategoryName(p.category) === selectedCategory),
-    [projects, selectedCategory],
+  const marqueeItems = useMemo(() => [...projects, ...projects], [projects])
+
+  const visibleCount = useMemo(() => {
+    if (selectedCategory === 'All') return projects.length
+    return projects.filter((p) => getCategoryName(p.category) === selectedCategory).length
+  }, [projects, selectedCategory])
+
+  const duration = useMemo(
+    () => Math.max(MIN_MARQUEE_DURATION_SECONDS, visibleCount * SECONDS_PER_PROJECT),
+    [visibleCount],
   )
 
-  const marqueeItems = useMemo(
-    () => [...filteredProjects, ...filteredProjects],
-    [filteredProjects],
-  )
-
-  const duration = useMemo(() => Math.max(12, filteredProjects.length * 4), [filteredProjects])
+  const marqueeInnerRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const inner = marqueeInnerRef.current
+    if (!inner) return
+    inner.style.animation = 'none'
+    void inner.offsetWidth // force reflow so the animation restarts from 0 instead of continuing mid-keyframe
+    inner.style.animation = ''
+  }, [selectedCategory])
 
   return (
     <section className={styles['projects-section']} aria-labelledby="projects-title">
@@ -123,77 +310,29 @@ export default function Projects({ block }: ProjectsProps) {
       </div>
 
       <div className={styles['marquee-outer']} aria-label="Project showcase" role="region">
-        <div
-          className={styles['marquee-inner']}
-          style={{ '--marquee-duration': `${duration}s` } as React.CSSProperties}
-        >
-          {marqueeItems.map((project, index) => {
-            const imageUrl =
-              typeof project.image === 'object' ? project.image?.url : project.image
-            const videoUrl =
-              typeof project.video === 'object' ? project.video?.url : project.video
-            const categoryName = getCategoryName(project.category)
-            const projectHref = getProjectRouteHref(project as Record<string, unknown>)
-            const title = project.title || categoryName || 'Project'
-
-            const cardFrame = (
-              <div className={styles['film-card-frame']}>
-                {videoUrl ? (
-                  <video
-                    src={videoUrl}
-                    className={styles['film-card-video']}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    draggable={false}
-                    aria-label={title}
-                  />
-                ) : imageUrl ? (
-                  <Image
-                    src={imageUrl}
-                    alt={title}
-                    fill
-                    className={styles['film-card-img']}
-                    sizes="(max-width: 768px) 72vw, 340px"
-                    loading="lazy"
-                    draggable={false}
-                  />
-                ) : null}
-                {(categoryName || project.title) && (
-                  <div className={styles['film-card-overlay']} aria-hidden="true">
-                    {categoryName && (
-                      <span className={styles['film-card-category']}>{categoryName}</span>
-                    )}
-                    {project.title && (
-                      <p className={styles['film-card-title']}>{project.title}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )
-
-            return (
-              <div
-                key={`${project.id ?? index}-${index}`}
-                className={`${styles['film-card']} ${projectHref ? styles['film-card-clickable'] : ''}`}
-                aria-hidden={index >= filteredProjects.length ? true : undefined}
-              >
-                {projectHref ? (
-                  <Link
-                    href={projectHref}
-                    className={styles['film-card-link']}
-                    aria-label={`View project: ${title}`}
-                  >
-                    {cardFrame}
-                  </Link>
-                ) : (
-                  cardFrame
-                )}
-              </div>
-            )
-          })}
-        </div>
+        {visibleCount === 0 ? (
+          <p className={styles['empty-state']}>No projects in this category yet.</p>
+        ) : (
+          <div
+            ref={marqueeInnerRef}
+            className={styles['marquee-inner']}
+            style={{ '--marquee-duration': `${duration}s` } as React.CSSProperties}
+          >
+            {marqueeItems.map((project, index) => {
+              const categoryName = getCategoryName(project.category)
+              const isVisible = selectedCategory === 'All' || categoryName === selectedCategory
+              const isSecondHalf = index >= projects.length
+              return (
+                <ProjectCard
+                  key={`${project.id ?? index}-${isSecondHalf ? 'b' : 'a'}`}
+                  project={project}
+                  isVisible={isVisible}
+                  isSecondHalf={isSecondHalf}
+                />
+              )
+            })}
+          </div>
+        )}
       </div>
 
       <div className={styles['projects-inner']}>
