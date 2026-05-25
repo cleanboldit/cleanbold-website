@@ -7,7 +7,6 @@ import Image from 'next/image'
 
 interface Client {
   id?: string
-  name?: string
   logo?: { url?: string } | string | null
 }
 
@@ -23,7 +22,6 @@ interface FeaturedClientsProps {
 
 interface LogoEntry {
   url: string
-  name: string
 }
 
 interface LogoCardProps {
@@ -72,7 +70,7 @@ const LogoCard = memo(function LogoCard({ logo, direction, phase }: LogoCardProp
       >
         <Image
           src={logo.url}
-          alt={`${logo.name} logo`}
+          alt="Client logo"
           width={200}
           height={100}
           className={styles['client-brand-logo']}
@@ -95,7 +93,7 @@ export default function FeaturedClients({ block }: FeaturedClientsProps) {
         typeof client.logo === 'object' ? (client.logo?.url ?? '') : (client.logo ?? '')
       if (!url || seen.has(url)) continue
       seen.add(url)
-      out.push({ url, name: client.name ?? 'Brand' })
+      out.push({ url })
     }
     return out
   }, [clients])

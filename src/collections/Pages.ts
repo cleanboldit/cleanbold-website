@@ -250,32 +250,11 @@ export const FeaturedClientsBlock: Block = {
       label: 'Clients',
       fields: [
         {
-          name: 'name',
-          type: 'text',
-          required: true,
-          label: 'Client Name',
-        },
-        {
           name: 'logo',
           type: 'upload',
           relationTo: 'media',
+          required: true,
           label: 'Client Logo',
-        },
-        {
-          name: 'row',
-          type: 'select',
-          label: 'Marquee Row',
-          options: [
-            { label: 'Row 1', value: '1' },
-            { label: 'Row 2', value: '2' },
-            { label: 'Row 3', value: '3' },
-            { label: 'Row 4', value: '4' },
-          ],
-        },
-        {
-          name: 'order',
-          type: 'number',
-          label: 'Order within row',
         },
       ],
     },
