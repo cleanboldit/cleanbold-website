@@ -48,8 +48,6 @@ export default function Hero({
             muted
             playsInline
             preload="auto"
-            // @ts-expect-error — fetchpriority not yet in React types
-            fetchpriority="high"
             poster={posterUrl ?? undefined}
             disablePictureInPicture
             controlsList="nodownload nofullscreen noremoteplayback"
@@ -58,7 +56,7 @@ export default function Hero({
             onError={() => setVideoFailed(true)}
             aria-hidden="true"
           >
-            <source src={`${videoUrl}#t=0.1`} type="video/mp4" />
+            <source src={videoUrl} type="video/webm" />
           </video>
         )}
 

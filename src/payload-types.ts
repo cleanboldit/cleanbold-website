@@ -162,7 +162,7 @@ export interface User {
  */
 export interface Media {
   id: string;
-  alt: string;
+  alt?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -279,10 +279,7 @@ export interface Page {
             ctaButtonText?: string | null;
             clients?:
               | {
-                  name: string;
-                  logo?: (string | null) | Media;
-                  row?: ('1' | '2' | '3' | '4') | null;
-                  order?: number | null;
+                  logo: string | Media;
                   id?: string | null;
                 }[]
               | null;
@@ -762,10 +759,7 @@ export interface PagesSelect<T extends boolean = true> {
               clients?:
                 | T
                 | {
-                    name?: T;
                     logo?: T;
-                    row?: T;
-                    order?: T;
                     id?: T;
                   };
               id?: T;
