@@ -11,19 +11,39 @@ export const HeroBlock: Block = {
       type: 'upload',
       relationTo: 'media',
       required: true,
-      label: 'Hero Video',
+      label: 'Hero Video (Desktop)',
       admin: {
-        description: 'Upload an MP4 video file for the hero background.',
+        description: 'Upload an MP4 video file for the desktop background.',
+      },
+    },
+    {
+      name: 'mobileVideo',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+      label: 'Hero Video (Mobile, optional)',
+      admin: {
+        description: 'Upload an MP4 video file for the mobile background. Falls back to Desktop Video if not provided.',
       },
     },
     {
       name: 'posterImage',
       type: 'upload',
       relationTo: 'media',
-      label: 'Hero poster (optional)',
+      label: 'Hero Poster (Desktop, optional)',
       admin: {
         description:
-          'Still image shown until the video can play. Export a JPEG/WebP frame from your video for best results.',
+          'Still image shown until the video can play on desktop. Export a JPEG/WebP frame from your video for best results.',
+      },
+    },
+    {
+      name: 'mobilePosterImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Hero Poster (Mobile, optional)',
+      admin: {
+        description:
+          'Still image shown until the video can play on mobile. Export a JPEG/WebP frame from your video for best results.',
       },
     },
     {

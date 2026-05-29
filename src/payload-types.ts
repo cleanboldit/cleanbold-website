@@ -190,13 +190,21 @@ export interface Page {
     | (
         | {
             /**
-             * Upload an MP4 video file for the hero background.
+             * Upload an MP4 video file for the desktop background.
              */
             video: string | Media;
             /**
-             * Still image shown until the video can play. Export a JPEG/WebP frame from your video for best results.
+             * Upload an MP4 video file for the mobile background. Falls back to Desktop Video if not provided.
+             */
+            mobileVideo?: (string | null) | Media;
+            /**
+             * Still image shown until the video can play on desktop. Export a JPEG/WebP frame from your video for best results.
              */
             posterImage?: (string | null) | Media;
+            /**
+             * Still image shown until the video can play on mobile. Export a JPEG/WebP frame from your video for best results.
+             */
+            mobilePosterImage?: (string | null) | Media;
             /**
              * Solid color behind the video while it loads (e.g. #1a237e).
              */
@@ -692,7 +700,9 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               video?: T;
+              mobileVideo?: T;
               posterImage?: T;
+              mobilePosterImage?: T;
               fallbackBackgroundColor?: T;
               primaryButtonText?: T;
               primaryButtonUrl?: T;
