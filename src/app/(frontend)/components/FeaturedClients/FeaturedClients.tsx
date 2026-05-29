@@ -57,6 +57,14 @@ function useGridCount() {
   return count
 }
 
+function createRandom(seed: number) {
+  let s = seed
+  return () => {
+    s = (s * 1664525 + 1013904223) % 4294967296
+    return s / 4294967296
+  }
+}
+
 const LogoCard = memo(function LogoCard({ logo, direction, phase }: LogoCardProps) {
   const exitClass = direction === 'up' ? styles['logo-exit-up'] : styles['logo-exit-down']
   const enterClass = direction === 'up' ? styles['logo-enter-up'] : styles['logo-enter-down']
@@ -100,27 +108,63 @@ export default function FeaturedClients({ block }: FeaturedClientsProps) {
 
   const gridCount = useGridCount()
 
-  const shuffledPool = useMemo(() => {
-    const arr = [...logoPool]
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[arr[i], arr[j]] = [arr[j], arr[i]]
-    }
-    return arr
-  }, [logoPool])
-
   const [phase, setPhase] = useState<'idle' | 'exiting' | 'entering'>('idle')
   const [tick, setTick] = useState(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  const logoPoolKey = useMemo(() => {
+    return logoPool.map((l) => l.url).join(',')
+  }, [logoPool])
+
   const visibleLogos = useMemo(() => {
-    const pool = shuffledPool
-    if (pool.length === 0) return []
-    const offset = (tick * gridCount) % pool.length
-    return Array.from({ length: gridCount }, (_, i) => pool[(offset + i) % pool.length])
-  }, [shuffledPool, gridCount, tick])
+    if (logoPool.length === 0) return []
+
+    if (logoPool.length < gridCount) {
+      const offset = (tick * gridCount) % logoPool.length
+      return Array.from({ length: gridCount }, (_, i) => logoPool[(offset + i) % logoPool.length])
+    }
+
+    const random = createRandom(0.158239)
+    const shuffle = (array: LogoEntry[]) => {
+      const arr = [...array]
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(random() * (i + 1))
+        ;[arr[i], arr[j]] = [arr[j], arr[i]]
+      }
+      return arr
+    }
+
+    let remainingPool = shuffle(logoPool)
+    let currentPage: LogoEntry[] = []
+
+    for (let t = 0; t <= tick; t++) {
+      if (remainingPool.length >= gridCount) {
+        currentPage = remainingPool.slice(0, gridCount)
+        remainingPool = remainingPool.slice(gridCount)
+      } else {
+        const R = remainingPool.length
+        const taken = [...remainingPool]
+        const newShuffle = shuffle(logoPool)
+        const takenSet = new Set(taken.map((l) => l.url))
+        const filtered = newShuffle.filter((l) => !takenSet.has(l.url))
+
+        const needed = gridCount - R
+        const filler = filtered.slice(0, needed)
+        currentPage = [...taken, ...filler]
+
+        const fillerSet = new Set(filler.map((l) => l.url))
+        const unused = newShuffle.filter((l) => !fillerSet.has(l.url))
+        remainingPool = unused
+      }
+    }
+
+    return currentPage
+  }, [logoPool, gridCount, tick])
 
   useEffect(() => {
+    setTick(0)
+    setPhase('idle')
+
     if (logoPool.length <= 1) return
 
     const schedule = () => {
@@ -141,7 +185,7 @@ export default function FeaturedClients({ block }: FeaturedClientsProps) {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [logoPool.length])
+  }, [logoPoolKey, logoPool.length])
 
   if (logoPool.length === 0) return null
 
@@ -169,7 +213,7 @@ export default function FeaturedClients({ block }: FeaturedClientsProps) {
         <div className={styles['clients-grid-wrapper']}>
           {visibleLogos.map((logo, cardIndex) => (
             <LogoCard
-              key={cardIndex}
+              key={`${logo.url}-${cardIndex}`}
               logo={logo}
               direction={cardIndex % 2 === 0 ? 'up' : 'down'}
               phase={phase}
