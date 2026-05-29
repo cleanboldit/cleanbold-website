@@ -1,6 +1,7 @@
 .scrollWrapper {
   position: relative;
   height: 100vh;
+  height: 100dvh;
   width: 100%;
 }
 
@@ -14,7 +15,22 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: #0a1628;
+  background-color: #0a1628;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@media (max-width: 768px) {
+  .backdrop {
+    background-image: var(--mobile-poster);
+  }
+}
+
+@media (min-width: 769px) {
+  .backdrop {
+    background-image: var(--desktop-poster);
+  }
 }
 
 .videoBg {

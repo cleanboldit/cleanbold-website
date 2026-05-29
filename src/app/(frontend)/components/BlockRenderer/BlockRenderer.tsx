@@ -28,18 +28,31 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
 
         switch (block.blockType) {
           case 'hero': {
-            const posterField = block.posterImage as { url?: string } | string | null | undefined
-            const posterUrl =
-              typeof posterField === 'object' && posterField?.url
-                ? posterField.url
-                : typeof posterField === 'string'
-                  ? posterField
-                  : null
+            const getMedia = (field: unknown): { url: string; mimeType?: string | null } | null => {
+              if (typeof field === 'object' && field !== null && 'url' in field) {
+                const mediaObj = field as { url: string; mimeType?: string | null }
+                if (typeof mediaObj.url === 'string') {
+                  return { url: mediaObj.url, mimeType: mediaObj.mimeType }
+                }
+              }
+              if (typeof field === 'string' && (field.startsWith('/') || field.startsWith('http') || field.includes('.'))) {
+                return { url: field, mimeType: null }
+              }
+              return null
+            }
+
+            const videoMedia = getMedia(block.video)
+            const mobileVideoMedia = getMedia(block.mobileVideo)
+            const posterMedia = getMedia(block.posterImage)
+            const mobilePosterMedia = getMedia(block.mobilePosterImage)
+
             return (
               <div key={key} id="hero">
                 <Hero
-                  video={block.video as { url: string } | null}
-                  posterUrl={posterUrl}
+                  video={videoMedia}
+                  mobileVideo={mobileVideoMedia}
+                  posterUrl={posterMedia?.url ?? null}
+                  mobilePosterUrl={mobilePosterMedia?.url ?? null}
                   fallbackBackgroundColor={
                     typeof block.fallbackBackgroundColor === 'string'
                       ? block.fallbackBackgroundColor
