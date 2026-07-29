@@ -216,15 +216,39 @@ export default function Projects({ block }: ProjectsProps) {
   const { projects = [], sectionLabel, mainTitle, description, exploreButtonText } = block
   const [selectedCategory, setSelectedCategory] = useState('All')
 
-  const categories = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          projects.map((p) => getCategoryName(p.category)).filter((c): c is string => Boolean(c)),
-        ),
-      ).reverse(),
-    [projects],
-  )
+  const categories = useMemo(() => {
+    const rawCategories = Array.from(
+      new Set(
+        projects.map((p) => getCategoryName(p.category)).filter((c): c is string => Boolean(c)),
+      ),
+    )
+
+    const preferredOrder = [
+      'real estate',
+      'fashion',
+      'ai & cgi',
+      'education',
+      'interior',
+      'others',
+    ]
+
+    return rawCategories.sort((a, b) => {
+      const cleanA = a.trim().toLowerCase()
+      const cleanB = b.trim().toLowerCase()
+      const idxA = preferredOrder.indexOf(cleanA)
+      const idxB = preferredOrder.indexOf(cleanB)
+
+      const defaultPos = preferredOrder.includes('others')
+        ? preferredOrder.indexOf('others') - 0.5
+        : preferredOrder.length
+
+      const posA = idxA !== -1 ? idxA : defaultPos
+      const posB = idxB !== -1 ? idxB : defaultPos
+
+      if (posA !== posB) return posA - posB
+      return a.localeCompare(b)
+    })
+  }, [projects])
 
   const marqueeItems = useMemo(() => [...projects, ...projects], [projects])
 
